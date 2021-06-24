@@ -13,15 +13,15 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  late ProfileStore _store;
+  // late ProfileStore _store;
   late AppLocalizations appLocalizations;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _store = Provider.of<ProfileStore>(context);
+    // _store = Provider.of<ProfileStore>(context);
     appLocalizations = AppLocalizations.of(context);
-    _store.getProfile();
+    // _store.getProfile();
   }
 
   @override
@@ -66,7 +66,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 width: 50,
                 height: 60,
                 //todo get image from api
-                image: _store.profile!.image??"",
+                image:/* _store.profile!.image??*/"",
                 imageErrorBuilder: (_, __, ___) {
                   return Image.asset(Assets.placeHolder);
                 },

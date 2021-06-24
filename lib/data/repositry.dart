@@ -86,48 +86,27 @@ class Repository {
     await _sharedPrefsHelper.removeAuthToken();
   }
 
+
+
+
   ///get profile
-  Future<Profile> getProfile() async {
-    return await _services
-        .getProfile()
-        .catchError((e) {
-      throw e;
-    });
-  }
+  // Future<Profile> getProfile() async {
+  //   return await _services
+  //       .getProfile()
+  //       .catchError((e) {
+  //     throw e;
+  //   });
+  // }
 
-  ///create Quick task
-  Future<CreateQuickTask?> createQuickTasks(CreateQuickTask? createTask) async {
-    return await _services.createQuickTasks(createTask).then((value) {
-      return value;
-    }).catchError((e) {
-      throw e;
-    });
-  }
 
-  ///create task
-  //this then is not needed
-  Future<CreateTasks?> createTasks(CreateTasks? createTask) async =>
-      await _services.createTasks(createTask).catchError((e) => throw e);
 
-  ///this function patch work any task into done
-  Future<DoneTask> doneTask(String id) async =>
-      await _services.doneTasks(id).catchError((e) => throw e);
-
-  ///get tags with paging
-  Future<Paging<Result>> getTags(int offset) async {
-    return await _services
-        .getTags(offset: offset)
-        .catchError((e) {
-      throw e;
-    });
-  }
-
-  ///get tags with paging
-  Future<Paging<GetTasks>> getTasks(int offset) async {
-    return await _services
-        .getTasks(offset: offset)
-        .catchError((e) {
-      throw e;
-    });
-  }
+ //todo remove this
+  // ///get tags with paging
+  // Future<Paging<GetTasks>> getTasks(int offset) async {
+  //   return await _services
+  //       .getTasks(offset: offset)
+  //       .catchError((e) {
+  //     throw e;
+  //   });
+  // }
 }

@@ -5,22 +5,15 @@ import 'package:provider/provider.dart';
 import 'package:todo_app/constants/app_theme.dart';
 import 'package:todo_app/constants/strings.dart';
 import 'package:todo_app/di/components/injection.dart';
-import 'package:todo_app/store/create_tasks/create_tasks_store.dart';
-import 'package:todo_app/store/form/form_store.dart';
 import 'package:todo_app/store/home/home_store.dart';
 import 'package:todo_app/store/language/language_store.dart';
 import 'package:todo_app/store/login/login.dart';
-import 'package:todo_app/store/profile/profile_store.dart';
 import 'package:todo_app/store/reset_password/reset_password.dart';
 import 'package:todo_app/store/sign_up/sign_up.dart';
-import 'package:todo_app/store/tasks_store/tasks_store.dart';
 import 'package:todo_app/store/theme/theme_store.dart';
 import 'package:todo_app/store/welcome/welcome_store.dart';
 import 'package:todo_app/ui/home/home.dart';
 import 'package:todo_app/ui/login/login.dart';
-import 'package:todo_app/ui/profile/profile.dart';
-import 'package:todo_app/ui/sign_up/sign_up.dart';
-import 'package:todo_app/ui/welcome/welcome.dart';
 import 'package:todo_app/utils/locale/app_localization.dart';
 import 'package:todo_app/utils/routes/routes.dart';
 import 'package:todo_app/data/repositry.dart';
@@ -36,11 +29,11 @@ class MyApp extends StatelessWidget {
   final SignUpStore _signUpStore = SignUpStore(getIt<Repository>());
   final HomeStore _homeStore = HomeStore(getIt<Repository>());
   final WelcomeStore _welcomeStore = WelcomeStore(getIt<Repository>());
-  final ProfileStore _profileStore = ProfileStore(getIt<Repository>());
+  // final ProfileStore _profileStore = ProfileStore(getIt<Repository>());
   final ResetPasswordStore _resetPasswordStore = ResetPasswordStore(getIt<Repository>());
-  final TaskStore _taskStore = TaskStore(getIt<Repository>());
-  final CreateTasksStore _createTasksStore =
-      CreateTasksStore(getIt<Repository>());
+  // final TaskStore _taskStore = TaskStore(getIt<Repository>());
+  // final CreateTasksStore _createTasksStore =
+  //     CreateTasksStore(getIt<Repository>());
 
   @override
   Widget build(BuildContext context) {
@@ -53,9 +46,9 @@ class MyApp extends StatelessWidget {
         Provider<SignUpStore>(create: (_) => _signUpStore),
         Provider<HomeStore>(create: (_) => _homeStore),
         Provider<WelcomeStore>(create: (_) => _welcomeStore),
-        Provider<ProfileStore>(create: (_) => _profileStore),
-        Provider<CreateTasksStore>(create: (_) => _createTasksStore),
-        Provider<TaskStore>(create: (_) => _taskStore),
+        // Provider<ProfileStore>(create: (_) => _profileStore),
+        // Provider<CreateTasksStore>(create: (_) => _createTasksStore),
+        // Provider<TaskStore>(create: (_) => _taskStore),
       ],
       child: Observer(
         name: 'global-observer',

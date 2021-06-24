@@ -57,88 +57,36 @@ class Services {
 
 
   ///get profile
-  Future<Profile> getProfile() async {
-    try {
-      var response = await _dioClient.get(Endpoints.profile);
-      return Profile.fromJson(response);
-    } catch (e) {
-      throw e;
-    }
-  }
-
-  ///this function work create quick task
-  Future<CreateQuickTask> createQuickTasks(CreateQuickTask? createTask) async {
-    try {
-      var response = await _dioClient.post(Endpoints.createTask,
-          data: createTask!.toJson().removeNull());
-      return CreateQuickTask.fromJson(response);
-    } catch (e) {
-      throw e;
-    }
-  }
-
-
-
-
-  ///this function patch work any task into done
-  Future<DoneTask> doneTasks(String id) async {
-    try {
-      var response = await _dioClient.patch(Endpoints.createTask + id + '/');
-      return DoneTask.fromJson(response);
-    } catch (e) {
-      throw e;
-    }
-  }
-
-  ///create task
-  Future<CreateTasks?> createTasks(CreateTasks? createTask) async {
-    try {
-      var response = await _dioClient.post(Endpoints.createTask,
-          data: createTask!.toJson().removeNull());
-      return CreateTasks.fromJson(response);
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  ///get tags with paging
-  Future<Paging<Result>> getTags({
-    int offset = 0,
-    int? limit = 1000,
-  }) async {
-    try {
-      Map<String, dynamic?> queries = {
-        Endpoints.querySkip: offset,
-        Endpoints.queryLimit: limit
-      };
-
-      var response =
-          await _dioClient.get(Endpoints.tags, queryParameters: queries);
-      var pagination = Paging<Result>.fromJson(response, Result.fromJsonModel);
-      return pagination;
-    } catch (e) {
-      throw e;
-    }
-  }
-
+  // Future<Profile> getProfile() async {
+  //   try {
+  //     var response = await _dioClient.get(Endpoints.profile);
+  //     return Profile.fromJson(response);
+  //   } catch (e) {
+  //     throw e;
+  //   }
+  // }
 
   ///get tasks with paging
-  Future<Paging<GetTasks>> getTasks({
-    int offset = 0,
-    int? limit = 1000,
-  }) async {
-    try {
-      Map<String, dynamic?> queries = {
-        Endpoints.querySkip: offset,
-        Endpoints.queryLimit: limit
-      };
+  //todo remove this
+  // Future<Paging<GetTasks>> getTasks({
+  //   int offset = 0,
+  //   int? limit = 1000,
+  // }) async {
+  //   try {
+  //     Map<String, dynamic?> queries = {
+  //       Endpoints.querySkip: offset,
+  //       Endpoints.queryLimit: limit
+  //     };
+  //
+  //     var response =
+  //     await _dioClient.get(Endpoints.createTask, queryParameters: queries);
+  //     var pagination = Paging<GetTasks>.fromJson(response, GetTasks.fromJsonModel);
+  //     return pagination;
+  //   } catch (e) {
+  //     throw e;
+  //   }
+  // }
 
-      var response =
-      await _dioClient.get(Endpoints.createTask, queryParameters: queries);
-      var pagination = Paging<GetTasks>.fromJson(response, GetTasks.fromJsonModel);
-      return pagination;
-    } catch (e) {
-      throw e;
-    }
-  }
+
+
 }

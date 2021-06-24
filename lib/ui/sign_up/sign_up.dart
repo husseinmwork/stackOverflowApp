@@ -1,18 +1,15 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:provider/provider.dart';
-import 'package:todo_app/constants/colors.dart';
+import 'package:todo_app/constants/app_theme.dart';
 import 'package:todo_app/constants/dimens.dart';
-import 'package:todo_app/constants/gradient.dart';
 import 'package:todo_app/store/form/form_store.dart';
 import 'package:todo_app/store/sign_up/sign_up.dart';
 import 'package:todo_app/store/theme/theme_store.dart';
 import 'package:todo_app/utils/device/device_utils.dart';
 import 'package:todo_app/utils/locale/app_localization.dart';
 import 'package:todo_app/utils/routes/routes.dart';
-import 'package:todo_app/utils/todo/todo_utils.dart';
 import 'package:todo_app/widgets/arrow_back_icon.dart';
 import 'package:todo_app/widgets/labeled_text_field.dart';
 import 'package:todo_app/widgets/todo_button.dart';
@@ -69,13 +66,16 @@ class _SignUpScreenState extends State<SignUpScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // backgroundColor: Colors.transparent,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0.0,
-        leading: ArrowBackIcon(),
-      ),
+      appBar: _buildAppBar(),
       body: _buildBody(),
+    );
+  }
+
+  AppBar _buildAppBar(){
+    return AppBar(
+      backgroundColor: Colors.transparent,
+      elevation: 0.0,
+      leading: ArrowBackIcon(),
     );
   }
 
@@ -102,7 +102,6 @@ class _SignUpScreenState extends State<SignUpScreen>
   }
 
   Widget _buildElement() {
-    TextTheme textTheme = Theme.of(context).textTheme;
 
     return SingleChildScrollView(
       child: Padding(
@@ -112,46 +111,59 @@ class _SignUpScreenState extends State<SignUpScreen>
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(appLocalizations.translate("sign_up"),
-                style: textTheme.headline4?.copyWith(
-                    color: _themeStore.darkMode ? Colors.white : Colors.black)),
+            _buildTitle(),
             SizedBox(height: Dimens.padding_large),
             _buildTextField(),
             SizedBox(height: Dimens.padding_xl),
-            RoundedButton(
-                onPressed: () {
-                  // progressController!.forward();
-                  _store.signUp();
-                  // if (_formStore.canRegister) {
-                  //   DeviceUtils.hideKeyboard(context);
-                  //   _store.signUp();
-                  // } else {
-                  //   showErrorMessage('Please check all fields', context);
-                  // }
-                },
-                title: Text(appLocalizations.translate("sign_up"),
-                    style: Theme.of(context).textTheme.button)),
+             _buildButtonRegistration(),
             SizedBox(
-              height: Dimens.padding_normal,
+              height: Dimens.padding_normal
             ),
-            MaterialButton(
-              onPressed: () {
-                Navigator.of(context).pushReplacementNamed(Routes.login);
-              },
-              child: Center(
-                child: Text(
-                  appLocalizations.translate("goto_login"),
-                  style: textTheme.bodyText2?.copyWith(
-                      color:
-                          _themeStore.darkMode ? Colors.white : Colors.black),
-                ),
-              ),
-            ),
+            _buildButtonLogin(),
           ],
         ),
       ),
     );
   }
+
+  Widget _buildTitle(){
+    return Text(appLocalizations.translate("sign_up"),
+        style: textTheme.headline4?.copyWith(
+            color: _themeStore.darkMode ? Colors.white : Colors.black));
+  }
+
+  Widget _buildButtonRegistration() {
+    return RoundedButton(
+        onPressed: () {
+          // progressController!.forward();
+          _store.signUp();
+          // if (_formStore.canRegister) {
+          //   DeviceUtils.hideKeyboard(context);
+          //   _store.signUp();
+          // } else {
+          //   showErrorMessage('Please check all fields', context);
+          // }
+        },
+        title: Text(appLocalizations.translate("sign_up"),
+            style: Theme.of(context).textTheme.button));
+  }
+
+  Widget _buildButtonLogin(){
+    return MaterialButton(
+      onPressed: () {
+        Navigator.of(context).pushReplacementNamed(Routes.login);
+      },
+      child: Center(
+        child: Text(
+          appLocalizations.translate("goto_login"),
+          style: textTheme.bodyText2?.copyWith(
+              color:
+              _themeStore.darkMode ? Colors.white : Colors.black),
+        ),
+      ),
+    );
+  }
+
 
   Widget _buildTextField() {
     //todo add all String into language en json
@@ -284,6 +296,10 @@ class _SignUpScreenState extends State<SignUpScreen>
     );
   }
 
+
+
+
+
   //todo  this function of navigator of screen
   _buildClosed() {
     //todo this error from this from: 0.0 must be set zero into animation in another way
@@ -303,6 +319,8 @@ class _SignUpScreenState extends State<SignUpScreen>
     _store.success = false;
     return Container();
   }
+
+
 }
 //
 // CustomPaint(
