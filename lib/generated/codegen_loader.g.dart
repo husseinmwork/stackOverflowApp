@@ -1,0 +1,128 @@
+// DO NOT EDIT. This is code generated via package:easy_localization/generate.dart
+
+// ignore_for_file: prefer_single_quotes
+
+import 'dart:ui';
+
+import 'package:easy_localization/easy_localization.dart' show AssetLoader;
+
+class CodegenLoader extends AssetLoader{
+  const CodegenLoader();
+
+  @override
+  Future<Map<String, dynamic>> load(String fullPath, Locale locale ) {
+    return Future.value(mapLocales[locale.toString()]);
+  }
+
+  static const Map<String,dynamic> ar = {
+  "login_start": "أدناه قائمة السلاسل لتسجيل الدخول",
+  "using": "استخدام",
+  "to_login": "لتسجيل الدخول",
+  "login_btn_forgot_password": "هل نسيت كلمة المرور؟",
+  "login_text_field_password_title": "كلمة المرور",
+  "login_text_field_hint_password": "كلمة المرور",
+  "login_text_field_hint_email": "اسم المستخدم",
+  "login_text_field_email_title": "اسم المستخدم الخاص بك",
+  "goto_register": "عضو جديد؟ تسجيل",
+  "reset_password": "إعادة تعيين كلمة المرور",
+  "goto_login": "استخدام",
+  "login_error_fill_fields": "استخدام",
+  "login_end": "------------------------------------------------------------------------------------",
+  "registration_start": "أدناه قائمة السلاسل لتسجيل الدخول",
+  "regs_text_field_lable_email": "استخدام",
+  "regs_text_field_hint_email": "استخدام",
+  "regs_text_field_password_title": "استخدا4",
+  "regs_text_field_hint_password": "استخدام",
+  "registration_end": "------------------------------------------------------------------------------------",
+  "home_start": "استخدام6",
+  "home_tv_posts": "استخدام7",
+  "home_tv_error": "استخدام8",
+  "home_tv_no_post_found": "استخدام9",
+  "home_tv_choose_language": "لتسجيل الدخول0",
+  "home_end": "-------------------------------------------------------------------------------------",
+  "welcome_start": "استخدام6",
+  "welcome_title": "لتسجيل الدخول1",
+  "welcome_text_field_title": "لتسجيل الدخول2",
+  "welcome_text_field_hint": "استخدام3",
+  "login": "لتسجيل الدخول3",
+  "sign_up": "لتسجيل الدخول4",
+  "welcome_end": "-------------------------------------------------------------------------------------",
+  "tab_bar_start_task_screen": "استخدام6",
+  "today": "لتسجيل الدخول5",
+  "inbox": "لتسجيل الدخول6",
+  "done": "لتسجيل الدخول7",
+  "missed": "لتسجيل الدخول8",
+  "tab_bar_end_task_screen": "-------------------------------------------------------------------------------------",
+  "start_home_screen": "استخدام6",
+  "task": "لتسجيل الدخول9",
+  "habits": "هل نسيت كلمة المرور؟0",
+  "end_home_screen": "-------------------------------------------------------------------------------------",
+  "start_create_tasks": "استخدام6",
+  "create_tasks_title": "هل نسيت كلمة المرور؟1",
+  "create_tasks_text_field_title": "هل نسيت كلمة المرور؟2",
+  "create_tasks_text_field_note": "هل نسيت كلمة المرور؟3",
+  "create_tasks_text_field_new_tag": "هل نسيت كلمة المرور؟4",
+  "create_tasks_date": "هل نسيت كلمة المرور؟5",
+  "create_tasks_selected_date": "هل نسيت كلمة المرور؟6",
+  "create_tasks_text_field_sub_title": "هل نسيت كلمة المرور؟7",
+  "create_tasks_priority": "هل نسيت كلمة المرور؟8",
+  "create_tasks_deadline": "هل نسيت كلمة المرور؟9",
+  "end_create_tasks": "-------------------------------------------------------------------------------------"
+};
+static const Map<String,dynamic> en = {
+  "login_start": "Below are list of strings for login",
+  "using": "Using ",
+  "to_login": "To Login ",
+  "login_btn_forgot_password": "Forget your password ?",
+  "login_text_field_password_title": "your password",
+  "login_text_field_hint_password": "Password",
+  "login_text_field_hint_email": "Username",
+  "login_text_field_email_title": "your Username",
+  "goto_register": "New member? Register",
+  "reset_password": "Reset Password",
+  "goto_login": "Do you have an account? Login",
+  "login_error_fill_fields": "Please fill in all fields",
+  "login_end": "------------------------------------------------------------------------------------",
+  "registration_start": "Below are list of strings for login",
+  "regs_text_field_lable_email": "Your Email",
+  "regs_text_field_hint_email": "Email",
+  "regs_text_field_password_title": "your confirm password",
+  "regs_text_field_hint_password": "Confirm Password",
+  "registration_end": "------------------------------------------------------------------------------------",
+  "home_start": "Below are list of strings for home",
+  "home_tv_posts": "Posts",
+  "home_tv_error": "Error",
+  "home_tv_no_post_found": "No posts found",
+  "home_tv_choose_language": "Choose Language",
+  "home_end": "-------------------------------------------------------------------------------------",
+  "welcome_start": "Below are list of strings for home",
+  "welcome_title": "What’s your \nemail \naddress?",
+  "welcome_text_field_title": "your email",
+  "welcome_text_field_hint": "Email",
+  "login": "Login",
+  "sign_up": "Sign Up",
+  "welcome_end": "-------------------------------------------------------------------------------------",
+  "tab_bar_start_task_screen": "Below are list of strings for home",
+  "today": "Today",
+  "inbox": "Inbox",
+  "done": "Done",
+  "missed": "Missed",
+  "tab_bar_end_task_screen": "-------------------------------------------------------------------------------------",
+  "start_home_screen": "Below are list of strings for home",
+  "task": "Task",
+  "habits": "Habits",
+  "end_home_screen": "-------------------------------------------------------------------------------------",
+  "start_create_tasks": "Below are list of strings for home",
+  "create_tasks_title": "Create Task",
+  "create_tasks_text_field_title": "Task title",
+  "create_tasks_text_field_note": "Note",
+  "create_tasks_text_field_new_tag": "New Tag",
+  "create_tasks_date": "Date",
+  "create_tasks_selected_date": "Selected Date",
+  "create_tasks_text_field_sub_title": "Sub Task",
+  "create_tasks_priority": "Task Priority",
+  "create_tasks_deadline": "DeadLine",
+  "end_create_tasks": "-------------------------------------------------------------------------------------"
+};
+static const Map<String, Map<String,dynamic>> mapLocales = {"ar": ar, "en": en};
+}

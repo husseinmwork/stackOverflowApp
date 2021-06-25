@@ -3,20 +3,19 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app/constants/colors.dart';
 import 'package:todo_app/constants/dimens.dart';
-import 'package:todo_app/packages/toast.dart';
 import 'package:todo_app/store/form/form_store.dart';
 import 'package:todo_app/store/language/language_store.dart';
 import 'package:todo_app/store/login/login.dart';
 import 'package:todo_app/store/theme/theme_store.dart';
 import 'package:todo_app/utils/device/device_utils.dart';
-import 'package:todo_app/utils/locale/app_localization.dart';
 import 'package:todo_app/utils/routes/routes.dart';
 import 'package:todo_app/utils/todo/todo_utils.dart';
 import 'package:todo_app/widgets/arrow_back_icon.dart';
 import 'package:todo_app/widgets/labeled_text_field.dart';
 import 'package:todo_app/widgets/todo_button.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:todo_app/generated/locale_keys.g.dart';
 import 'package:material_dialog/material_dialog.dart';
-
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -33,10 +32,6 @@ class _LoginScreenState extends State<LoginScreen> {
   late ThemeStore _themeStore;
   late LanguageStore _languageStore;
 
-
-
-  late AppLocalizations appLocalizations;
-
   FocusNode _passwordFocusNode = FocusNode();
   FocusNode _emailFocusNode = FocusNode();
 
@@ -45,7 +40,6 @@ class _LoginScreenState extends State<LoginScreen> {
     super.didChangeDependencies();
     _store = Provider.of<LoginStore>(context);
     _themeStore = Provider.of<ThemeStore>(context);
-    appLocalizations = AppLocalizations.of(context);
     _languageStore = Provider.of<LanguageStore>(context);
 
     _store
@@ -56,20 +50,40 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, () {
+      if (context.locale == Locale("ar")) {
+        _languageStore.setSelectedLanguage(Language.ar);
+      } else if (context.locale == Locale("en")) {
+        _languageStore.setSelectedLanguage(Language.en);
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // backgroundColor: Colors.transparent,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0.0,
-        leading: ArrowBackIcon(),
-        actions: [_buildThemeButton()],
-      ),
+      appBar: _buildAppBar(),
       body: _buildBody(),
     );
   }
 
-
+  AppBar _buildAppBar() {
+    return AppBar(
+      backgroundColor: Colors.transparent,
+      elevation: 0.0,
+      leading: ArrowBackIcon(),
+      actions: [
+        _buildThemeButton(),
+        IconButton(
+            icon: Icon(Icons.language),
+            onPressed: () {
+              _buildLanguageDialog();
+            }),
+      ],
+    );
+  }
 
   Widget _buildThemeButton() {
     return Observer(
@@ -90,8 +104,6 @@ class _LoginScreenState extends State<LoginScreen> {
     return Stack(
       children: [
         _buildElement(),
-
-        //todo this is false awy please change this way
         Align(
           alignment: Alignment.center,
           child: Observer(
@@ -121,7 +133,7 @@ class _LoginScreenState extends State<LoginScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(appLocalizations.translate("login"),
+            Text(LocaleKeys.login.tr(),
                 style: textTheme.headline4?.copyWith(
                     color: _themeStore.darkMode ? Colors.white : Colors.black)),
             SizedBox(
@@ -137,11 +149,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       onTap: () {
                         _store.showPassword = !_store.showPassword;
                       },
-                      title: appLocalizations
-                          .translate("login_text_field_email_title"),
+                      title: LocaleKeys.login_text_field_email_title.tr(),
                       textController: _emailController,
-                      hint: appLocalizations
-                          .translate("login_text_field_hint_email"),
+                      hint: LocaleKeys.login_text_field_email_title.tr(),
                       errorText: _formStore.formErrorStore.userEmail,
                       onChanged: (email) {
                         _formStore.setUserId(_emailController.text);
@@ -166,11 +176,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       onTap: () {
                         _store.showPassword = !_store.showPassword;
                       },
-                      title: appLocalizations
-                          .translate("login_text_field_password_title"),
+                      title: LocaleKeys.login_text_field_password_title.tr(),
                       textController: _passwordController,
-                      hint: appLocalizations
-                          .translate("login_text_field_hint_password"),
+                      hint: LocaleKeys.login_text_field_hint_password.tr(),
                       errorText: _formStore.formErrorStore.password,
                       onChanged: (password) {
                         _formStore.setPassword(_passwordController.text);
@@ -179,16 +187,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       focusNode: _passwordFocusNode,
                     ),
                   ),
-
                   MaterialButton(
                     onPressed: () {
                       Navigator.of(context).pushNamed(Routes.email_screen);
-
                     },
                     child: Container(
                       alignment: Alignment.centerRight,
                       child: Text(
-                        appLocalizations.translate("login_btn_forgot_password"),
+                        LocaleKeys.login_btn_forgot_password.tr(),
                         style: textTheme.bodyText2?.copyWith(
                             color: _themeStore.darkMode
                                 ? Colors.white
@@ -196,7 +202,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   ),
-
                 ],
               ),
             ),
@@ -212,7 +217,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     showErrorMessage('Please check all fields', context);
                   }
                 },
-                title: Text(appLocalizations.translate("login"),
+                title: Text(LocaleKeys.login.tr(),
                     style: Theme.of(context).textTheme.button)),
             SizedBox(
               height: Dimens.padding_normal,
@@ -223,7 +228,7 @@ class _LoginScreenState extends State<LoginScreen> {
               },
               child: Center(
                 child: Text(
-                  appLocalizations.translate("goto_register"),
+                  LocaleKeys.goto_register.tr(),
                   style: textTheme.bodyText2?.copyWith(
                       color:
                           _themeStore.darkMode ? Colors.white : Colors.black),
@@ -236,11 +241,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void showToast(String msg, {int? duration, int? gravity}) {
-    Toast.show(msg, context, duration: duration, gravity: gravity);
-  }
-
-  //todo  this function of navigator of screen
   _buildClosed() {
     return SizedBox.shrink();
   }
@@ -268,6 +268,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
+
 //toast
 // Observer(builder: (_)=>_store.resultForgetPassword.isEmpty?SizedBox(height: 0): _showToast(context)),
 // Widget _showToast(BuildContext context) {
@@ -276,4 +277,58 @@ class _LoginScreenState extends State<LoginScreen> {
 //   });
 //   return SizedBox.shrink();
 // }
+
+//
+//   void showToast(String msg, {int? duration, int? gravity}) {
+//     Toast.show(msg, context, duration: duration, gravity: gravity);
+//   }
+
+  _buildLanguageDialog() {
+    showDialogLang<String>(
+      context: context,
+      child: MaterialDialog(
+          borderRadius: Dimens.border_mid,
+          enableFullWidth: true,
+          title: Text(
+            LocaleKeys.home_tv_choose_language.tr(),
+            style: Theme.of(context).textTheme.subtitle2,
+          ),
+          headerColor: Theme.of(context).primaryColor,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          closeButtonColor: Colors.white,
+          enableCloseButton: true,
+          enableBackButton: false,
+          onCloseButtonClicked: () {
+            Navigator.of(context).pop();
+          },
+          children: [
+            _buildListTileLang(() {
+              Navigator.of(context).pop();
+              // change user language based on selected locale
+              _languageStore.selectedLanguage = Language.ar;
+              context.setLocale(Locale('ar'));
+            }, "Arabic"),
+            _buildListTileLang(() {
+              Navigator.of(context).pop();
+              // change user language based on selected locale
+              _languageStore.selectedLanguage = Language.en;
+              context.setLocale(Locale('en'));
+            }, "English"),
+          ]),
+    );
+  }
+
+  _buildListTileLang(Function onTap, title) {
+    return ListTile(
+      dense: true,
+      contentPadding: EdgeInsets.all(0.0),
+      title: Text(title , style: Theme.of(context).textTheme.bodyText2?.copyWith(
+        color:  _themeStore.darkMode?Colors.white:Colors.black
+
+      ),),
+      onTap: () {
+        onTap();
+      },
+    );
+  }
 }

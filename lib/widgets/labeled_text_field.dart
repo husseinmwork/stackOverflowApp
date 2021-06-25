@@ -22,7 +22,6 @@ class LabeledTextField extends StatefulWidget {
   final String? maxLetter;
   final String? errorText;
   final TextInputAction? inputAction;
-  final TextAlign textAlign;
   final String title;
   final Function? onTap;
 
@@ -36,7 +35,6 @@ class LabeledTextField extends StatefulWidget {
     this.isIcon = false,
     this.onTap,
     this.hint,
-    this.textAlign = TextAlign.left,
     this.icon,
     this.isObscure = false,
     required this.title,
@@ -72,7 +70,7 @@ class _LabeledTextFieldState extends State<LabeledTextField> {
           style: Theme.of(context).textTheme.overline,
         ),
         TextFormField(
-          textAlign: widget.textAlign,
+          textAlign: TextAlign.start,
           controller: widget.textController,
           focusNode: widget.focusNode,
           onFieldSubmitted: widget.onFieldSubmitted,
@@ -106,7 +104,7 @@ class _LabeledTextFieldState extends State<LabeledTextField> {
                       : AppColors.DarkPurple),
             ),
             hintStyle: Theme.of(context).textTheme.subtitle2?.copyWith(
-                color: _themeStore.darkMode ? Colors.white : Colors.black),
+                color: _themeStore.darkMode ? Colors.white : Colors.black ),
             suffixIcon: IconButton(
               onPressed: widget.isIcon
                   ? () {

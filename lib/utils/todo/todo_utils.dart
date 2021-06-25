@@ -47,3 +47,14 @@ extension mapper on Map<String, dynamic?> {
 
   keyAt(int index) => this.keys.elementAt(index);
 }
+
+
+
+showDialogLang<T>({required BuildContext context, required Widget child}) {
+  showDialog<T>(
+    context: context,
+    builder: (BuildContext context) => child,
+  ).then<void>((T? value) {
+    // The value passed to Navigator.pop() or null.
+  });
+}

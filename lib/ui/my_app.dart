@@ -17,6 +17,8 @@ import 'package:todo_app/ui/login/login.dart';
 import 'package:todo_app/utils/locale/app_localization.dart';
 import 'package:todo_app/utils/routes/routes.dart';
 import 'package:todo_app/data/repositry.dart';
+import 'package:easy_localization/easy_localization.dart';
+
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -54,11 +56,14 @@ class MyApp extends StatelessWidget {
         name: 'global-observer',
         builder: (context) {
           return MaterialApp(
+            localizationsDelegates: context.localizationDelegates,
+            supportedLocales: context.supportedLocales,
+            locale: context.locale,
             debugShowCheckedModeBanner: false,
             title: Strings.appName,
             theme: _themeStore.darkMode ? themeDataDark : themeData,
             routes: Routes.routes,
-            locale: Locale(_languageStore.locale),
+     /*       locale: Locale(_languageStore.locale),
             supportedLocales: _languageStore.supportedLanguages
                 .map((language) => Locale(language.locale!, language.code))
                 .toList(),
@@ -71,10 +76,10 @@ class MyApp extends StatelessWidget {
               GlobalWidgetsLocalizations.delegate,
               // Built-in localization of basic text for Cupertino widgets
               GlobalCupertinoLocalizations.delegate,
-            ],
-            home: _homeStore.isLoggedIn ? HomeScreen() : LoginScreen(),
+            ],*/
+            // home: _homeStore.isLoggedIn ? HomeScreen() : LoginScreen(),
             // home: SignUpScreen(),
-            // home: LoginScreen(),
+            home: LoginScreen(),
           );
         },
       ),

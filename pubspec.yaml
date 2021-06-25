@@ -23,10 +23,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
   flutter_localizations:
     sdk: flutter
-  flutter_cupertino_localizations: ^1.0.1
+
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -64,6 +63,7 @@ dependencies:
   infinite_scroll_pagination: ^3.0.1+1
   # Material Dialog
   material_dialog: ^1.0.0-nullsafety.1
+  easy_localization: ^3.0.0
 
 
 dev_dependencies:
@@ -89,6 +89,8 @@ flutter:
   assets:
     - assets/lang/
     - assets/images/
+    - assets/lang/en.json
+    - assets/lang/ar.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

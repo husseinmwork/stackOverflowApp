@@ -30,14 +30,13 @@ abstract class _LoginStore with Store {
   String password = '';
 
   @observable
-  bool showPassword = false;
+  bool showPassword = true;
 
   @observable
   bool success = false;
 
   @observable
   bool loading = false;
-
 
   // @observable
   // Map<String,dynamic> resultForgetPassword = {};
@@ -58,7 +57,6 @@ abstract class _LoginStore with Store {
       this.loading = false;
       this.success = false;
       if (error is DioError) {
-
         debugPrint("this dio error login  = \n");
         DioErrorUtil.handleError(error); // remove this print before remove
         //error store this is dio error
@@ -82,7 +80,4 @@ abstract class _LoginStore with Store {
       // debugPrint(error);
     });
   }
-
-
-
 }
