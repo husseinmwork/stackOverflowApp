@@ -5,14 +5,12 @@ import 'package:todo_app/ui/profile/profile.dart';
 import 'package:todo_app/ui/reset_password/email_screen.dart';
 import 'package:todo_app/ui/reset_password/otp.dart';
 import 'package:todo_app/ui/sign_up/sign_up.dart';
-import 'package:todo_app/ui/welcome/welcome.dart';
 
 class Routes {
   Routes._();
 
   //static variables
   // static const String splash = '/splash';
-  static const String welcome = '/welcome';
   static const String login = '/login';
   static const String sign_up = '/signUp';
   static const String home = '/home';
@@ -22,7 +20,6 @@ class Routes {
   static const String email_screen = '/email';
 
   static final routes = <String, WidgetBuilder>{
-    welcome: (BuildContext context) => Welcome(),
     login: (BuildContext context) => LoginScreen(),
     sign_up: (BuildContext context) => SignUpScreen(),
     home: (BuildContext context) => HomeScreen(),

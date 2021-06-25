@@ -77,14 +77,21 @@ class _EmailScreenState extends State<EmailScreen> {
     return Container(
       width: double.infinity,
       height: 100,
-      child: LabeledTextField(
-        isIcon: false,
-        title: _appLocalizations.translate("regs_text_field_lable_email"),
-        textController: _emailController,
-        hint: _appLocalizations.translate("regs_text_field_hint_email"),
-        onChanged: (email) {
-          _store.email = email;
-        },
+      child: Observer(
+        builder: (_) => LabeledTextField(
+          isIcon: false,
+          title: _appLocalizations.translate("regs_text_field_lable_email"),
+          textController: _emailController,
+          hint: _appLocalizations.translate("regs_text_field_hint_email"),
+          errorText: _formStore.formErrorStore.userEmail,
+          onChanged: (email) {
+            _formStore.setUserId(email);
+            _store.email = email;
+          },
+          onFieldSubmitted: (value) {
+            // FocusScope.of(context).requestFocus(_passwordFocusNode);
+          },
+        ),
       ),
     );
   }

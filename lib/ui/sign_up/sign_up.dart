@@ -10,6 +10,7 @@ import 'package:todo_app/store/theme/theme_store.dart';
 import 'package:todo_app/utils/device/device_utils.dart';
 import 'package:todo_app/utils/locale/app_localization.dart';
 import 'package:todo_app/utils/routes/routes.dart';
+import 'package:todo_app/utils/todo/todo_utils.dart';
 import 'package:todo_app/widgets/arrow_back_icon.dart';
 import 'package:todo_app/widgets/labeled_text_field.dart';
 import 'package:todo_app/widgets/todo_button.dart';
@@ -41,19 +42,6 @@ class _SignUpScreenState extends State<SignUpScreen>
   final _formStore = FormStore();
   late ThemeStore _themeStore;
   late AppLocalizations appLocalizations;
-  AnimationController? progressController;
-  Animation<double>? animation;
-
-  @override
-  void initState() {
-    super.initState();
-    progressController = AnimationController(
-        vsync: this, duration: Duration(milliseconds: 2000));
-    animation = Tween<double>(begin: 0, end: 100).animate(progressController!)
-      ..addListener(() {
-        setState(() {});
-      });
-  }
 
   @override
   void didChangeDependencies() {
@@ -71,7 +59,7 @@ class _SignUpScreenState extends State<SignUpScreen>
     );
   }
 
-  AppBar _buildAppBar(){
+  AppBar _buildAppBar() {
     return AppBar(
       backgroundColor: Colors.transparent,
       elevation: 0.0,
@@ -88,7 +76,7 @@ class _SignUpScreenState extends State<SignUpScreen>
           child: Observer(
             builder: (_) => Visibility(
               visible: _store.loading,
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(backgroundColor: Colors.blue),
             ),
           ),
         ),
@@ -102,7 +90,6 @@ class _SignUpScreenState extends State<SignUpScreen>
   }
 
   Widget _buildElement() {
-
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.only(
@@ -114,11 +101,9 @@ class _SignUpScreenState extends State<SignUpScreen>
             _buildTitle(),
             SizedBox(height: Dimens.padding_large),
             _buildTextField(),
-            SizedBox(height: Dimens.padding_xl),
-             _buildButtonRegistration(),
-            SizedBox(
-              height: Dimens.padding_normal
-            ),
+            SizedBox(height: Dimens.padding_xxl),
+            _buildButtonRegistration(),
+            SizedBox(height: Dimens.padding_normal),
             _buildButtonLogin(),
           ],
         ),
@@ -126,44 +111,11 @@ class _SignUpScreenState extends State<SignUpScreen>
     );
   }
 
-  Widget _buildTitle(){
+  Widget _buildTitle() {
     return Text(appLocalizations.translate("sign_up"),
         style: textTheme.headline4?.copyWith(
             color: _themeStore.darkMode ? Colors.white : Colors.black));
   }
-
-  Widget _buildButtonRegistration() {
-    return RoundedButton(
-        onPressed: () {
-          // progressController!.forward();
-          _store.signUp();
-          // if (_formStore.canRegister) {
-          //   DeviceUtils.hideKeyboard(context);
-          //   _store.signUp();
-          // } else {
-          //   showErrorMessage('Please check all fields', context);
-          // }
-        },
-        title: Text(appLocalizations.translate("sign_up"),
-            style: Theme.of(context).textTheme.button));
-  }
-
-  Widget _buildButtonLogin(){
-    return MaterialButton(
-      onPressed: () {
-        Navigator.of(context).pushReplacementNamed(Routes.login);
-      },
-      child: Center(
-        child: Text(
-          appLocalizations.translate("goto_login"),
-          style: textTheme.bodyText2?.copyWith(
-              color:
-              _themeStore.darkMode ? Colors.white : Colors.black),
-        ),
-      ),
-    );
-  }
-
 
   Widget _buildTextField() {
     //todo add all String into language en json
@@ -207,17 +159,22 @@ class _SignUpScreenState extends State<SignUpScreen>
           Row(
             children: [
               Expanded(
-                child: LabeledTextField(
-                  focusNode: _userNameFocusNode,
-                  title: "user name",
-                  textController: _userNameController,
-                  hint: "User Name",
-                  onChanged: (name) {
-                    _store.userName = name;
-                  },
-                  onFieldSubmitted: (value) {
-                    FocusScope.of(context).requestFocus(_emailFocusNode);
-                  },
+                child: Observer(
+                  builder: (_) => LabeledTextField(
+                    focusNode: _userNameFocusNode,
+                    title: "user name",
+                    textController: _userNameController,
+                    hint: "User Name",
+                    errorText: _formStore.formErrorStore.userName,
+                    onChanged: (name) {
+                      _formStore.setUserName(name);
+
+                      _store.userName = name;
+                    },
+                    onFieldSubmitted: (value) {
+                      FocusScope.of(context).requestFocus(_emailFocusNode);
+                    },
+                  ),
                 ),
               ),
               SizedBox(width: Dimens.padding_normal),
@@ -233,7 +190,7 @@ class _SignUpScreenState extends State<SignUpScreen>
                     focusNode: _emailFocusNode,
                     errorText: _formStore.formErrorStore.userEmail,
                     onChanged: (email) {
-                      // _formStore.setUserId(email);
+                      _formStore.setUserId(email);
                       _store.email = email;
                     },
                     onFieldSubmitted: (value) {
@@ -274,12 +231,13 @@ class _SignUpScreenState extends State<SignUpScreen>
           Observer(
             builder: (_) => LabeledTextField(
               focusNode: _confirmPasswordFocusNode,
-              isObscure: _store.showPassword,
+              isObscure: _store.showConfirmPassword,
               isIcon: true,
-              icon:
-                  _store.showPassword ? Icons.visibility_off : Icons.visibility,
+              icon: _store.showConfirmPassword
+                  ? Icons.visibility_off
+                  : Icons.visibility,
               onTap: () {
-                _store.showPassword = !_store.showPassword;
+                _store.showConfirmPassword = !_store.showConfirmPassword;
               },
               title:
                   appLocalizations.translate("regs_text_field_password_title"),
@@ -296,17 +254,36 @@ class _SignUpScreenState extends State<SignUpScreen>
     );
   }
 
+  Widget _buildButtonRegistration() {
+    return RoundedButton(
+        onPressed: () {
+          if (_formStore.canRegister) {
+            DeviceUtils.hideKeyboard(context);
+            _store.signUp();
+          } else {
+            showErrorMessage('Please check all fields', context);
+          }
+        },
+        title: Text(appLocalizations.translate("sign_up"),
+            style: Theme.of(context).textTheme.button));
+  }
 
+  Widget _buildButtonLogin() {
+    return MaterialButton(
+      onPressed: () {
+        Navigator.of(context).pushReplacementNamed(Routes.login);
+      },
+      child: Center(
+        child: Text(
+          appLocalizations.translate("goto_login"),
+          style: textTheme.bodyText2?.copyWith(
+              color: _themeStore.darkMode ? Colors.white : Colors.black),
+        ),
+      ),
+    );
+  }
 
-
-
-  //todo  this function of navigator of screen
   _buildClosed() {
-    //todo this error from this from: 0.0 must be set zero into animation in another way
-    // if (animation!.value == 100) {
-    //   progressController!.reverse();
-    // }
-
     return SizedBox.shrink();
   }
 
@@ -315,31 +292,7 @@ class _SignUpScreenState extends State<SignUpScreen>
       Navigator.of(context).pushReplacementNamed(Routes.login);
       _store.loading = false;
     });
-    // if (animation!.value == 100) progressController!.reverse(from: 0.0);
     _store.success = false;
     return Container();
   }
-
-
 }
-//
-// CustomPaint(
-// foregroundPainter: CircleProgress(animation!.value),
-// // this will add custom painter after child
-// child: Container(
-// width: 100,
-// height: 100,
-// child: GestureDetector(
-// onTap: () {},
-// child: Center(
-// child: Text(
-// "${animation!.value.toInt()} %",
-// style: TextStyle(
-// fontSize: 20,
-// fontWeight: FontWeight.bold,
-// color: Colors.white),
-// ),
-// ),
-// ),
-// ),
-// ),

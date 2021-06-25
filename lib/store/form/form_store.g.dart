@@ -45,6 +45,21 @@ mixin _$FormStore on _FormStore, Store {
     });
   }
 
+  final _$userNameAtom = Atom(name: '_FormStore.userName');
+
+  @override
+  String get userName {
+    _$userNameAtom.reportRead();
+    return super.userName;
+  }
+
+  @override
+  set userName(String value) {
+    _$userNameAtom.reportWrite(value, super.userName, () {
+      super.userName = value;
+    });
+  }
+
   final _$passwordAtom = Atom(name: '_FormStore.password');
 
   @override
@@ -147,6 +162,17 @@ mixin _$FormStore on _FormStore, Store {
   }
 
   @override
+  void setUserName(String value) {
+    final _$actionInfo = _$_FormStoreActionController.startAction(
+        name: '_FormStore.setUserName');
+    try {
+      return super.setUserName(value);
+    } finally {
+      _$_FormStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void setPassword(String value) {
     final _$actionInfo = _$_FormStoreActionController.startAction(
         name: '_FormStore.setPassword');
@@ -180,6 +206,17 @@ mixin _$FormStore on _FormStore, Store {
   }
 
   @override
+  void validateUserName(String value) {
+    final _$actionInfo = _$_FormStoreActionController.startAction(
+        name: '_FormStore.validateUserName');
+    try {
+      return super.validateUserName(value);
+    } finally {
+      _$_FormStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void validatePassword(String value) {
     final _$actionInfo = _$_FormStoreActionController.startAction(
         name: '_FormStore.validatePassword');
@@ -205,6 +242,7 @@ mixin _$FormStore on _FormStore, Store {
   String toString() {
     return '''
 userEmail: ${userEmail},
+userName: ${userName},
 password: ${password},
 confirmPassword: ${confirmPassword},
 success: ${success},
@@ -254,6 +292,21 @@ mixin _$FormErrorStore on _FormErrorStore, Store {
     });
   }
 
+  final _$userNameAtom = Atom(name: '_FormErrorStore.userName');
+
+  @override
+  String? get userName {
+    _$userNameAtom.reportRead();
+    return super.userName;
+  }
+
+  @override
+  set userName(String? value) {
+    _$userNameAtom.reportWrite(value, super.userName, () {
+      super.userName = value;
+    });
+  }
+
   final _$passwordAtom = Atom(name: '_FormErrorStore.password');
 
   @override
@@ -288,6 +341,7 @@ mixin _$FormErrorStore on _FormErrorStore, Store {
   String toString() {
     return '''
 userEmail: ${userEmail},
+userName: ${userName},
 password: ${password},
 confirmPassword: ${confirmPassword},
 hasErrorsInLogin: ${hasErrorsInLogin},

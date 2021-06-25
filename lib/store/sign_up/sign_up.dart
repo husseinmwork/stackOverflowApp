@@ -54,7 +54,10 @@ abstract class _SignUpStore with Store {
   bool loading = false;
 
   @observable
-  bool showPassword = false;
+  bool showPassword = true;
+
+  @observable
+  bool showConfirmPassword = true;
 
   @action
   Future signUp() async {

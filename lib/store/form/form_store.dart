@@ -26,6 +26,7 @@ abstract class _FormStore with Store {
     _disposers = [
       reaction((_) => userEmail, validateUserEmail),
       reaction((_) => password, validatePassword),
+      reaction((_) => userName, validateUserName),
       reaction((_) => confirmPassword, validateConfirmPassword)
     ];
   }
@@ -33,6 +34,9 @@ abstract class _FormStore with Store {
   // store variables:-----------------------------------------------------------
   @observable
   String userEmail = '';
+
+  @observable
+  String userName = '';
 
   @observable
   String password = '';
@@ -50,6 +54,7 @@ abstract class _FormStore with Store {
   bool get canLogin =>
       !formErrorStore.hasErrorsInLogin &&
       userEmail.isNotEmpty &&
+      userName.isNotEmpty &&
       password.isNotEmpty;
 
   @computed
@@ -57,6 +62,7 @@ abstract class _FormStore with Store {
       !formErrorStore.hasErrorsInRegister &&
       userEmail.isNotEmpty &&
       password.isNotEmpty &&
+      userName.isNotEmpty &&
       confirmPassword.isNotEmpty;
 
   @computed
@@ -67,6 +73,11 @@ abstract class _FormStore with Store {
   @action
   void setUserId(String value) {
     userEmail = value;
+  }
+
+  @action
+  void setUserName(String value) {
+    userName = value;
   }
 
   @action
@@ -81,15 +92,21 @@ abstract class _FormStore with Store {
 
   @action
   void validateUserEmail(String value) {
-    var regNumber = RegExp(".*[0-9].*");
     if (value.isEmpty) {
       formErrorStore.userEmail = "Email can't be empty";
-    } /*else if (!isEmail(value)) {
+    } else if (!isEmail(value)) {
       formErrorStore.userEmail = 'Please enter a valid email address';
-    }*/ if (!regNumber.hasMatch(value)) {
-      formErrorStore.userEmail = "Email can't be empty";
-    }else {
+    } else {
       formErrorStore.userEmail = null;
+    }
+  }
+
+  @action
+  void validateUserName(String value) {
+    if (value.isEmpty) {
+      formErrorStore.userName = "UserName can't be empty";
+    } else {
+      formErrorStore.userName = null;
     }
   }
 
@@ -102,7 +119,7 @@ abstract class _FormStore with Store {
     } else if (value.length < 6) {
       formErrorStore.password = "Password must be at-least 6 characters long";
     }
-  /*  else if (!regNumber.hasMatch(value)) {
+    /*  else if (!regNumber.hasMatch(value)) {
       formErrorStore.password = "Password be at-least 1 number";
     } */
     else {
@@ -163,6 +180,7 @@ abstract class _FormStore with Store {
   void validateAll() {
     validatePassword(password);
     validateUserEmail(userEmail);
+    validateUserName(userName);
   }
 }
 
@@ -173,17 +191,24 @@ abstract class _FormErrorStore with Store {
   String? userEmail;
 
   @observable
+  String? userName;
+
+  @observable
   String? password;
 
   @observable
   String? confirmPassword;
 
   @computed
-  bool get hasErrorsInLogin => userEmail != null || password != null;
+  bool get hasErrorsInLogin =>
+      userEmail != null || password != null || userName != null;
 
   @computed
   bool get hasErrorsInRegister =>
-      userEmail != null || password != null || confirmPassword != null;
+      userEmail != null ||
+      password != null ||
+      confirmPassword != null ||
+      userName != null;
 
   @computed
   bool get hasErrorInForgotPassword => userEmail != null;

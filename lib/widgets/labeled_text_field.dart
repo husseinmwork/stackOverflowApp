@@ -84,7 +84,6 @@ class _LabeledTextFieldState extends State<LabeledTextField> {
             if (widget.isNumber)
               FilteringTextInputFormatter.allow(RegExp("[0-9]"))
           ],
-
           keyboardType: this.widget.inputType,
           style: Theme.of(context).textTheme.subtitle2?.copyWith(
               color: _themeStore.darkMode ? Colors.white : Colors.black),
@@ -102,15 +101,18 @@ class _LabeledTextFieldState extends State<LabeledTextField> {
             ),
             focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(
-                  color:
-                      _themeStore.darkMode ? Color(0xFFA5F59C) : AppColors.DarkPurple),
+                  color: _themeStore.darkMode
+                      ? Color(0xFFA5F59C)
+                      : AppColors.DarkPurple),
             ),
             hintStyle: Theme.of(context).textTheme.subtitle2?.copyWith(
                 color: _themeStore.darkMode ? Colors.white : Colors.black),
             suffixIcon: IconButton(
-              onPressed: (){
-                widget.onTap!();
-              },
+              onPressed: widget.isIcon
+                  ? () {
+                      widget.onTap!();
+                    }
+                  : null,
               icon: widget.isIcon
                   ? Container(
                       padding: EdgeInsets.all(Dimens.padding_mini),
