@@ -5,6 +5,7 @@ import 'package:todo_app/constants/colors.dart';
 import 'package:todo_app/constants/dimens.dart';
 import 'package:todo_app/packages/toast.dart';
 import 'package:todo_app/store/form/form_store.dart';
+import 'package:todo_app/store/language/language_store.dart';
 import 'package:todo_app/store/login/login.dart';
 import 'package:todo_app/store/theme/theme_store.dart';
 import 'package:todo_app/utils/device/device_utils.dart';
@@ -14,6 +15,8 @@ import 'package:todo_app/utils/todo/todo_utils.dart';
 import 'package:todo_app/widgets/arrow_back_icon.dart';
 import 'package:todo_app/widgets/labeled_text_field.dart';
 import 'package:todo_app/widgets/todo_button.dart';
+import 'package:material_dialog/material_dialog.dart';
+
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -28,6 +31,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formStore = FormStore();
   late LoginStore _store;
   late ThemeStore _themeStore;
+  late LanguageStore _languageStore;
+
 
 
   late AppLocalizations appLocalizations;
@@ -41,6 +46,8 @@ class _LoginScreenState extends State<LoginScreen> {
     _store = Provider.of<LoginStore>(context);
     _themeStore = Provider.of<ThemeStore>(context);
     appLocalizations = AppLocalizations.of(context);
+    _languageStore = Provider.of<LanguageStore>(context);
+
     _store
       ..userName = _emailController.text = "husseinqq"
       ..password = _passwordController.text = "hussein";
@@ -61,6 +68,8 @@ class _LoginScreenState extends State<LoginScreen> {
       body: _buildBody(),
     );
   }
+
+
 
   Widget _buildThemeButton() {
     return Observer(

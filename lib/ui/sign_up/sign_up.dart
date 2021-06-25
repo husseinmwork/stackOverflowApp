@@ -38,8 +38,8 @@ class _SignUpScreenState extends State<SignUpScreen>
   FocusNode _confirmPasswordFocusNode = FocusNode();
   FocusNode _emailFocusNode = FocusNode();
 
-  late SignUpStore _store;
   final _formStore = FormStore();
+  late SignUpStore _store;
   late ThemeStore _themeStore;
   late AppLocalizations appLocalizations;
 
@@ -92,12 +92,12 @@ class _SignUpScreenState extends State<SignUpScreen>
   Widget _buildElement() {
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.only(
-            left: Dimens.padding_xl, right: Dimens.padding_xl),
+        padding: const EdgeInsets.symmetric(horizontal: Dimens.padding_xl),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            SizedBox(height: Dimens.padding_xl),
             _buildTitle(),
             SizedBox(height: Dimens.padding_large),
             _buildTextField(),
