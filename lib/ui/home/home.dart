@@ -7,6 +7,7 @@ import 'package:todo_app/store/home/home_store.dart';
 import 'package:todo_app/store/theme/theme_store.dart';
 import 'package:todo_app/utils/locale/app_localization.dart';
 import 'package:todo_app/utils/routes/routes.dart';
+import 'package:todo_app/widgets/app_drawer.dart';
 import 'package:todo_app/widgets/image_avatar.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -17,15 +18,13 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   late HomeStore _store;
   late ThemeStore _themeStore;
-  late AppLocalizations _appLocalizations;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _store = Provider.of<HomeStore>(context);
     _themeStore = Provider.of<ThemeStore>(context);
-    _appLocalizations = AppLocalizations.of(context);
-    // _store.getPrefUser();
+    _store.getPrefUser();
     _store.updateScrolling();
   }
 
@@ -60,6 +59,11 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: AppDrawer(
+        image: _store.user?.image ?? "null",
+        email: _store.user?.email ?? "null",
+        userName: _store.user?.username ?? "null",
+      ),
       appBar: _buildAppBar(),
       floatingActionButton: _buildFAB(),
       body: _buildBody(),
@@ -72,12 +76,11 @@ class _HomeScreenState extends State<HomeScreen> {
       title: Row(
         children: [
           Observer(
-            builder: (_) => Text(/*_store.user?.fullName ??*/ "null user",
-                style: Theme.of(context).textTheme.subtitle1),
+            builder: (_) => Text(_store.user?.fullName ?? "null user",
+                style: Theme.of(context).textTheme.subtitle1,
+                overflow: TextOverflow.ellipsis),
           ),
-          // SizedBox(width: Dimens.padding_normal),
-
-          // Text("👋", style: TextStyle(fontSize: 20)),
+          SizedBox(width: Dimens.padding_normal),
           IconButton(
               icon: Icon(Icons.logout),
               onPressed: () {
@@ -96,6 +99,7 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Container(
             margin: EdgeInsets.only(top: 5, bottom: 5),
             child: ImageAvatar(
+              radius: 18,
               onTap: () {},
               image:
                   "https://www.dmarge.com/wp-content/uploads/2021/01/dwayne-the-rock-.jpg",
@@ -170,19 +174,20 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Row(
                   children: [
                     ImageAvatar(
+                      radius: 18,
                       onTap: () {},
                       image:
                           "https://www.dmarge.com/wp-content/uploads/2021/01/dwayne-the-rock-.jpg",
                     ),
                     Expanded(
                       child: Container(
-                        margin: EdgeInsets.symmetric(vertical: 6 , horizontal: 10),
+                        margin:
+                            EdgeInsets.symmetric(vertical: 6, horizontal: 10),
                         child: TextField(
                           decoration: InputDecoration(
-                            border: InputBorder.none,
-                            hintText: "add Question",
-                            hintStyle: Theme.of(context).textTheme.bodyText1
-                          ),
+                              border: InputBorder.none,
+                              hintText: "add Question",
+                              hintStyle: Theme.of(context).textTheme.bodyText1),
                           // decoration: InputDecoration(
                           //     focusedBorder: OutlineInputBorder(
                           //         borderRadius:
@@ -250,6 +255,7 @@ class _QuestionItemState extends State<QuestionItem> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ImageAvatar(
+                      radius: 18,
                       onTap: () {},
                       image:
                           "https://www.dmarge.com/wp-content/uploads/2021/01/dwayne-the-rock-.jpg"),

@@ -13,19 +13,23 @@ class Endpoints {
   ///start: end point of Registration
 
   static const String login = baseUrl + "/accounts/login";
-
   static const String signUp = baseUrl + "/accounts/register";
-
-  static const String resetPassword = baseUrl + "/accounts/email";
+  static const String sendEmail = baseUrl + "/accounts/email";
+  static const String resetPassword = baseUrl + "/accounts/passwords/reset";
 
   ///end: end point of Registration
 
 
+  ///get my question
+  static const String getMyQuestion = baseUrl + "/questions";
+  static const String querySkip = 'skip';
+  static const String queryLimit = 'take';
 
-  static const String profile = baseUrl + "accounts/user/";
 
 
-  static const String createTask = baseUrl + "task/";
+
+
+
 
   ///patch function done task
   static const String doneTask = baseUrl + "task/{id}/";
@@ -37,7 +41,5 @@ class Endpoints {
 
   static const String tags = baseUrl + "tag/";
 
-  static const String querySkip = 'skip';
 
-  static const String queryLimit = 'limit';
 }

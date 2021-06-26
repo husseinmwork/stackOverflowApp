@@ -5,8 +5,10 @@ import 'package:todo_app/constants/dimens.dart';
 class ImageAvatar extends StatelessWidget {
   final Function onTap;
   final String image;
+  final double radius;
+  final double borderRadius;
 
-  ImageAvatar({required this.onTap , required this.image});
+  ImageAvatar({required this.onTap , required this.image , required this.radius , this.borderRadius =Dimens.border_image });
 
   @override
   Widget build(BuildContext context) {
@@ -15,10 +17,10 @@ class ImageAvatar extends StatelessWidget {
         onTap();
       },
       child: CircleAvatar(
-        radius: 18,
+        radius: radius,
         backgroundColor: Colors.red,
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(Dimens.border_image),
+          borderRadius: BorderRadius.circular(borderRadius),
           child: FadeInImage.assetNetwork(
             fit: BoxFit.cover,
             placeholder: Assets.placeHolder,

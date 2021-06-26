@@ -19,6 +19,9 @@ abstract class  LocaleKeys {
   static const regs_text_field_hint_email = 'regs_text_field_hint_email';
   static const regs_text_field_password_title = 'regs_text_field_password_title';
   static const regs_text_field_hint_password = 'regs_text_field_hint_password';
+  static const regs_text_field_lable_first_name = 'regs_text_field_lable_first_name';
+  static const regs_text_field_lable_last_name = 'regs_text_field_lable_last_name';
+  static const regs_text_field_lable_user_name = 'regs_text_field_lable_user_name';
   static const registration_end = 'registration_end';
   static const home_start = 'home_start';
   static const home_tv_posts = 'home_tv_posts';
@@ -42,17 +45,14 @@ abstract class  LocaleKeys {
   static const start_home_screen = 'start_home_screen';
   static const task = 'task';
   static const habits = 'habits';
+  static const arabic = 'arabic';
+  static const english = 'english';
   static const end_home_screen = 'end_home_screen';
-  static const start_create_tasks = 'start_create_tasks';
-  static const create_tasks_title = 'create_tasks_title';
-  static const create_tasks_text_field_title = 'create_tasks_text_field_title';
-  static const create_tasks_text_field_note = 'create_tasks_text_field_note';
-  static const create_tasks_text_field_new_tag = 'create_tasks_text_field_new_tag';
-  static const create_tasks_date = 'create_tasks_date';
-  static const create_tasks_selected_date = 'create_tasks_selected_date';
-  static const create_tasks_text_field_sub_title = 'create_tasks_text_field_sub_title';
-  static const create_tasks_priority = 'create_tasks_priority';
-  static const create_tasks_deadline = 'create_tasks_deadline';
-  static const end_create_tasks = 'end_create_tasks';
+  static const start_otp_screen = 'start_otp_screen';
+  static const otp_screen_verification_code = 'otp_screen_verification_code';
+  static const otp_screen_please_enter_OTP_gmail = 'otp_screen_please_enter_OTP_gmail';
+  static const otp_screen_resend_OTP = 'otp_screen_resend_OTP';
+  static const otp_screen_verify_OTP = 'otp_screen_verify_OTP';
+  static const end_otp_screen = 'end_otp_screen';
 
 }

@@ -4,12 +4,15 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app/constants/app_theme.dart';
 import 'package:todo_app/constants/dimens.dart';
+import 'package:todo_app/generated/locale_keys.g.dart';
 import 'package:todo_app/store/form/form_store.dart';
 import 'package:todo_app/store/sign_up/sign_up.dart';
 import 'package:todo_app/store/theme/theme_store.dart';
 import 'package:todo_app/utils/device/device_utils.dart';
 import 'package:todo_app/utils/locale/app_localization.dart';
 import 'package:todo_app/utils/routes/routes.dart';
+import 'package:easy_localization/easy_localization.dart';
+
 import 'package:todo_app/utils/todo/todo_utils.dart';
 import 'package:todo_app/widgets/arrow_back_icon.dart';
 import 'package:todo_app/widgets/labeled_text_field.dart';
@@ -41,13 +44,11 @@ class _SignUpScreenState extends State<SignUpScreen>
   final _formStore = FormStore();
   late SignUpStore _store;
   late ThemeStore _themeStore;
-  late AppLocalizations appLocalizations;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _store = Provider.of<SignUpStore>(context);
-    appLocalizations = AppLocalizations.of(context);
     _themeStore = Provider.of<ThemeStore>(context);
   }
 
@@ -112,7 +113,7 @@ class _SignUpScreenState extends State<SignUpScreen>
   }
 
   Widget _buildTitle() {
-    return Text(appLocalizations.translate("sign_up"),
+    return Text(LocaleKeys.sign_up.tr(),
         style: textTheme.headline4?.copyWith(
             color: _themeStore.darkMode ? Colors.white : Colors.black));
   }
@@ -127,9 +128,9 @@ class _SignUpScreenState extends State<SignUpScreen>
               Expanded(
                 child: LabeledTextField(
                   focusNode: _firstNameFocusNode,
-                  title: "first name",
+                  title:LocaleKeys.regs_text_field_lable_first_name.tr(),
                   textController: _firstNameController,
-                  hint: "First Name",
+                  hint:LocaleKeys.regs_text_field_lable_first_name.tr(),
                   onChanged: (name) {
                     _store.firstName = name;
                   },
@@ -142,9 +143,9 @@ class _SignUpScreenState extends State<SignUpScreen>
               Expanded(
                 child: LabeledTextField(
                   focusNode: _lastNameFocusNode,
-                  title: "last name",
+                  title: LocaleKeys.regs_text_field_lable_last_name.tr(),
                   textController: _lastNameController,
-                  hint: "Last Name",
+                  hint: LocaleKeys.regs_text_field_lable_last_name.tr(),
                   onChanged: (name) {
                     _store.lastName = name;
                   },
@@ -162,9 +163,9 @@ class _SignUpScreenState extends State<SignUpScreen>
                 child: Observer(
                   builder: (_) => LabeledTextField(
                     focusNode: _userNameFocusNode,
-                    title: "user name",
+                    title: LocaleKeys.regs_text_field_lable_user_name.tr(),
                     textController: _userNameController,
-                    hint: "User Name",
+                    hint:LocaleKeys.regs_text_field_lable_user_name.tr(),
                     errorText: _formStore.formErrorStore.userName,
                     onChanged: (name) {
                       _formStore.setUserName(name);
@@ -182,11 +183,9 @@ class _SignUpScreenState extends State<SignUpScreen>
                 child: Observer(
                   builder: (_) => LabeledTextField(
                     isIcon: false,
-                    title: appLocalizations
-                        .translate("regs_text_field_lable_email"),
+                    title: LocaleKeys.regs_text_field_lable_email.tr(),
                     textController: _emailController,
-                    hint: appLocalizations
-                        .translate("regs_text_field_hint_email"),
+                    hint:  LocaleKeys.regs_text_field_hint_email.tr(),
                     focusNode: _emailFocusNode,
                     errorText: _formStore.formErrorStore.userEmail,
                     onChanged: (email) {
@@ -213,10 +212,10 @@ class _SignUpScreenState extends State<SignUpScreen>
                 _store.showPassword = !_store.showPassword;
               },
               title:
-                  appLocalizations.translate("login_text_field_password_title"),
+              LocaleKeys.login_text_field_password_title.tr(),
               textController: _passwordController,
               hint:
-                  appLocalizations.translate("login_text_field_hint_password"),
+              LocaleKeys.login_text_field_hint_password.tr(),
               errorText: _formStore.formErrorStore.password,
               onChanged: (password) {
                 _formStore.setPassword(password);
@@ -240,9 +239,9 @@ class _SignUpScreenState extends State<SignUpScreen>
                 _store.showConfirmPassword = !_store.showConfirmPassword;
               },
               title:
-                  appLocalizations.translate("regs_text_field_password_title"),
+              LocaleKeys.login_text_field_password_title.tr(),
               textController: _confirmPasswordController,
-              hint: appLocalizations.translate("regs_text_field_hint_password"),
+              hint:    LocaleKeys.login_text_field_hint_password.tr(),
               errorText: _formStore.formErrorStore.confirmPassword,
               onChanged: (password) {
                 _formStore.setConfirmPassword(password);
@@ -264,7 +263,7 @@ class _SignUpScreenState extends State<SignUpScreen>
             showErrorMessage('Please check all fields', context);
           }
         },
-        title: Text(appLocalizations.translate("sign_up"),
+        title: Text(   LocaleKeys.sign_up.tr(),
             style: Theme.of(context).textTheme.button));
   }
 
@@ -275,7 +274,7 @@ class _SignUpScreenState extends State<SignUpScreen>
       },
       child: Center(
         child: Text(
-          appLocalizations.translate("goto_login"),
+          LocaleKeys.goto_login.tr(),
           style: textTheme.bodyText2?.copyWith(
               color: _themeStore.darkMode ? Colors.white : Colors.black),
         ),

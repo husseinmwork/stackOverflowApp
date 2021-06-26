@@ -210,12 +210,13 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             RoundedButton(
                 onPressed: () {
-                  if (_formStore.canLogin) {
-                    DeviceUtils.hideKeyboard(context);
-                    _store.login();
-                  } else {
-                    showErrorMessage('Please check all fields', context);
-                  }
+                  _store.login();
+                  // if (_formStore.canLogin) {
+                  //   DeviceUtils.hideKeyboard(context);
+                  //   _store.login();
+                  // } else {
+                  //   showErrorMessage('Please check all fields', context);
+                  // }
                 },
                 title: Text(LocaleKeys.login.tr(),
                     style: Theme.of(context).textTheme.button)),
@@ -304,16 +305,14 @@ class _LoginScreenState extends State<LoginScreen> {
           children: [
             _buildListTileLang(() {
               Navigator.of(context).pop();
-              // change user language based on selected locale
               _languageStore.selectedLanguage = Language.ar;
               context.setLocale(Locale('ar'));
-            }, "Arabic"),
+            }, LocaleKeys.arabic.tr()),
             _buildListTileLang(() {
               Navigator.of(context).pop();
-              // change user language based on selected locale
               _languageStore.selectedLanguage = Language.en;
               context.setLocale(Locale('en'));
-            }, "English"),
+            },  LocaleKeys.english.tr()),
           ]),
     );
   }

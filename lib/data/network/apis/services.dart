@@ -2,15 +2,10 @@ import 'package:injectable/injectable.dart';
 import 'package:todo_app/data/network/constant/end_points.dart';
 import 'package:todo_app/data/network/dio_client.dart';
 import 'package:todo_app/data/network/rest_client.dart';
-import 'package:todo_app/model/create_quick_task/create_quick_task.dart';
-import 'package:todo_app/model/create_tasks/create_tasks.dart';
-import 'package:todo_app/model/done_tasks/done_task.dart';
-import 'package:todo_app/model/get_tasks/get_tasks.dart';
+import 'package:todo_app/model/get_my_question/get_my_question.dart';
 import 'package:todo_app/model/helper/paging.dart';
 import 'package:todo_app/model/login/login.dart';
-import 'package:todo_app/model/profile/profile.dart';
 import 'package:todo_app/model/sign_up/sign_up.dart';
-import 'package:todo_app/model/tags/tags.dart';
 import 'package:todo_app/utils/todo/todo_utils.dart';
 
 @Singleton()
@@ -29,8 +24,8 @@ class Services {
   ///start Registration
   Future<Map<String, dynamic>> signUp(SignUp signUp) async {
     try {
-      var response =
-          await _dioClient.post(Endpoints.signUp, data: signUp.toJson().removeNull());
+      var response = await _dioClient.post(Endpoints.signUp,
+          data: signUp.toJson().removeNull());
       return response;
     } catch (e) {
       throw e;
@@ -49,44 +44,49 @@ class Services {
 
   Future passwordResetRequest(String email) async {
     Map data = {"email": email};
-    return await _dioClient.patch(Endpoints.resetPassword, data: data);
+    return await _dioClient
+        .post(Endpoints.sendEmail, data: data)
+        .catchError((error) => throw error);
+  }
+
+  Future sendOtpAndNewPassword(
+      String email, int otp, String newPassword) async {
+    Map data = {"email": email, "uniqueKey": otp, "password": newPassword};
+    return await _dioClient
+        .patch(Endpoints.resetPassword, data: data)
+        .catchError((error) => throw error);
   }
 
   ///end registration
 
-
-
   ///get profile
-  // Future<Profile> getProfile() async {
-  //   try {
-  //     var response = await _dioClient.get(Endpoints.profile);
-  //     return Profile.fromJson(response);
-  //   } catch (e) {
-  //     throw e;
-  //   }
-  // }
+// Future<Profile> getProfile() async {
+//   try {
+//     var response = await _dioClient.get(Endpoints.profile);
+//     return Profile.fromJson(response);
+//   } catch (e) {
+//     throw e;
+//   }
+// }
 
-  ///get tasks with paging
-  //todo remove this
-  // Future<Paging<GetTasks>> getTasks({
-  //   int offset = 0,
-  //   int? limit = 1000,
-  // }) async {
-  //   try {
-  //     Map<String, dynamic?> queries = {
-  //       Endpoints.querySkip: offset,
-  //       Endpoints.queryLimit: limit
-  //     };
-  //
-  //     var response =
-  //     await _dioClient.get(Endpoints.createTask, queryParameters: queries);
-  //     var pagination = Paging<GetTasks>.fromJson(response, GetTasks.fromJsonModel);
-  //     return pagination;
-  //   } catch (e) {
-  //     throw e;
-  //   }
-  // }
+  ///get question with paging
+  Future<Paging<GetMyQuestion>> getQuestion({
+    int skip = 0,
+    int? take = 1000,
+  }) async {
+    try {
+      Map<String, dynamic?> queries = {
+        Endpoints.querySkip: skip,
+        Endpoints.queryLimit: take
+      };
 
-
-
+      var response = await _dioClient.get(Endpoints.getMyQuestion,
+          queryParameters: queries);
+      var pagination =
+          Paging<GetMyQuestion>.fromJson(response, GetMyQuestion.fromJsonModel);
+      return pagination;
+    } catch (e) {
+      throw e;
+    }
+  }
 }

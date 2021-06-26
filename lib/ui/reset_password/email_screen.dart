@@ -4,14 +4,17 @@ import 'package:provider/provider.dart';
 import 'package:todo_app/constants/app_theme.dart';
 import 'package:todo_app/constants/colors.dart';
 import 'package:todo_app/constants/dimens.dart';
+import 'package:todo_app/generated/locale_keys.g.dart';
 import 'package:todo_app/store/form/form_store.dart';
 import 'package:todo_app/store/reset_password/reset_password.dart';
 import 'package:todo_app/store/theme/theme_store.dart';
+import 'package:todo_app/ui/reset_password/otp.dart';
 import 'package:todo_app/utils/locale/app_localization.dart';
 import 'package:todo_app/utils/routes/routes.dart';
 import 'package:todo_app/widgets/arrow_back_icon.dart';
 import 'package:todo_app/widgets/labeled_text_field.dart';
 import 'package:todo_app/widgets/todo_button.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class EmailScreen extends StatefulWidget {
   @override
@@ -22,7 +25,6 @@ class _EmailScreenState extends State<EmailScreen> {
   TextEditingController _emailController = TextEditingController();
   final _formStore = FormStore();
 
-  late AppLocalizations _appLocalizations;
   late ResetPasswordStore _store;
   late ThemeStore _themeStore;
 
@@ -30,7 +32,6 @@ class _EmailScreenState extends State<EmailScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _store = Provider.of<ResetPasswordStore>(context);
-    _appLocalizations = AppLocalizations.of(context);
     _themeStore = Provider.of<ThemeStore>(context);
   }
 
@@ -68,7 +69,7 @@ class _EmailScreenState extends State<EmailScreen> {
   }
 
   Widget _buildTitle() {
-    return Text(_appLocalizations.translate("reset_password"),
+    return Text(LocaleKeys.reset_password.tr(),
         style: textTheme.headline4?.copyWith(
             color: _themeStore.darkMode ? Colors.white : Colors.black));
   }
@@ -80,9 +81,9 @@ class _EmailScreenState extends State<EmailScreen> {
       child: Observer(
         builder: (_) => LabeledTextField(
           isIcon: false,
-          title: _appLocalizations.translate("regs_text_field_lable_email"),
+          title: LocaleKeys.regs_text_field_lable_email.tr(),
           textController: _emailController,
-          hint: _appLocalizations.translate("regs_text_field_hint_email"),
+          hint: LocaleKeys.regs_text_field_lable_email.tr(),
           errorText: _formStore.formErrorStore.userEmail,
           onChanged: (email) {
             _formStore.setUserId(email);
@@ -98,14 +99,15 @@ class _EmailScreenState extends State<EmailScreen> {
 
   Widget _buildButton() {
     return RoundedButton(
-        title: Text(_appLocalizations.translate("reset_password"),
+        title: Text(LocaleKeys.reset_password.tr(),
             style: Theme.of(context).textTheme.button),
         onPressed: () async {
           await _store.passwordResetRequest();
           if (_store.success == false && _store.loading == true) {
             onSaveTaped();
           } else {
-            Navigator.of(context).pushNamed(Routes.otp);
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (_) => OtpScreen(email: _store.email!)));
           }
           // if (_formStore.canForgetPassword) {
           //   _store.passwordResetRequest();

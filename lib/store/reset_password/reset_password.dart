@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/cupertino.dart';
 import 'package:injectable/injectable.dart';
 import 'package:mobx/mobx.dart';
@@ -25,7 +23,13 @@ abstract class _ResetPasswordStore with Store {
   _ResetPasswordStore(Repository repository) : this._repository = repository;
 
   @observable
-  String email = '' ;
+  String? email;
+
+  @observable
+  int? otp ;
+
+  @observable
+  String? newPassword;
 
   @observable
   bool success = false;
@@ -33,19 +37,22 @@ abstract class _ResetPasswordStore with Store {
   @observable
   bool loading = false;
 
-
   @action
   Future passwordResetRequest() async {
     this.loading = true;
-    _repository.passwordResetRequest(email).then((value) {
-      // resultForgetPassword = value ;
-      debugPrint("this response of reset password $value ");
+    _repository.passwordResetRequest(email!).then((value) {
       success = true;
     }).catchError((error) {
       this.loading = false;
       this.success = false;
       errorStore.errorMessage = DioErrorUtil.handleError(error);
     });
+  }
+
+
+
+  Future sendOtpAndNewPassword() async {
+    return await _repository.sendOtpAndNewPassword(email!, otp!, newPassword!).catchError((error)=>throw error);
   }
 
 

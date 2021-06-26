@@ -3,11 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:injectable/injectable.dart';
 import 'package:mobx/mobx.dart';
 import 'package:todo_app/data/repositry.dart';
-import 'package:todo_app/model/create_quick_task/create_quick_task.dart';
-import 'package:todo_app/model/done_tasks/done_task.dart';
-import 'package:todo_app/model/get_tasks/get_tasks.dart';
 import 'package:todo_app/model/login/login.dart';
-import 'package:todo_app/model/tags/tags.dart';
 import 'package:todo_app/store/error/error_store.dart';
 
 part 'home_store.g.dart';
@@ -31,8 +27,8 @@ abstract class _HomeStore with Store {
   }
 
 // get user form pref
-//   @observable
-//   User? user;
+  @observable
+  Account? user;
 
   @observable
   bool success = false;
@@ -72,18 +68,18 @@ abstract class _HomeStore with Store {
   ///this method work logout and remove (user , authToken , IsLoggedIn) shared preferences
   @action
   logout() async {
-    // user = null;
-    // _repository.removeUser();
+    user = null;
+    _repository.removeUser();
     _repository.removeIsLoggedIn();
     _repository.removeAuthToken();
-    // user = await _repository.user;
+    user = await _repository.user;
     // // todo handel error
     // debugPrint(user.toString());
   }
 
-  // @action
-  // getPrefUser() async {
-  //   user = await _repository.user;
-  // }
+  @action
+  getPrefUser() async {
+    user = await _repository.user;
+  }
 
 }

@@ -9,6 +9,21 @@ part of 'home_store.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$HomeStore on _HomeStore, Store {
+  final _$userAtom = Atom(name: '_HomeStore.user');
+
+  @override
+  Account? get user {
+    _$userAtom.reportRead();
+    return super.user;
+  }
+
+  @override
+  set user(Account? value) {
+    _$userAtom.reportWrite(value, super.user, () {
+      super.user = value;
+    });
+  }
+
   final _$successAtom = Atom(name: '_HomeStore.success');
 
   @override
@@ -91,6 +106,13 @@ mixin _$HomeStore on _HomeStore, Store {
     return _$logoutAsyncAction.run(() => super.logout());
   }
 
+  final _$getPrefUserAsyncAction = AsyncAction('_HomeStore.getPrefUser');
+
+  @override
+  Future getPrefUser() {
+    return _$getPrefUserAsyncAction.run(() => super.getPrefUser());
+  }
+
   final _$_HomeStoreActionController = ActionController(name: '_HomeStore');
 
   @override
@@ -118,6 +140,7 @@ mixin _$HomeStore on _HomeStore, Store {
   @override
   String toString() {
     return '''
+user: ${user},
 success: ${success},
 loading: ${loading},
 controller: ${controller},
