@@ -77,12 +77,9 @@ abstract class _SignUpStore with Store {
     }).catchError((error) {
       this.loading = false;
       this.success = false;
-      // if(error is DioError){
-      //   debugPrint("this dio error sign up  = \n");
-      // errorStore.errorMessage = DioErrorUtil.handleError(error);
-      // }
-      // debugPrint("this not dio error  sign up   = \n");
-      // debugPrint(error);
+        DioErrorUtil.handleError(error);
+        errorStore.errorMessage = DioErrorUtil.handleError(error);
+        print("this error $error");
     });
     return response;
   }

@@ -3,6 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:injectable/injectable.dart';
 import 'package:mobx/mobx.dart';
 import 'package:todo_app/data/repositry.dart';
+import 'package:todo_app/model/get_question/get_question.dart';
 import 'package:todo_app/model/login/login.dart';
 import 'package:todo_app/store/error/error_store.dart';
 
@@ -81,5 +82,23 @@ abstract class _HomeStore with Store {
   getPrefUser() async {
     user = await _repository.user;
   }
+
+
+  @observable
+  ObservableList<List<Question>> question =
+  ObservableList<List<Question>>();
+
+
+  ///get question with paging
+  @action
+  Future getQuestion(int skip) async {
+    return await _repository
+        .getQuestion(skip).then((value) =>question.add(value.results)).catchError((e) {
+      throw e;
+    }
+    );
+  }
+
+
 
 }

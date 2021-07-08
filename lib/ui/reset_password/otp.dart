@@ -17,16 +17,7 @@ import 'package:todo_app/widgets/labeled_text_field.dart';
 import 'package:todo_app/widgets/todo_button.dart';
 
 class OtpScreen extends StatefulWidget {
-  final String email;
-  final String newEmail;
-  final bool? isGuestCheckOut;
 
-  const OtpScreen({
-    Key? key,
-    required this.email,
-    this.newEmail = "",
-    this.isGuestCheckOut,
-  }) : super(key: key);
 
   @override
   _OtpScreenState createState() => new _OtpScreenState();
@@ -85,17 +76,7 @@ class _OtpScreenState extends State<OtpScreen>
     );
   }
 
-  // Return "Email" label
-  get _getYourEmail {
-    return Text(
-      widget.email,
-      textAlign: TextAlign.center,
-      style: Theme.of(context)
-          .textTheme
-          .caption
-          ?.copyWith(color: _themeStore.darkMode ? Colors.white : Colors.black),
-    );
-  }
+
 
   // Returns "OTP" input part
   get _getInputPart {
@@ -108,7 +89,6 @@ class _OtpScreenState extends State<OtpScreen>
             children: [
               _getVerificationCodeLabel,
               _getEmailLabel,
-              _getYourEmail,
             ],
           ),
         ),

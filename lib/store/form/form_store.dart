@@ -53,9 +53,12 @@ abstract class _FormStore with Store {
   @computed
   bool get canLogin =>
       !formErrorStore.hasErrorsInLogin &&
-      userEmail.isNotEmpty &&
       userName.isNotEmpty &&
       password.isNotEmpty;
+
+  @computed
+  bool get canSendEmail =>
+      !formErrorStore.hasErrorsSendEmail && userEmail.isNotEmpty;
 
   @computed
   bool get canRegister =>
@@ -116,8 +119,8 @@ abstract class _FormStore with Store {
     var regUpperCase = RegExp("(?=.*[A-Z])");
     if (value.isEmpty) {
       formErrorStore.password = "Password can't be empty";
-    } else if (value.length < 6) {
-      formErrorStore.password = "Password must be at-least 6 characters long";
+    } else if (value.length < 8) {
+      formErrorStore.password = "Password must be at-least 8 characters long";
     }
     /*  else if (!regNumber.hasMatch(value)) {
       formErrorStore.password = "Password be at-least 1 number";
@@ -200,7 +203,10 @@ abstract class _FormErrorStore with Store {
   String? confirmPassword;
 
   @computed
-  bool get hasErrorsInLogin =>
+  bool get hasErrorsInLogin => password != null || userName != null;
+
+  @computed
+  bool get hasErrorsSendEmail =>
       userEmail != null || password != null || userName != null;
 
   @computed

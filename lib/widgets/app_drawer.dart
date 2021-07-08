@@ -25,7 +25,7 @@ class _AppDrawerState extends State<AppDrawer> {
           _createHeader(),
           _createDrawerItem(
               icon: Icons.contacts, text: 'My Question', onTap: () {
-                Navigator.of(context).pushNamed(Routes.my_question);
+                // Navigator.of(context).pushNamed(Routes.my_question);
           }),
           _createDrawerItem(icon: Icons.event, text: 'Events', onTap: () {}),
           _createDrawerItem(icon: Icons.note, text: 'Notes', onTap: () {}),

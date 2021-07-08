@@ -1,10 +1,10 @@
 import 'package:injectable/injectable.dart';
 import 'package:mobx/mobx.dart';
 import 'package:todo_app/data/repositry.dart';
-import 'package:todo_app/model/get_my_question/get_my_question.dart';
+import 'package:todo_app/model/get_question/get_question.dart';
 import 'package:todo_app/store/error/error_store.dart';
 
-part 'my_question.g.dart';
+part 'get_question.g.dart';
 
 @Injectable()
 class MyQuestionStore = _MyQuestionStore with _$MyQuestionStore;
@@ -33,13 +33,13 @@ abstract class _MyQuestionStore with Store {
   bool loading = false;
 
   @observable
-  ObservableList<List<GetMyQuestion>> question =
-      ObservableList<List<GetMyQuestion>>();
+  ObservableList<List<Question>> question =
+      ObservableList<List<Question>>();
 
 
   ///get question with paging
   @action
-  Future getMyQuestion(int skip) async {
+  Future getQuestion(int skip) async {
     return await _repository
         .getQuestion(skip).then((value) =>question.add(value.results)).catchError((e) {
           throw e;

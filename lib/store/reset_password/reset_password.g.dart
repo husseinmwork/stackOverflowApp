@@ -84,6 +84,21 @@ mixin _$ResetPasswordStore on _ResetPasswordStore, Store {
     });
   }
 
+  final _$errorSendEmailAtom = Atom(name: '_ResetPasswordStore.errorSendEmail');
+
+  @override
+  bool get errorSendEmail {
+    _$errorSendEmailAtom.reportRead();
+    return super.errorSendEmail;
+  }
+
+  @override
+  set errorSendEmail(bool value) {
+    _$errorSendEmailAtom.reportWrite(value, super.errorSendEmail, () {
+      super.errorSendEmail = value;
+    });
+  }
+
   final _$passwordResetRequestAsyncAction =
       AsyncAction('_ResetPasswordStore.passwordResetRequest');
 
@@ -100,7 +115,8 @@ email: ${email},
 otp: ${otp},
 newPassword: ${newPassword},
 success: ${success},
-loading: ${loading}
+loading: ${loading},
+errorSendEmail: ${errorSendEmail}
     ''';
   }
 }

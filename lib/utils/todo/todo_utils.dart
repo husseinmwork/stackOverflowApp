@@ -12,7 +12,8 @@ showErrorMessage(String message , BuildContext context) {
       if (message.isNotEmpty) {
         FlushbarHelper.createError(
           message: message,
-          title: AppLocalizations.of(context).translate('home_tv_error'),
+          //todo change languages
+          title: 'home_tv_error',
           duration: Duration(seconds: 3),
         )..show(context);
       }

@@ -8,13 +8,13 @@ class Login {
   final String accessToken;
   @JsonKey(name: 'refresh_token')
   final String refreshToken;
-  @JsonKey(name: 'account')
-  final Account account;
+  @JsonKey(name: 'user')
+  final Account user;
 
   Login({
     required this.accessToken,
     required this.refreshToken,
-    required this.account,
+    required this.user,
   });
 
   factory Login.fromJson(Map<String, dynamic> json) => _$LoginFromJson(json);

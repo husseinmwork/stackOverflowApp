@@ -24,7 +24,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   TextEditingController _passwordController = TextEditingController();
-  TextEditingController _emailController = TextEditingController();
+  TextEditingController _userNameController = TextEditingController();
 
   //stores:---------------------------------------------------------------------
   final _formStore = FormStore();
@@ -43,10 +43,10 @@ class _LoginScreenState extends State<LoginScreen> {
     _languageStore = Provider.of<LanguageStore>(context);
 
     _store
-      ..userName = _emailController.text = "husseinqq"
-      ..password = _passwordController.text = "hussein";
-    _store.userName = "husseinqq";
-    _store.password = "hussein";
+      ..userName = _userNameController.text = "hu1996"
+      ..password = _passwordController.text = "hu199666";
+    _store.userName = "hu1996";
+    _store.password = "hu199666";
   }
 
   @override
@@ -124,136 +124,127 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _buildElement() {
     TextTheme textTheme = Theme.of(context).textTheme;
-
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-            horizontal: Dimens.padding_xl, vertical: Dimens.padding_xxl),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(LocaleKeys.login.tr(),
-                style: textTheme.headline4?.copyWith(
-                    color: _themeStore.darkMode ? Colors.white : Colors.black)),
-            SizedBox(
-              height: Dimens.padding_xxl,
-            ),
-            Container(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Observer(
-                    builder: (_) => LabeledTextField(
-                      isIcon: false,
-                      onTap: () {
-                        _store.showPassword = !_store.showPassword;
-                      },
-                      title: LocaleKeys.login_text_field_email_title.tr(),
-                      textController: _emailController,
-                      hint: LocaleKeys.login_text_field_email_title.tr(),
-                      errorText: _formStore.formErrorStore.userEmail,
-                      onChanged: (email) {
-                        _formStore.setUserId(_emailController.text);
-                        _store.userName = email;
-                      },
-                      focusNode: _emailFocusNode,
-                      onFieldSubmitted: (value) {
-                        FocusScope.of(context).requestFocus(_passwordFocusNode);
-                      },
-                    ),
-                  ),
-                  SizedBox(
-                    height: Dimens.padding_xxl,
-                  ),
-                  Observer(
-                    builder: (_) => LabeledTextField(
-                      isObscure: _store.showPassword,
-                      isIcon: true,
-                      icon: _store.showPassword
-                          ? Icons.visibility_off
-                          : Icons.visibility,
-                      onTap: () {
-                        _store.showPassword = !_store.showPassword;
-                      },
-                      title: LocaleKeys.login_text_field_password_title.tr(),
-                      textController: _passwordController,
-                      hint: LocaleKeys.login_text_field_hint_password.tr(),
-                      errorText: _formStore.formErrorStore.password,
-                      onChanged: (password) {
-                        _formStore.setPassword(_passwordController.text);
-                        _store.password = password;
-                      },
-                      focusNode: _passwordFocusNode,
-                    ),
-                  ),
-                  MaterialButton(
-                    onPressed: () {
-                      Navigator.of(context).pushNamed(Routes.email_screen);
-                    },
-                    child: Container(
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        LocaleKeys.login_btn_forgot_password.tr(),
-                        style: textTheme.bodyText2?.copyWith(
-                            color: _themeStore.darkMode
-                                ? Colors.white
-                                : Colors.black),
+    return Center(
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: Dimens.padding_xl),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(LocaleKeys.login.tr(),
+                  style: textTheme.headline4?.copyWith(
+                      color:
+                          _themeStore.darkMode ? Colors.white : Colors.black)),
+              SizedBox(
+                height: Dimens.padding_xxl,
+              ),
+              Container(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Observer(
+                      builder: (_) => LabeledTextField(
+                        isIcon: false,
+                        title: LocaleKeys.login_text_field_email_title.tr(),
+                        textController: _userNameController,
+                        hint: LocaleKeys.login_text_field_email_title.tr(),
+                        errorText: _formStore.formErrorStore.userName,
+                        onChanged: (userName) {
+                          _formStore.setUserName(_userNameController.text);
+                          _store.userName = userName;
+                        },
+                        focusNode: _emailFocusNode,
+                        onFieldSubmitted: (value) {
+                          FocusScope.of(context)
+                              .requestFocus(_passwordFocusNode);
+                        },
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(
-              height: Dimens.padding_xxl,
-            ),
-            RoundedButton(
-                onPressed: () {
-                  _store.login();
-                  // if (_formStore.canLogin) {
-                  //   DeviceUtils.hideKeyboard(context);
-                  //   _store.login();
-                  // } else {
-                  //   showErrorMessage('Please check all fields', context);
-                  // }
-                },
-                title: Text(LocaleKeys.login.tr(),
-                    style: Theme.of(context).textTheme.button)),
-            SizedBox(
-              height: Dimens.padding_normal,
-            ),
-            MaterialButton(
-              onPressed: () {
-                Navigator.of(context).pushReplacementNamed(Routes.sign_up);
-              },
-              child: Center(
-                child: Text(
-                  LocaleKeys.goto_register.tr(),
-                  style: textTheme.bodyText2?.copyWith(
-                      color:
-                          _themeStore.darkMode ? Colors.white : Colors.black),
+                    SizedBox(
+                      height: Dimens.padding_xxl,
+                    ),
+                    Observer(
+                      builder: (_) => LabeledTextField(
+                        isObscure: _store.showPassword,
+                        isIcon: true,
+                        icon: _store.showPassword
+                            ? Icons.visibility_off
+                            : Icons.visibility,
+                        onTap: () {
+                          _store.showPassword = !_store.showPassword;
+                        },
+                        title: LocaleKeys.login_text_field_password_title.tr(),
+                        textController: _passwordController,
+                        hint: LocaleKeys.login_text_field_hint_password.tr(),
+                        errorText: _formStore.formErrorStore.password,
+                        onChanged: (password) {
+                          _formStore.setPassword(_passwordController.text);
+                          _store.password = password;
+                        },
+                        focusNode: _passwordFocusNode,
+                        onFieldSubmitted: (vlaue) {
+                          _store.login();
+                        },
+                      ),
+                    ),
+                    MaterialButton(
+                      onPressed: () {
+                        Navigator.of(context).pushNamed(Routes.email_screen);
+                      },
+                      child: Container(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          LocaleKeys.login_btn_forgot_password.tr(),
+                          style: textTheme.bodyText2?.copyWith(
+                              color: _themeStore.darkMode
+                                  ? Colors.white
+                                  : Colors.black),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ),
-          ],
+              SizedBox(
+                height: Dimens.padding_xxl,
+              ),
+              RoundedButton(
+                onPressed: () {
+                  DeviceUtils.hideKeyboard(context);
+                  if (_formStore.canLogin) {
+                    _store.login();
+                  } else {
+                    showErrorMessage('Please check all fields', context);
+                  }
+                },
+                title: Text(LocaleKeys.login.tr(),
+                    style: Theme.of(context).textTheme.button),
+              ),
+              SizedBox(
+                height: Dimens.padding_normal,
+              ),
+              MaterialButton(
+                onPressed: () {
+                  Navigator.of(context).pushReplacementNamed(Routes.sign_up);
+                },
+                child: Center(
+                  child: Text(
+                    LocaleKeys.goto_register.tr(),
+                    style: textTheme.bodyText2?.copyWith(
+                        color:
+                            _themeStore.darkMode ? Colors.white : Colors.black),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  _buildClosed() {
-    return SizedBox.shrink();
-  }
 
-  Widget _navigateToLoginScreen(BuildContext context) {
-    Future.delayed(Duration.zero, () {
-      Navigator.of(context).pushReplacementNamed(Routes.home);
-      _store.loading = false;
-    });
-    _store.success = false;
-    return Container();
-  }
 
   void onSaveTaped() async {
     final snackBar = SnackBar(
@@ -312,7 +303,7 @@ class _LoginScreenState extends State<LoginScreen> {
               Navigator.of(context).pop();
               _languageStore.selectedLanguage = Language.en;
               context.setLocale(Locale('en'));
-            },  LocaleKeys.english.tr()),
+            }, LocaleKeys.english.tr()),
           ]),
     );
   }
@@ -321,13 +312,30 @@ class _LoginScreenState extends State<LoginScreen> {
     return ListTile(
       dense: true,
       contentPadding: EdgeInsets.all(0.0),
-      title: Text(title , style: Theme.of(context).textTheme.bodyText2?.copyWith(
-        color:  _themeStore.darkMode?Colors.white:Colors.black
-
-      ),),
+      title: Text(
+        title,
+        style: Theme.of(context).textTheme.bodyText2?.copyWith(
+            color: _themeStore.darkMode ? Colors.white : Colors.black),
+      ),
       onTap: () {
         onTap();
       },
     );
   }
+
+  ///this  Navigation to another page
+  _buildClosed() {
+    return SizedBox.shrink();
+  }
+
+  Widget _navigateToLoginScreen(BuildContext context) {
+    Future.delayed(Duration.zero, () {
+      Navigator.of(context).pushReplacementNamed(Routes.home);
+      _store.loading = false;
+    });
+    _store.success = false;
+    return Container();
+  }
+
+
 }

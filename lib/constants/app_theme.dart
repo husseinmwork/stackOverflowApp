@@ -98,7 +98,7 @@ final ThemeData themeDataDark = ThemeData(
     style: TextButton.styleFrom(
         primary: Colors.white, backgroundColor: Colors.green),
   ),
-  accentColor: AppColors.scaffoldBackgroundColor,
+  accentColor: AppColors.blue,
 
   accentColorBrightness: Brightness.dark,
   // iconTheme: IconThemeData(color: Colors.red),

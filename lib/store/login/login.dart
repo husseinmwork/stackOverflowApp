@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:injectable/injectable.dart';
 import 'package:mobx/mobx.dart';
 import 'package:todo_app/data/repositry.dart';
@@ -39,7 +38,7 @@ abstract class _LoginStore with Store {
     this.loading = true;
     await _repository.login(userName, password).then((value) {
       _repository.saveIsLoggedIn(true);
-      _repository.saveUser(value.account);
+      _repository.saveUser(value.user);
       _repository.saveAuthToken({
         'accessToken': value.accessToken,
         'refreshToken': value.refreshToken
@@ -48,12 +47,10 @@ abstract class _LoginStore with Store {
     }).catchError((error) {
       this.loading = false;
       this.success = false;
-      if (error is DioError) {
-        debugPrint("this dio error login  = \n");
+      // if (error is DioError) {
         DioErrorUtil.handleError(error);
         errorStore.errorMessage = DioErrorUtil.handleError(error);
-      }
-      debugPrint("this not dio error login = $error");
+      // }
     });
   }
 }

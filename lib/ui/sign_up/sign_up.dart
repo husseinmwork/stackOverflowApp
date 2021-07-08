@@ -77,7 +77,7 @@ class _SignUpScreenState extends State<SignUpScreen>
           child: Observer(
             builder: (_) => Visibility(
               visible: _store.loading,
-              child: CircularProgressIndicator(backgroundColor: Colors.blue),
+              child: CircularProgressIndicator(),
             ),
           ),
         ),
@@ -91,22 +91,23 @@ class _SignUpScreenState extends State<SignUpScreen>
   }
 
   Widget _buildElement() {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: Dimens.padding_xl),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: Dimens.padding_xl),
-            _buildTitle(),
-            SizedBox(height: Dimens.padding_large),
-            _buildTextField(),
-            SizedBox(height: Dimens.padding_xxl),
-            _buildButtonRegistration(),
-            SizedBox(height: Dimens.padding_normal),
-            _buildButtonLogin(),
-          ],
+    return Center(
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: Dimens.padding_xl),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildTitle(),
+              SizedBox(height: Dimens.padding_large),
+              _buildTextField(),
+              SizedBox(height: Dimens.padding_xxl),
+              _buildButtonRegistration(),
+              SizedBox(height: Dimens.padding_normal),
+              _buildButtonLogin(),
+            ],
+          ),
         ),
       ),
     );
@@ -128,9 +129,9 @@ class _SignUpScreenState extends State<SignUpScreen>
               Expanded(
                 child: LabeledTextField(
                   focusNode: _firstNameFocusNode,
-                  title:LocaleKeys.regs_text_field_lable_first_name.tr(),
+                  title: LocaleKeys.regs_text_field_lable_first_name.tr(),
                   textController: _firstNameController,
-                  hint:LocaleKeys.regs_text_field_lable_first_name.tr(),
+                  hint: LocaleKeys.regs_text_field_lable_first_name.tr(),
                   onChanged: (name) {
                     _store.firstName = name;
                   },
@@ -165,7 +166,7 @@ class _SignUpScreenState extends State<SignUpScreen>
                     focusNode: _userNameFocusNode,
                     title: LocaleKeys.regs_text_field_lable_user_name.tr(),
                     textController: _userNameController,
-                    hint:LocaleKeys.regs_text_field_lable_user_name.tr(),
+                    hint: LocaleKeys.regs_text_field_lable_user_name.tr(),
                     errorText: _formStore.formErrorStore.userName,
                     onChanged: (name) {
                       _formStore.setUserName(name);
@@ -185,7 +186,7 @@ class _SignUpScreenState extends State<SignUpScreen>
                     isIcon: false,
                     title: LocaleKeys.regs_text_field_lable_email.tr(),
                     textController: _emailController,
-                    hint:  LocaleKeys.regs_text_field_hint_email.tr(),
+                    hint: LocaleKeys.regs_text_field_hint_email.tr(),
                     focusNode: _emailFocusNode,
                     errorText: _formStore.formErrorStore.userEmail,
                     onChanged: (email) {
@@ -211,11 +212,9 @@ class _SignUpScreenState extends State<SignUpScreen>
               onTap: () {
                 _store.showPassword = !_store.showPassword;
               },
-              title:
-              LocaleKeys.login_text_field_password_title.tr(),
+              title: LocaleKeys.login_text_field_password_title.tr(),
               textController: _passwordController,
-              hint:
-              LocaleKeys.login_text_field_hint_password.tr(),
+              hint: LocaleKeys.login_text_field_hint_password.tr(),
               errorText: _formStore.formErrorStore.password,
               onChanged: (password) {
                 _formStore.setPassword(password);
@@ -238,10 +237,9 @@ class _SignUpScreenState extends State<SignUpScreen>
               onTap: () {
                 _store.showConfirmPassword = !_store.showConfirmPassword;
               },
-              title:
-              LocaleKeys.login_text_field_password_title.tr(),
+              title: LocaleKeys.login_text_field_password_title.tr(),
               textController: _confirmPasswordController,
-              hint:    LocaleKeys.login_text_field_hint_password.tr(),
+              hint: LocaleKeys.login_text_field_hint_password.tr(),
               errorText: _formStore.formErrorStore.confirmPassword,
               onChanged: (password) {
                 _formStore.setConfirmPassword(password);
@@ -256,14 +254,15 @@ class _SignUpScreenState extends State<SignUpScreen>
   Widget _buildButtonRegistration() {
     return RoundedButton(
         onPressed: () {
+          DeviceUtils.hideKeyboard(context);
+
           if (_formStore.canRegister) {
-            DeviceUtils.hideKeyboard(context);
             _store.signUp();
           } else {
             showErrorMessage('Please check all fields', context);
           }
         },
-        title: Text(   LocaleKeys.sign_up.tr(),
+        title: Text(LocaleKeys.sign_up.tr(),
             style: Theme.of(context).textTheme.button));
   }
 
@@ -281,6 +280,9 @@ class _SignUpScreenState extends State<SignUpScreen>
       ),
     );
   }
+
+
+  ///this  Navigation to another page
 
   _buildClosed() {
     return SizedBox.shrink();

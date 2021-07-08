@@ -5,12 +5,14 @@ import 'package:todo_app/constants/app_theme.dart';
 import 'package:todo_app/constants/colors.dart';
 import 'package:todo_app/constants/dimens.dart';
 import 'package:todo_app/generated/locale_keys.g.dart';
+import 'package:todo_app/packages/polygon_shape.dart';
 import 'package:todo_app/store/form/form_store.dart';
 import 'package:todo_app/store/reset_password/reset_password.dart';
 import 'package:todo_app/store/theme/theme_store.dart';
 import 'package:todo_app/ui/reset_password/otp.dart';
-import 'package:todo_app/utils/locale/app_localization.dart';
+import 'package:todo_app/utils/device/device_utils.dart';
 import 'package:todo_app/utils/routes/routes.dart';
+import 'package:todo_app/utils/todo/todo_utils.dart';
 import 'package:todo_app/widgets/arrow_back_icon.dart';
 import 'package:todo_app/widgets/labeled_text_field.dart';
 import 'package:todo_app/widgets/todo_button.dart';
@@ -43,35 +45,71 @@ class _EmailScreenState extends State<EmailScreen> {
     );
   }
 
-  AppBar _buildAppBar() {
-    return AppBar(
-      backgroundColor: Colors.transparent,
-      elevation: 0.0,
-      leading: ArrowBackIcon(),
-    );
-  }
+  AppBar _buildAppBar() => AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0.0,
+        leading: ArrowBackIcon(),
+      );
 
   Widget _buildBody() {
     TextTheme textTheme = Theme.of(context).textTheme;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: Dimens.padding_xl),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          _buildTitle(),
-          _buildTextField(),
-          _buildButton(),
-        ],
-      ),
+    return Stack(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: Dimens.padding_xl),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _buildTitle(),
+              _buildTextField(),
+              _buildButton(),
+            ],
+          ),
+        ),
+        Align(
+          alignment: Alignment.center,
+          child: Observer(
+            builder: (_) => Visibility(
+              visible: _store.loading,
+              child: CircularProgressIndicator(
+              ),
+            ),
+          ),
+        ),
+        Observer(builder: (_) {
+          return _store.success
+              ? _navigateToLoginScreen(context)
+              : _buildClosed();
+        }),
+      ],
     );
   }
 
   Widget _buildTitle() {
-    return Text(LocaleKeys.reset_password.tr(),
-        style: textTheme.headline4?.copyWith(
-            color: _themeStore.darkMode ? Colors.white : Colors.black));
+    return Row(
+      children: [
+        Text(LocaleKeys.reset_password.tr(),
+            style: textTheme.headline4?.copyWith(
+                color: _themeStore.darkMode ? Colors.white : Colors.black)),
+
+        // PolygonShape(),
+        Expanded(
+          child: Transform.translate(
+            offset: Offset(90, 0),
+            child: Transform.rotate(
+              angle: Dimens.padding_normal,
+              child: ShapeOfView(
+                width: 120,
+                height: 120,
+                shape: PolygonShape(numberOfSides: 6),
+              ),
+            ),
+          ),
+        )
+      ],
+    );
   }
 
   Widget _buildTextField() {
@@ -102,20 +140,16 @@ class _EmailScreenState extends State<EmailScreen> {
         title: Text(LocaleKeys.reset_password.tr(),
             style: Theme.of(context).textTheme.button),
         onPressed: () async {
-          await _store.passwordResetRequest();
-          if (_store.success == false && _store.loading == true) {
-            onSaveTaped();
+          DeviceUtils.hideKeyboard(context);
+          if (_formStore.canSendEmail) {
+            await _store.passwordResetRequest();
+            if(_store.errorSendEmail)
+              onSaveTaped();
+
           } else {
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (_) => OtpScreen(email: _store.email!)));
+            showErrorMessage(
+                "please Enter a valid Email", context);
           }
-          // if (_formStore.canForgetPassword) {
-          //   _store.passwordResetRequest();
-          //
-          // } else {
-          //   showErrorMessage(
-          //       "please Enter a valid Email", context);
-          // }
         });
   }
 
@@ -132,5 +166,20 @@ class _EmailScreenState extends State<EmailScreen> {
       duration: Duration(seconds: 4),
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  ///this  Navigation to another page
+
+  _buildClosed() {
+    return SizedBox.shrink();
+  }
+
+  Widget _navigateToLoginScreen(BuildContext context) {
+    Future.delayed(Duration.zero, () {
+      Navigator.of(context).pushReplacementNamed(Routes.otp_screen);
+      _store.loading = false;
+    });
+    _store.success = false;
+    return Container();
   }
 }

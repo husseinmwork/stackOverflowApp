@@ -2,7 +2,7 @@ import 'package:injectable/injectable.dart';
 import 'package:todo_app/data/network/constant/end_points.dart';
 import 'package:todo_app/data/network/dio_client.dart';
 import 'package:todo_app/data/network/rest_client.dart';
-import 'package:todo_app/model/get_my_question/get_my_question.dart';
+import 'package:todo_app/model/get_question/get_question.dart';
 import 'package:todo_app/model/helper/paging.dart';
 import 'package:todo_app/model/login/login.dart';
 import 'package:todo_app/model/sign_up/sign_up.dart';
@@ -70,7 +70,7 @@ class Services {
 // }
 
   ///get question with paging
-  Future<Paging<GetMyQuestion>> getQuestion({
+  Future<Paging<Question>> getQuestion({
     int skip = 0,
     int? take = 1000,
   }) async {
@@ -80,10 +80,10 @@ class Services {
         Endpoints.queryLimit: take
       };
 
-      var response = await _dioClient.get(Endpoints.getMyQuestion,
+      var response = await _dioClient.get(Endpoints.getQuestion,
           queryParameters: queries);
       var pagination =
-          Paging<GetMyQuestion>.fromJson(response, GetMyQuestion.fromJsonModel);
+          Paging<Question>.fromJson(response, Question.fromJsonModel);
       return pagination;
     } catch (e) {
       throw e;

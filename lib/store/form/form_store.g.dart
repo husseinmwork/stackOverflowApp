@@ -15,6 +15,13 @@ mixin _$FormStore on _FormStore, Store {
   bool get canLogin => (_$canLoginComputed ??=
           Computed<bool>(() => super.canLogin, name: '_FormStore.canLogin'))
       .value;
+  Computed<bool>? _$canSendEmailComputed;
+
+  @override
+  bool get canSendEmail =>
+      (_$canSendEmailComputed ??= Computed<bool>(() => super.canSendEmail,
+              name: '_FormStore.canSendEmail'))
+          .value;
   Computed<bool>? _$canRegisterComputed;
 
   @override
@@ -248,6 +255,7 @@ confirmPassword: ${confirmPassword},
 success: ${success},
 loading: ${loading},
 canLogin: ${canLogin},
+canSendEmail: ${canSendEmail},
 canRegister: ${canRegister},
 canForgetPassword: ${canForgetPassword}
     ''';

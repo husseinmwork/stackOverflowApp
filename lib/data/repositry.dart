@@ -1,7 +1,7 @@
 import 'package:todo_app/data/local/datasources/post/post_datasource.dart';
 import 'package:todo_app/data/network/apis/services.dart';
 import 'package:todo_app/data/sharedpref/shared_preference_helper.dart';
-import 'package:todo_app/model/get_my_question/get_my_question.dart';
+import 'package:todo_app/model/get_question/get_question.dart';
 import 'package:todo_app/model/helper/paging.dart';
 import 'package:todo_app/model/login/login.dart';
 import 'package:todo_app/model/sign_up/sign_up.dart';
@@ -83,7 +83,7 @@ class Repository {
   }
 
   ///get question with paging
-  Future<Paging<GetMyQuestion>> getQuestion(int skip) async {
+  Future<Paging<Question>> getQuestion(int skip) async {
     return await _services.getQuestion(skip: skip).catchError((e) => throw e);
   }
 }

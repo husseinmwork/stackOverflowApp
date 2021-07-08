@@ -10,14 +10,14 @@ Login _$LoginFromJson(Map<String, dynamic> json) {
   return Login(
     accessToken: json['token'] as String,
     refreshToken: json['refresh_token'] as String,
-    account: Account.fromJson(json['account'] as Map<String, dynamic>),
+    user: Account.fromJson(json['user'] as Map<String, dynamic>),
   );
 }
 
 Map<String, dynamic> _$LoginToJson(Login instance) => <String, dynamic>{
       'token': instance.accessToken,
       'refresh_token': instance.refreshToken,
-      'account': instance.account,
+      'user': instance.user,
     };
 
 Account _$AccountFromJson(Map<String, dynamic> json) {

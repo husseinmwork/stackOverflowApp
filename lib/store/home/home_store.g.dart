@@ -99,6 +99,21 @@ mixin _$HomeStore on _HomeStore, Store {
     });
   }
 
+  final _$questionAtom = Atom(name: '_HomeStore.question');
+
+  @override
+  ObservableList<List<Question>> get question {
+    _$questionAtom.reportRead();
+    return super.question;
+  }
+
+  @override
+  set question(ObservableList<List<Question>> value) {
+    _$questionAtom.reportWrite(value, super.question, () {
+      super.question = value;
+    });
+  }
+
   final _$logoutAsyncAction = AsyncAction('_HomeStore.logout');
 
   @override
@@ -111,6 +126,13 @@ mixin _$HomeStore on _HomeStore, Store {
   @override
   Future getPrefUser() {
     return _$getPrefUserAsyncAction.run(() => super.getPrefUser());
+  }
+
+  final _$getQuestionAsyncAction = AsyncAction('_HomeStore.getQuestion');
+
+  @override
+  Future<dynamic> getQuestion(int skip) {
+    return _$getQuestionAsyncAction.run(() => super.getQuestion(skip));
   }
 
   final _$_HomeStoreActionController = ActionController(name: '_HomeStore');
@@ -145,7 +167,8 @@ success: ${success},
 loading: ${loading},
 controller: ${controller},
 fabIsVisible: ${fabIsVisible},
-socialLinkAgent: ${socialLinkAgent}
+socialLinkAgent: ${socialLinkAgent},
+question: ${question}
     ''';
   }
 }

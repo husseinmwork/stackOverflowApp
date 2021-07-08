@@ -37,14 +37,19 @@ abstract class _ResetPasswordStore with Store {
   @observable
   bool loading = false;
 
+  @observable
+  bool errorSendEmail = false;
+
   @action
   Future passwordResetRequest() async {
     this.loading = true;
-    _repository.passwordResetRequest(email!).then((value) {
+    await _repository.passwordResetRequest(email!).then((value) {
       success = true;
+      errorSendEmail = false;
     }).catchError((error) {
       this.loading = false;
       this.success = false;
+      this.errorSendEmail = true;
       errorStore.errorMessage = DioErrorUtil.handleError(error);
     });
   }
