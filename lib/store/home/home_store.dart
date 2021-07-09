@@ -37,8 +37,6 @@ abstract class _HomeStore with Store {
   @observable
   bool loading = false;
 
-
-
   //User screen Scroll
   @observable
   ScrollController controller = ScrollController();
@@ -46,10 +44,8 @@ abstract class _HomeStore with Store {
   @observable
   bool fabIsVisible = false;
 
-
   @observable
   List<String> socialLinkAgent = ObservableList<String>();
-
 
   // actions:-------------------------------------------------------------------
   @action
@@ -64,7 +60,6 @@ abstract class _HomeStore with Store {
   void disposeController() {
     controller.removeListener(() {});
   }
-
 
   ///this method work logout and remove (user , authToken , IsLoggedIn) shared preferences
   @action
@@ -83,22 +78,17 @@ abstract class _HomeStore with Store {
     user = await _repository.user;
   }
 
-
   @observable
-  ObservableList<List<Question>> question =
-  ObservableList<List<Question>>();
-
+  ObservableList<List<Question>> question = ObservableList<List<Question>>();
 
   ///get question with paging
   @action
   Future getQuestion(int skip) async {
     return await _repository
-        .getQuestion(skip).then((value) =>question.add(value.results)).catchError((e) {
+        .getQuestion(skip)
+        .then((value) => question.add(value.results))
+        .catchError((e) {
       throw e;
-    }
-    );
+    });
   }
-
-
-
 }

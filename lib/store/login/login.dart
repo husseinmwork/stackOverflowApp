@@ -33,6 +33,9 @@ abstract class _LoginStore with Store {
   @observable
   bool loading = false;
 
+  @observable
+  bool errorLogin = false;
+
   @action
   Future login() async {
     this.loading = true;
@@ -44,9 +47,11 @@ abstract class _LoginStore with Store {
         'refreshToken': value.refreshToken
       });
       success = true;
+      errorLogin = false;
     }).catchError((error) {
       this.loading = false;
       this.success = false;
+      errorLogin = true;
       // if (error is DioError) {
         DioErrorUtil.handleError(error);
         errorStore.errorMessage = DioErrorUtil.handleError(error);

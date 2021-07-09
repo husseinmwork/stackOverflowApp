@@ -44,9 +44,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
     _store
       ..userName = _userNameController.text = "hu1996"
-      ..password = _passwordController.text = "hu199666";
+      ..password = _passwordController.text = "newpasswordddd1212";
     _store.userName = "hu1996";
-    _store.password = "hu199666";
+    _store.password = "newpasswordddd1212";
   }
 
   @override
@@ -210,10 +210,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 height: Dimens.padding_xxl,
               ),
               RoundedButton(
-                onPressed: () {
+                onPressed: () async {
                   DeviceUtils.hideKeyboard(context);
                   if (_formStore.canLogin) {
-                    _store.login();
+                    await _store.login();
+                    if (_store.errorLogin) onSaveTaped();
                   } else {
                     showErrorMessage('Please check all fields', context);
                   }
@@ -243,8 +244,6 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
-
-
 
   void onSaveTaped() async {
     final snackBar = SnackBar(
@@ -336,6 +335,4 @@ class _LoginScreenState extends State<LoginScreen> {
     _store.success = false;
     return Container();
   }
-
-
 }

@@ -1,21 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:todo_app/constants/colors.dart';
+import 'package:provider/provider.dart';
+import 'package:todo_app/store/home/home_store.dart';
+import 'package:todo_app/store/theme/theme_store.dart';
 import 'package:todo_app/utils/routes/routes.dart';
 import 'package:todo_app/widgets/image_avatar.dart';
 
 class AppDrawer extends StatefulWidget {
-  final String image;
-  final String userName;
-  final String? fullName;
-  final String email;
-
-  const AppDrawer({required this.image,required this.userName, this.fullName,required this.email}) ;
-
   @override
   _AppDrawerState createState() => _AppDrawerState();
 }
 
 class _AppDrawerState extends State<AppDrawer> {
+  late HomeStore _store;
+  late ThemeStore _themeStore;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _store = Provider.of<HomeStore>(context);
+    _themeStore = Provider.of<ThemeStore>(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -24,9 +29,11 @@ class _AppDrawerState extends State<AppDrawer> {
         children: <Widget>[
           _createHeader(),
           _createDrawerItem(
-              icon: Icons.contacts, text: 'My Question', onTap: () {
+              icon: Icons.contacts,
+              text: 'My Question',
+              onTap: () {
                 // Navigator.of(context).pushNamed(Routes.my_question);
-          }),
+              }),
           _createDrawerItem(icon: Icons.event, text: 'Events', onTap: () {}),
           _createDrawerItem(icon: Icons.note, text: 'Notes', onTap: () {}),
           Divider(),
@@ -38,7 +45,13 @@ class _AppDrawerState extends State<AppDrawer> {
               text: 'Flutter Documentation',
               onTap: () {}),
           _createDrawerItem(
-              icon: Icons.stars, text: 'Useful Links', onTap: () {}),
+              icon: Icons.logout,
+              text: 'Logout',
+              onTap: () {
+                Navigator.of(context).pop();
+                _store.logout();
+                Navigator.of(context).pushReplacementNamed(Routes.login);
+              }),
         ],
       ),
     );
@@ -58,11 +71,11 @@ class _AppDrawerState extends State<AppDrawer> {
             ImageAvatar(
               radius: 40,
               onTap: () {},
-              image: widget.image,
+              image: _store.user?.image ?? "null",
               borderRadius: 40,
             ),
-            Text(widget.email),
-            Text(widget.userName),
+            Text(_store.user?.email ?? "null"),
+            Text(_store.user?.username ?? "null"),
           ],
         ));
   }
