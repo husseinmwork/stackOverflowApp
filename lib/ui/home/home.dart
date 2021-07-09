@@ -6,9 +6,9 @@ import 'package:todo_app/constants/dimens.dart';
 import 'package:todo_app/model/get_question/get_question.dart';
 import 'package:todo_app/store/home/home_store.dart';
 import 'package:todo_app/store/theme/theme_store.dart';
+import 'package:todo_app/ui/home/app_drawer.dart';
 import 'package:todo_app/utils/locale/app_localization.dart';
 import 'package:todo_app/utils/routes/routes.dart';
-import 'file:///D:/stackOverflowApp/lib/ui/home/app_drawer.dart';
 import 'package:todo_app/widgets/image_avatar.dart';
 
 class HomeScreen extends StatefulWidget {
