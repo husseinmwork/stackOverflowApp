@@ -72,14 +72,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _buildImage() => CircleAvatar(
         radius: Dimens.imageProfile,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(100),
+        child: ClipOval(
           child: FadeInImage.assetNetwork(
             fit: BoxFit.cover,
             placeholder: Assets.placeHolder,
-            image: _store.profile?.image ?? "",
+            height: double.infinity,
+            width: double.infinity,
+            image: _store.profile?.image ?? "null",
             imageErrorBuilder: (_, __, ___) {
-              return Image.asset(Assets.placeHolder);
+              return Image.asset(Assets.placeHolder, fit: BoxFit.cover);
             },
           ),
         ),

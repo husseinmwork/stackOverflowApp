@@ -43,7 +43,10 @@ class Profile {
   factory Profile.fromJson(Map<String, dynamic> json) =>
       _$ProfileFromJson(json);
 
-    String get fullName =>  firstName! + " " + lastName!;
+     String get fullName =>  (firstName??"unknown") + " " + (lastName ??"unknown");
+
+
+
 
   Map<String, dynamic> toJson() => _$ProfileToJson(this);
 }

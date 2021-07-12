@@ -1,3 +1,5 @@
+import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:todo_app/data/local/datasources/post/post_datasource.dart';
 import 'package:todo_app/data/network/apis/services.dart';
 import 'package:todo_app/data/sharedpref/shared_preference_helper.dart';
@@ -48,8 +50,8 @@ class Repository {
       _sharedPrefsHelper.removeIsLoggedIn();
 
   ///start Registration
-  Future<Map<String, dynamic>> signUp(SignUp signUp) async {
-    return await _services.signUp(signUp).catchError((error) => throw error);
+  Future<Map<String, dynamic>> signUp(FormData formData) async {
+    return await _services.signUp(formData).catchError((error) => throw error);
   }
 
   Future<Login> login(String userName, String password) async {

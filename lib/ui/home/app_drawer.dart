@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:todo_app/constants/assets.dart';
+import 'package:todo_app/constants/dimens.dart';
 import 'package:todo_app/store/home/home_store.dart';
 import 'package:todo_app/store/theme/theme_store.dart';
 import 'package:todo_app/utils/routes/routes.dart';
@@ -73,11 +75,20 @@ class _AppDrawerState extends State<AppDrawer> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              ImageAvatar(
-                radius: 40,
-                onTap: () {},
-                image: _store.user?.image ?? "null",
-                borderRadius: 40,
+              CircleAvatar(
+                radius: Dimens.imageDrawer,
+                child: ClipOval(
+                  child: FadeInImage.assetNetwork(
+                    fit: BoxFit.cover,
+                    placeholder: Assets.placeHolder,
+                    height: double.infinity,
+                    width: double.infinity,
+                    image: _store.user?.image ?? "null",
+                    imageErrorBuilder: (_, __, ___) {
+                      return Image.asset(Assets.placeHolder, fit: BoxFit.cover);
+                    },
+                  ),
+                ),
               ),
               Text(_store.user?.email ?? "null"),
               Text(_store.user?.username ?? "null"),

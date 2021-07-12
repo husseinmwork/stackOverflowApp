@@ -49,10 +49,10 @@ class _LoginScreenState extends State<LoginScreen> {
     // _store.password = "newpasswordddd1212";
 
     _store
-      ..userName = _userNameController.text = "username1"
-      ..password = _passwordController.text = "11111111";
-    _store.userName = "username1";
-    _store.password = "11111111";
+      ..userName = _userNameController.text = "username2"
+      ..password = _passwordController.text = "username2";
+    _store.userName = "username2";
+    _store.password = "username2";
   }
 
   @override

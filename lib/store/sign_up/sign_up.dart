@@ -65,21 +65,15 @@ abstract class _SignUpStore with Store {
     );
     var formData = FormData.fromMap({
       "image": multiPartFile,
-      "username":"fsdfsdfsd",
-      "email":"email@dd.co",
-      "password":"sfk;sdlf"
+      "username": userName,
+      "email": email,
+      "password": password,
+      "firstName":firstName,
+      "lastName":lastName
     });
 
     loading = true;
-    var response = _repository.signUp(SignUp(
-        firstName: firstName,
-        lastName: lastName,
-        username: userName,
-        email: email,
-        password: password,
-        image: formData,
-        score: score,
-        isActive: isActive));
+    var response = _repository.signUp(formData);
     response.then((value) {
       success = true;
     }).catchError((error) {

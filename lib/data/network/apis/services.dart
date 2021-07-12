@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:todo_app/data/network/constant/end_points.dart';
 import 'package:todo_app/data/network/dio_client.dart';
@@ -26,13 +27,10 @@ class Services {
   // IbaityApi(this._dioClient, this._restClient);
 
   ///start Registration
-  Future<Map<String, dynamic>> signUp(SignUp signUp) async {
+  Future<Map<String, dynamic>> signUp(FormData formData) async {
     try {
       var response = await _dioClient.post(Endpoints.signUp,
-          //todo this signUp.image content all information of sign up
-          data: /*signUp.toJson().removeNull()*/ signUp.image
-
-
+          data:  formData
       );
       return response;
     } catch (e) {

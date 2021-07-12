@@ -7,8 +7,6 @@ import 'package:todo_app/model/get_question/get_question.dart';
 import 'package:todo_app/store/home/home_store.dart';
 import 'package:todo_app/store/theme/theme_store.dart';
 import 'package:todo_app/ui/home/app_drawer.dart';
-import 'package:todo_app/utils/locale/app_localization.dart';
-import 'package:todo_app/utils/routes/routes.dart';
 import 'package:todo_app/widgets/image_avatar.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -72,42 +70,17 @@ class _HomeScreenState extends State<HomeScreen> {
         elevation: 0,
         title: Row(
           children: [
-            Observer(
-              builder: (_) => Text(_store.user?.fullName ?? "null user",
-                  style: Theme.of(context).textTheme.headline6),
+            Text(
+              //todo RichText and change color
+              "Stackoverflow",
+              style: Theme.of(context).textTheme.headline6,
             ),
           ],
         ),
-        //todo
         actions: [
           _buildThemeButton(),
-          Container(
-            padding: const EdgeInsets.only(
-                right: Dimens.padding_mini, top: Dimens.padding_mini),
-            margin: const EdgeInsets.only(
-                right: Dimens.padding_mid, top: Dimens.padding_mini),
-            child: Container(
-              margin: EdgeInsets.only(top: 5, bottom: 5),
-              child: ImageAvatar(
-                radius: 18,
-                onTap: () {},
-                image: _store.user?.image ?? "",
-              ),
-            ),
-          ),
         ],
       );
-
-  // Widget _buildFAB() {
-  //   return FloatingActionButton(
-  //     onPressed: () {
-  //       // print(" add floatingActionButton");
-  //       Navigator.of(context).pushNamed(Routes.create_tasks);
-  //     },
-  //     child: Icon(Icons.arrow_upward),
-  //     elevation: 2.0,
-  //   );
-  // }
 
   Widget _buildFAB() => Observer(
         builder: (_) => AnimatedOpacity(
