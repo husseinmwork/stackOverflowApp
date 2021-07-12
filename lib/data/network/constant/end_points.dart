@@ -24,11 +24,12 @@ class Endpoints {
   static const String querySkip = 'skip';
   static const String queryLimit = 'take';
 
-  ///patch function done task
-  static const String doneTask = baseUrl + "task/{id}/";
-  static const String taskId = 'id';
+  ///get profile
+  static const String profile = baseUrl + "/accounts/profile";
+
+
+
 
   static const String refreshToken = baseUrl + "accounts/token/refresh/";
 
-  static const String tags = baseUrl + "tag/";
 }

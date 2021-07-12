@@ -1,6 +1,11 @@
+import 'dart:io';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app/constants/app_theme.dart';
 import 'package:todo_app/constants/dimens.dart';
@@ -44,12 +49,22 @@ class _SignUpScreenState extends State<SignUpScreen>
   final _formStore = FormStore();
   late SignUpStore _store;
   late ThemeStore _themeStore;
+  final picker = ImagePicker();
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _store = Provider.of<SignUpStore>(context);
     _themeStore = Provider.of<ThemeStore>(context);
+  }
+
+  Future getImage() async {
+    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      _store.image = File(pickedFile.path);
+    } else {
+      debugPrint('No image selected.;');
+    }
   }
 
   @override
@@ -65,6 +80,8 @@ class _SignUpScreenState extends State<SignUpScreen>
       backgroundColor: Colors.transparent,
       elevation: 0.0,
       leading: ArrowBackIcon(),
+      title: Text(LocaleKeys.sign_up.tr(),
+          style: Theme.of(context).textTheme.headline6),
     );
   }
 
@@ -96,11 +113,11 @@ class _SignUpScreenState extends State<SignUpScreen>
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: Dimens.padding_xl),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              _buildTitle(),
-              SizedBox(height: Dimens.padding_large),
+              _buildImage(),
+              SizedBox(height: Dimens.padding_xxl),
               _buildTextField(),
               SizedBox(height: Dimens.padding_xxl),
               _buildButtonRegistration(),
@@ -113,11 +130,27 @@ class _SignUpScreenState extends State<SignUpScreen>
     );
   }
 
-  Widget _buildTitle() {
-    return Text(LocaleKeys.sign_up.tr(),
-        style: textTheme.headline4?.copyWith(
-            color: _themeStore.darkMode ? Colors.white : Colors.black));
-  }
+  Widget _buildImage() => GestureDetector(
+        onTap: () async {
+          await getImage();
+        },
+        child: Observer(
+          builder: (_) => CircleAvatar(
+            radius: Dimens.image,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(Dimens.image),
+              child: _store.image == null
+                  ? Icon(Icons.add_a_photo, size: Dimens.padding_xxl)
+                  : Image.file(
+                      _store.image!,
+                      fit: BoxFit.cover,
+                      height: double.infinity,
+                      width: double.infinity,
+                    ),
+            ),
+          ),
+        ),
+      );
 
   Widget _buildTextField() {
     //todo add all String into language en json
@@ -280,7 +313,6 @@ class _SignUpScreenState extends State<SignUpScreen>
       ),
     );
   }
-
 
   ///this  Navigation to another page
 

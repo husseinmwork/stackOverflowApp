@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:injectable/injectable.dart';
 import 'package:todo_app/data/network/constant/end_points.dart';
 import 'package:todo_app/data/network/dio_client.dart';
@@ -5,8 +7,10 @@ import 'package:todo_app/data/network/rest_client.dart';
 import 'package:todo_app/model/get_question/get_question.dart';
 import 'package:todo_app/model/helper/paging.dart';
 import 'package:todo_app/model/login/login.dart';
+import 'package:todo_app/model/profile/profile.dart';
 import 'package:todo_app/model/sign_up/sign_up.dart';
 import 'package:todo_app/utils/todo/todo_utils.dart';
+
 
 @Singleton()
 class Services {
@@ -25,9 +29,15 @@ class Services {
   Future<Map<String, dynamic>> signUp(SignUp signUp) async {
     try {
       var response = await _dioClient.post(Endpoints.signUp,
-          data: signUp.toJson().removeNull());
+          //todo this signUp.image content all information of sign up
+          data: /*signUp.toJson().removeNull()*/ signUp.image
+
+
+      );
       return response;
     } catch (e) {
+
+      print("this this$e");
       throw e;
     }
   }
@@ -60,14 +70,14 @@ class Services {
   ///end registration
 
   ///get profile
-// Future<Profile> getProfile() async {
-//   try {
-//     var response = await _dioClient.get(Endpoints.profile);
-//     return Profile.fromJson(response);
-//   } catch (e) {
-//     throw e;
-//   }
-// }
+  Future<Profile> getProfile() async {
+    try {
+      var response = await _dioClient.get(Endpoints.profile);
+      return Profile.fromJson(response);
+    } catch (e) {
+      throw e;
+    }
+  }
 
   ///get question with paging
   Future<Paging<Question>> getQuestion({
@@ -80,8 +90,8 @@ class Services {
         Endpoints.queryLimit: take
       };
 
-      var response = await _dioClient.get(Endpoints.getQuestion,
-          queryParameters: queries);
+      var response =
+          await _dioClient.get(Endpoints.getQuestion, queryParameters: queries);
       var pagination =
           Paging<Question>.fromJson(response, Question.fromJsonModel);
       return pagination;

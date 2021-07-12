@@ -1,32 +1,49 @@
-import 'package:json_annotation/json_annotation.dart'; 
+import 'package:json_annotation/json_annotation.dart';
 
-part 'profile.g.dart'; 
+part 'profile.g.dart';
 
 @JsonSerializable()
 class Profile {
-  @JsonKey(name: 'pk')
-  final  String? pk;
-  @JsonKey(name: 'first_name')
-  final  String? firstName;
-  @JsonKey(name: 'last_name')
-  final  String? lastName;
+  @JsonKey(name: 'id')
+  final String? id;
+  @JsonKey(name: 'firstName')
+  final String? firstName;
+  @JsonKey(name: 'lastName')
+  final String? lastName;
   @JsonKey(name: 'username')
-  final  String? username;
+  final String? userName;
   @JsonKey(name: 'email')
-  final  String? email;
-  @JsonKey(name: 'birthdate')
-  final  String? birthdate;
-  @JsonKey(name: 'timezone')
-  final  String? timezone;
+  final String? email;
+  @JsonKey(name: 'score')
+  final int? score;
+  @JsonKey(name: 'isActive')
+  final bool? isActive;
   @JsonKey(name: 'image')
-  final  String? image;
-  @JsonKey(name: 'daily_progress')
-  final  double? dailyProgress;
+  final String? image;
 
-  Profile({this.pk, this.firstName, this.lastName, this.username, this.email, this.birthdate, this.timezone, this.image, this.dailyProgress});
+  @JsonKey(name: 'Question')
+  final List<dynamic>? question;
 
-  factory Profile.fromJson(Map<String, dynamic> json) => _$ProfileFromJson(json);
+  @JsonKey(name: 'Answer')
+  final List<dynamic>? answer;
+
+  Profile({
+    this.id,
+    this.firstName,
+    this.lastName,
+    this.userName,
+    this.email,
+    this.question,
+    this.answer,
+    this.score,
+    this.isActive,
+    this.image,
+  });
+
+  factory Profile.fromJson(Map<String, dynamic> json) =>
+      _$ProfileFromJson(json);
+
+    String get fullName =>  firstName! + " " + lastName!;
 
   Map<String, dynamic> toJson() => _$ProfileToJson(this);
 }
-

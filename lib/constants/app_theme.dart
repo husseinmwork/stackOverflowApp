@@ -81,6 +81,7 @@ final ThemeData themeData = new ThemeData(
     iconTheme: IconThemeData(color: Colors.white));
 
 final ThemeData themeDataDark = ThemeData(
+
   appBarTheme: AppBarTheme(
     color: AppColors.scaffoldBackgroundColor,
   ),

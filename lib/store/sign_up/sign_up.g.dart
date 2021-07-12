@@ -87,13 +87,13 @@ mixin _$SignUpStore on _SignUpStore, Store {
   final _$imageAtom = Atom(name: '_SignUpStore.image');
 
   @override
-  String? get image {
+  File? get image {
     _$imageAtom.reportRead();
     return super.image;
   }
 
   @override
-  set image(String? value) {
+  set image(File? value) {
     _$imageAtom.reportWrite(value, super.image, () {
       super.image = value;
     });

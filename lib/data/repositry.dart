@@ -4,6 +4,7 @@ import 'package:todo_app/data/sharedpref/shared_preference_helper.dart';
 import 'package:todo_app/model/get_question/get_question.dart';
 import 'package:todo_app/model/helper/paging.dart';
 import 'package:todo_app/model/login/login.dart';
+import 'package:todo_app/model/profile/profile.dart';
 import 'package:todo_app/model/sign_up/sign_up.dart';
 
 class Repository {
@@ -38,7 +39,6 @@ class Repository {
   Future<Future<bool>> removeUser() async => _sharedPrefsHelper.removeUser();
 
   // is login user -------------------------------------------------------------
-  // todo delete
   Future<void> saveIsLoggedIn(bool value) =>
       _sharedPrefsHelper.saveIsLoggedIn(value);
 
@@ -86,4 +86,9 @@ class Repository {
   Future<Paging<Question>> getQuestion(int skip) async {
     return await _services.getQuestion(skip: skip).catchError((e) => throw e);
   }
+
+  Future<Profile> getProfile()async{
+   return await _services.getProfile().catchError((error)=>throw error);
+  }
+
 }

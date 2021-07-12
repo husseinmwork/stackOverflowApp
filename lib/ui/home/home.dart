@@ -73,10 +73,8 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Row(
           children: [
             Observer(
-
               builder: (_) => Text(_store.user?.fullName ?? "null user",
-                  style: Theme.of(context).textTheme.subtitle1,
-                  overflow: TextOverflow.ellipsis),
+                  style: Theme.of(context).textTheme.headline6),
             ),
           ],
         ),
@@ -93,8 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: ImageAvatar(
                 radius: 18,
                 onTap: () {},
-                image:
-                    "https://www.dmarge.com/wp-content/uploads/2021/01/dwayne-the-rock-.jpg",
+                image: _store.user?.image ?? "",
               ),
             ),
           ),

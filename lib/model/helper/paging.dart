@@ -12,7 +12,7 @@ class Paging<T> {
   });
 
   factory Paging.fromJson(Map<String, dynamic> json, Function fromJsonModel) {
-    final items = json['questions'].cast<Map<String, dynamic>>();
+    final items = json['results'].cast<Map<String, dynamic>>();
     return Paging<T>(
       count: json['count'],
       next: json['next'],

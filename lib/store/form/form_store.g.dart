@@ -270,6 +270,13 @@ mixin _$FormErrorStore on _FormErrorStore, Store {
           () => super.hasErrorsInLogin,
           name: '_FormErrorStore.hasErrorsInLogin'))
       .value;
+  Computed<bool>? _$hasErrorsSendEmailComputed;
+
+  @override
+  bool get hasErrorsSendEmail => (_$hasErrorsSendEmailComputed ??=
+          Computed<bool>(() => super.hasErrorsSendEmail,
+              name: '_FormErrorStore.hasErrorsSendEmail'))
+      .value;
   Computed<bool>? _$hasErrorsInRegisterComputed;
 
   @override
@@ -353,6 +360,7 @@ userName: ${userName},
 password: ${password},
 confirmPassword: ${confirmPassword},
 hasErrorsInLogin: ${hasErrorsInLogin},
+hasErrorsSendEmail: ${hasErrorsSendEmail},
 hasErrorsInRegister: ${hasErrorsInRegister},
 hasErrorInForgotPassword: ${hasErrorInForgotPassword}
     ''';

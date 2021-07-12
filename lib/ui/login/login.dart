@@ -41,12 +41,18 @@ class _LoginScreenState extends State<LoginScreen> {
     _store = Provider.of<LoginStore>(context);
     _themeStore = Provider.of<ThemeStore>(context);
     _languageStore = Provider.of<LanguageStore>(context);
+    //
+    // _store
+    //   ..userName = _userNameController.text = "hu1996"
+    //   ..password = _passwordController.text = "newpasswordddd1212";
+    // _store.userName = "hu1996";
+    // _store.password = "newpasswordddd1212";
 
     _store
-      ..userName = _userNameController.text = "hu1996"
-      ..password = _passwordController.text = "newpasswordddd1212";
-    _store.userName = "hu1996";
-    _store.password = "newpasswordddd1212";
+      ..userName = _userNameController.text = "username1"
+      ..password = _passwordController.text = "11111111";
+    _store.userName = "username1";
+    _store.password = "11111111";
   }
 
   @override
@@ -74,6 +80,8 @@ class _LoginScreenState extends State<LoginScreen> {
       backgroundColor: Colors.transparent,
       elevation: 0.0,
       leading: ArrowBackIcon(),
+      title: Text(LocaleKeys.login.tr(),
+          style: Theme.of(context).textTheme.headline6),
       actions: [
         _buildThemeButton(),
         IconButton(
@@ -132,13 +140,7 @@ class _LoginScreenState extends State<LoginScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(LocaleKeys.login.tr(),
-                  style: textTheme.headline4?.copyWith(
-                      color:
-                          _themeStore.darkMode ? Colors.white : Colors.black)),
-              SizedBox(
-                height: Dimens.padding_xxl,
-              ),
+
               Container(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,

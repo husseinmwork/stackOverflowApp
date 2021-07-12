@@ -58,26 +58,32 @@ class _AppDrawerState extends State<AppDrawer> {
   }
 
   Widget _createHeader() {
-    return DrawerHeader(
-        decoration: BoxDecoration(
-          color: Theme.of(context).primaryColor,
-        ),
-        margin: EdgeInsets.zero,
-        padding: EdgeInsets.zero,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ImageAvatar(
-              radius: 40,
-              onTap: () {},
-              image: _store.user?.image ?? "null",
-              borderRadius: 40,
-            ),
-            Text(_store.user?.email ?? "null"),
-            Text(_store.user?.username ?? "null"),
-          ],
-        ));
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).pop();
+        Navigator.of(context).pushNamed(Routes.profile_screen);
+      },
+      child: DrawerHeader(
+          decoration: BoxDecoration(
+            color: Theme.of(context).primaryColor,
+          ),
+          margin: EdgeInsets.zero,
+          padding: EdgeInsets.zero,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ImageAvatar(
+                radius: 40,
+                onTap: () {},
+                image: _store.user?.image ?? "null",
+                borderRadius: 40,
+              ),
+              Text(_store.user?.email ?? "null"),
+              Text(_store.user?.username ?? "null"),
+            ],
+          )),
+    );
   }
 
   Widget _createDrawerItem(
