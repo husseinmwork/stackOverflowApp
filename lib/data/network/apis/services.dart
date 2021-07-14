@@ -77,6 +77,17 @@ class Services {
     }
   }
 
+  ///update profile
+  Future updateProfile(FormData profile) async {
+    return await _dioClient
+        .patch(Endpoints.updateProfile, data: profile)
+        .catchError((error) => throw error);
+  }
+
+
+
+
+
   ///get question with paging
   Future<Paging<Question>> getQuestion({
     int skip = 0,

@@ -26,10 +26,8 @@ class Endpoints {
 
   ///get profile
   static const String profile = baseUrl + "/accounts/profile";
+  static const String updateProfile = baseUrl + "/accounts/profile";
 
-
-
-
-  static const String refreshToken = baseUrl + "accounts/token/refresh/";
+  static const String refreshToken = baseUrl + "/accounts/tokens/refresh";
 
 }

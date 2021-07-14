@@ -89,8 +89,15 @@ class Repository {
     return await _services.getQuestion(skip: skip).catchError((e) => throw e);
   }
 
+  ///get profile
   Future<Profile> getProfile()async{
    return await _services.getProfile().catchError((error)=>throw error);
   }
+
+  ///update profile
+  Future updateProfile(FormData profile)async{
+    return await _services.updateProfile(profile).catchError((error)=>throw error);
+  }
+
 
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:todo_app/ui/home/home.dart';
 import 'package:todo_app/ui/login/login.dart';
 import 'package:todo_app/ui/my_question/my_question.dart';
+import 'package:todo_app/ui/profile/edit_profile.dart';
 import 'package:todo_app/ui/profile/profile.dart';
 import 'package:todo_app/ui/reset_password/email_screen.dart';
 import 'package:todo_app/ui/reset_password/otp.dart';
@@ -17,6 +18,7 @@ class Routes {
   static const String email_screen = '/email';
   static const String otp_screen = '/otp';
   static const String profile_screen = '/profile';
+  static const String edit_profile_screen = '/editProfile';
   // static const String my_question = '/myQuestion';
 
   static final routes = <String, WidgetBuilder>{
@@ -26,6 +28,7 @@ class Routes {
     email_screen: (BuildContext context) => EmailScreen(),
     otp_screen: (BuildContext context) => OtpScreen(),
     profile_screen: (BuildContext context) => ProfileScreen(),
+    edit_profile_screen: (BuildContext context) => EditProfileScreen(),
     // my_question: (BuildContext context) => MyQuestionScreen(),
   };
 

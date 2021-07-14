@@ -5,6 +5,7 @@ import 'package:todo_app/constants/assets.dart';
 import 'package:todo_app/constants/dimens.dart';
 import 'package:todo_app/store/language/language_store.dart';
 import 'package:todo_app/store/profile/profile_store.dart';
+import 'package:todo_app/utils/routes/routes.dart';
 import 'package:todo_app/widgets/arrow_back_icon.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -41,7 +42,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
         actions: [
           OutlinedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.of(context).pushNamed(Routes.edit_profile_screen);
+              },
               child: Text(
                 "Edit",
                 style: Theme.of(context).textTheme.button,
@@ -61,8 +64,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             children: [
               _buildImage(),
               _buildFullName(),
-              _buildUserName(),
               _buildEmail(),
+              _buildUserName(),
               SizedBox(height: Dimens.padding_xl),
               _buildRow(),
             ],

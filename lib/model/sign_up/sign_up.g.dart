@@ -16,7 +16,7 @@ SignUp _$SignUpFromJson(Map<String, dynamic> json) {
     isAdmin: json['isAdmin'] as bool?,
     isSuperAdmin: json['isSuperAdmin'] as bool?,
     score: json['score'] as int?,
-    image: json['image'] as Object?,
+    image: json['image'],
     password: json['password'] as String?,
   );
 }
@@ -26,7 +26,7 @@ Map<String, dynamic> _$SignUpToJson(SignUp instance) => <String, dynamic>{
       'lastName': instance.lastName,
       'username': instance.username,
       'email': instance.email,
-      'image':instance.image,
+      'image': instance.image,
       'password': instance.password,
       'score': instance.score,
       'isActive': instance.isActive,

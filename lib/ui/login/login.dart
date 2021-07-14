@@ -42,17 +42,17 @@ class _LoginScreenState extends State<LoginScreen> {
     _themeStore = Provider.of<ThemeStore>(context);
     _languageStore = Provider.of<LanguageStore>(context);
     //
-    // _store
-    //   ..userName = _userNameController.text = "hu1996"
-    //   ..password = _passwordController.text = "newpasswordddd1212";
-    // _store.userName = "hu1996";
-    // _store.password = "newpasswordddd1212";
-
     _store
-      ..userName = _userNameController.text = "username2"
-      ..password = _passwordController.text = "username2";
-    _store.userName = "username2";
-    _store.password = "username2";
+      ..userName = _userNameController.text = "hu1996"
+      ..password = _passwordController.text = "newpasswordddd1212";
+    _store.userName = "hu1996";
+    _store.password = "newpasswordddd1212";
+    //
+    // _store
+    //   ..userName = _userNameController.text = "username2"
+    //   ..password = _passwordController.text = "username2";
+    // _store.userName = "username2";
+    // _store.password = "username2";
   }
 
   @override
