@@ -50,3 +50,39 @@ class Profile {
 
   Map<String, dynamic> toJson() => _$ProfileToJson(this);
 }
+//
+//
+//
+//
+// @JsonSerializable()
+// class User {
+//   @JsonKey(name: 'id')
+//   final String? id;
+//   @JsonKey(name: 'username')
+//   final String? username;
+//   @JsonKey(name: 'email')
+//   final String? email;
+//   @JsonKey(name: 'firstName')
+//   final String? firstName;
+//   @JsonKey(name: 'lastName')
+//   final String? lastName;
+//   @JsonKey(name: 'image')
+//   final String? image;
+//   @JsonKey(name: 'score')
+//   final int? score;
+//
+//   User(
+//       { this.id,
+//         this.username,
+//         this.email,
+//         this.firstName,
+//         this.lastName,
+//         this.score,
+//         this.image});
+//
+//   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
+//
+//   Map<String, dynamic> toJson() => _$UserToJson(this);
+//
+//   String get fullName => (firstName??"null") + (lastName??"null") ;
+// }

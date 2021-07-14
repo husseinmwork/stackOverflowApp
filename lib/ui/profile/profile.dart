@@ -43,7 +43,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         actions: [
           OutlinedButton(
               onPressed: () {
-                Navigator.of(context).pushNamed(Routes.edit_profile_screen);
+                Navigator.of(context).pushReplacementNamed(Routes.edit_profile_screen);
               },
               child: Text(
                 "Edit",

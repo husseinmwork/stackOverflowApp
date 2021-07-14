@@ -12,7 +12,6 @@ import 'package:todo_app/model/profile/profile.dart';
 import 'package:todo_app/model/sign_up/sign_up.dart';
 import 'package:todo_app/utils/todo/todo_utils.dart';
 
-
 @Singleton()
 class Services {
   // dio instance
@@ -29,12 +28,9 @@ class Services {
   ///start Registration
   Future<Map<String, dynamic>> signUp(FormData formData) async {
     try {
-      var response = await _dioClient.post(Endpoints.signUp,
-          data:  formData
-      );
+      var response = await _dioClient.post(Endpoints.signUp, data: formData);
       return response;
     } catch (e) {
-
       print("this this$e");
       throw e;
     }
@@ -78,15 +74,15 @@ class Services {
   }
 
   ///update profile
-  Future updateProfile(FormData profile) async {
-    return await _dioClient
-        .patch(Endpoints.updateProfile, data: profile)
-        .catchError((error) => throw error);
+  Future<Account> updateProfile(FormData profile) async {
+    try {
+      var response =
+          await _dioClient.patch(Endpoints.updateProfile, data: profile);
+      return Account.fromJson(response);
+    } catch (e) {
+      throw e;
+    }
   }
-
-
-
-
 
   ///get question with paging
   Future<Paging<Question>> getQuestion({

@@ -5,11 +5,13 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app/constants/assets.dart';
+import 'package:todo_app/constants/colors.dart';
 import 'package:todo_app/constants/dimens.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:todo_app/store/language/language_store.dart';
 import 'package:todo_app/store/profile/profile_store.dart';
 import 'package:todo_app/utils/device/device_utils.dart';
+import 'package:todo_app/utils/routes/routes.dart';
 import 'package:todo_app/widgets/arrow_back_icon.dart';
 import 'package:todo_app/widgets/labeled_text_field.dart';
 import 'package:todo_app/generated/locale_keys.g.dart';
@@ -74,22 +76,35 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             Text("Edit Profile", style: Theme.of(context).textTheme.headline6),
       );
 
-  Widget _buildBody() => Observer(
-        builder: (_) => Visibility(
-          visible: _store.profile != null,
-          replacement: Center(
+  Widget _buildBody() =>  Stack(
+    children: [
+      Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  _buildImage(),
+                  _buildTextField(),
+                ],
+              ),
+
+      Align(
+        alignment: Alignment.center,
+        child: Observer(
+          builder: (_) => Visibility(
+            visible: _store.loading == true,
             child: CircularProgressIndicator(),
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              _buildImage(),
-              _buildTextField(),
-            ],
-          ),
         ),
-      );
+      ),
+      Observer(builder: (_) {
+        return _store.success
+            ? _navigateToLoginScreen(context)
+            : _buildClosed();
+      }),
+    ],
+  );
+
+
 
   Widget _buildImage() => GestureDetector(
    onTap: ()async{
@@ -181,7 +196,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             RoundedButton(
               onPressed: () async {
                 DeviceUtils.hideKeyboard(context);
-                _store.updateProfile();
+                await _store.updateProfile();
+                if(_store.errorEditProfile) onSaveTaped();
                 // if (_formStore.canLogin) {
                 //   await _store.login();
                 //   if (_store.errorLogin) onSaveTaped();
@@ -196,4 +212,34 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       ),
     );
   }
+
+  void onSaveTaped() async {
+    final snackBar = SnackBar(
+      content: Observer(
+        builder: (_) => Text(
+          _store.errorStore.errorMessage,
+          style: TextStyle(color: Colors.white),
+        ),
+      ),
+      behavior: SnackBarBehavior.fixed,
+      backgroundColor: AppColors.DarkPurple,
+      duration: Duration(seconds: 4),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  ///this  Navigation to another page
+  _buildClosed() {
+    return SizedBox.shrink();
+  }
+
+  Widget _navigateToLoginScreen(BuildContext context) {
+    Future.delayed(Duration.zero, () {
+      Navigator.of(context).pushReplacementNamed(Routes.profile_screen);
+      _store.loading = false;
+    });
+    _store.success = false;
+    return Container();
+  }
+
 }

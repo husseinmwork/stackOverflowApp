@@ -95,7 +95,7 @@ class Repository {
   }
 
   ///update profile
-  Future updateProfile(FormData profile)async{
+  Future<Account> updateProfile(FormData profile)async{
     return await _services.updateProfile(profile).catchError((error)=>throw error);
   }
 

@@ -64,8 +64,10 @@ abstract class _ProfileStore with Store {
 
   ///update profile
   Future updateProfile() async {
+    this.loading = true;
+
     List<MultipartFile>? multiPartFile = [];
-    if(image !=null){
+    if (image != null) {
       multiPartFile.add(
         MultipartFile.fromFileSync(image!.path, filename: "image.jpg"),
       );
@@ -78,17 +80,21 @@ abstract class _ProfileStore with Store {
       "firstName": firstName,
       "lastName": lastName
     }.removeNull());
-
-    return await _repository.updateProfile(formData).then((value) {
-      debugPrint(value);
+    return await _repository.updateProfile(formData).then((user) {
+      _repository.saveUser(user);
       success = true;
       errorEditProfile = false;
+      return user;
     }).catchError((error) {
       this.loading = false;
       this.success = false;
       errorEditProfile = true;
-      DioErrorUtil.handleError(error);
-      errorStore.errorMessage = DioErrorUtil.handleError(error);
+      if (error is DioError) {
+        DioErrorUtil.handleError(error);
+        errorStore.errorMessage = DioErrorUtil.handleError(error);
+      } else {
+        errorStore.errorMessage = "error is not dio error";
+      }
     });
   }
 }

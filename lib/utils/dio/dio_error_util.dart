@@ -29,6 +29,9 @@ class DioErrorUtil {
           } else if (error.response?.statusCode == 404) {
             errorDescription =
                 "Received invalid status code: ${error.response?.statusCode} email not found";
+          }else if (error.response?.statusCode == 499) {
+            errorDescription =
+                "Received invalid status code: ${error.response?.statusCode} network error";
           } else
             errorDescription = "Unexpected error occurred";
           break;
