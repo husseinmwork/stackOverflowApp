@@ -10,14 +10,7 @@ Agile software development
 1-mobx state-management
 2-dependency injection 
 3-mvvm design patterns 
-4. Typescript
-5. Express
-6. Prisma
-7. PassportJS
-8. Joi
-9. AWS S3
-10. Nodemailer
-11. Jest/Supertest
+
 
 ## What is the project about
 
