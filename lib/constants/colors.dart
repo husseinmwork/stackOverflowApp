@@ -21,7 +21,7 @@ class AppColors {
   static const blue = Color(0xFF246BFD);
 
   ///this secondary
-  static const lightPurple = Color(0xFFC25FFF);
+  static const lightPurple = Color(0xFFCE93D8);
   static const DarkPurple = Color(0xFF470073);
 
   ///this bg1

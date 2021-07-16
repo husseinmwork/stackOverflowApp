@@ -33,4 +33,10 @@ class Dimens {
   static const double border_mid = 8;
   static const double border_large = 12;
   static const double border_xl = 16;
+
+  //size
+  static const double image = 50;
+  static const double imageProfile = 60;
+  static const double imageDrawer = 40;
+
 }

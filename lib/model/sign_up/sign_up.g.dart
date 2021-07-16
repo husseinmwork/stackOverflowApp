@@ -16,7 +16,7 @@ SignUp _$SignUpFromJson(Map<String, dynamic> json) {
     isAdmin: json['isAdmin'] as bool?,
     isSuperAdmin: json['isSuperAdmin'] as bool?,
     score: json['score'] as int?,
-    image: json['image'] as String?,
+    image: json['image'],
     password: json['password'] as String?,
   );
 }

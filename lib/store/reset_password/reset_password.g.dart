@@ -12,15 +12,45 @@ mixin _$ResetPasswordStore on _ResetPasswordStore, Store {
   final _$emailAtom = Atom(name: '_ResetPasswordStore.email');
 
   @override
-  String get email {
+  String? get email {
     _$emailAtom.reportRead();
     return super.email;
   }
 
   @override
-  set email(String value) {
+  set email(String? value) {
     _$emailAtom.reportWrite(value, super.email, () {
       super.email = value;
+    });
+  }
+
+  final _$otpAtom = Atom(name: '_ResetPasswordStore.otp');
+
+  @override
+  int? get otp {
+    _$otpAtom.reportRead();
+    return super.otp;
+  }
+
+  @override
+  set otp(int? value) {
+    _$otpAtom.reportWrite(value, super.otp, () {
+      super.otp = value;
+    });
+  }
+
+  final _$newPasswordAtom = Atom(name: '_ResetPasswordStore.newPassword');
+
+  @override
+  String? get newPassword {
+    _$newPasswordAtom.reportRead();
+    return super.newPassword;
+  }
+
+  @override
+  set newPassword(String? value) {
+    _$newPasswordAtom.reportWrite(value, super.newPassword, () {
+      super.newPassword = value;
     });
   }
 
@@ -54,6 +84,21 @@ mixin _$ResetPasswordStore on _ResetPasswordStore, Store {
     });
   }
 
+  final _$errorSendEmailAtom = Atom(name: '_ResetPasswordStore.errorSendEmail');
+
+  @override
+  bool get errorSendEmail {
+    _$errorSendEmailAtom.reportRead();
+    return super.errorSendEmail;
+  }
+
+  @override
+  set errorSendEmail(bool value) {
+    _$errorSendEmailAtom.reportWrite(value, super.errorSendEmail, () {
+      super.errorSendEmail = value;
+    });
+  }
+
   final _$passwordResetRequestAsyncAction =
       AsyncAction('_ResetPasswordStore.passwordResetRequest');
 
@@ -67,8 +112,11 @@ mixin _$ResetPasswordStore on _ResetPasswordStore, Store {
   String toString() {
     return '''
 email: ${email},
+otp: ${otp},
+newPassword: ${newPassword},
 success: ${success},
-loading: ${loading}
+loading: ${loading},
+errorSendEmail: ${errorSendEmail}
     ''';
   }
 }

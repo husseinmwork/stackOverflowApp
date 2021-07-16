@@ -1,5 +1,6 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:injectable/injectable.dart';
 import 'package:mobx/mobx.dart';
 import 'package:todo_app/data/repositry.dart';
@@ -18,7 +19,6 @@ abstract class _SignUpStore with Store {
 
   final ErrorStore errorStore = ErrorStore();
 
-
   _SignUpStore(Repository repository) : this._repository = repository;
 
   @observable
@@ -31,21 +31,19 @@ abstract class _SignUpStore with Store {
   String? password;
 
   @observable
-  String? firstName ;
+  String? firstName;
 
   @observable
-  String? lastName ;
+  String? lastName;
 
   @observable
-  String? image ;
+  File? image;
 
   @observable
   int? score;
 
   @observable
-  bool? isActive ;
-
-
+  bool? isActive;
 
   @observable
   bool success = false;
@@ -54,32 +52,35 @@ abstract class _SignUpStore with Store {
   bool loading = false;
 
   @observable
-  bool showPassword = false;
+  bool showPassword = true;
+
+  @observable
+  bool showConfirmPassword = true;
 
   @action
   Future signUp() async {
+    List<MultipartFile> multiPartFile = [];
+    multiPartFile.add(
+      MultipartFile.fromFileSync(image!.path, filename: "image.jpg"),
+    );
+    var formData = FormData.fromMap({
+      "image": multiPartFile,
+      "username": userName,
+      "email": email,
+      "password": password,
+      "firstName":firstName,
+      "lastName":lastName
+    });
+
     loading = true;
-    var response = _repository.signUp(SignUp(
-      firstName: firstName,
-      lastName: lastName,
-      username: userName,
-      email: email,
-      password: password,
-      image: image,
-      score: score,
-      isActive: isActive
-    ));
+    var response = _repository.signUp(formData);
     response.then((value) {
       success = true;
     }).catchError((error) {
       this.loading = false;
       this.success = false;
-      // if(error is DioError){
-      //   debugPrint("this dio error sign up  = \n");
-      // errorStore.errorMessage = DioErrorUtil.handleError(error);
-      // }
-      // debugPrint("this not dio error  sign up   = \n");
-      // debugPrint(error);
+      DioErrorUtil.handleError(error);
+      errorStore.errorMessage = DioErrorUtil.handleError(error);
     });
     return response;
   }

@@ -24,6 +24,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:todo_app/constants/colors.dart';
 import 'package:todo_app/constants/font_family.dart';
 
@@ -59,32 +60,42 @@ TextTheme textTheme = TextTheme(
         color: Color(0xFF3A3D46)));
 
 final ThemeData themeData = new ThemeData(
-    textTheme: textTheme,
-    fontFamily: FontFamily.productSans,
-    brightness: Brightness.light,
-    buttonColor: AppColors.shapeColor,
-     cardColor:Colors.white,
+  textTheme: textTheme,
+  fontFamily: FontFamily.productSans,
+  brightness: Brightness.light,
+  buttonColor: AppColors.shapeColor,
+  cardColor: Colors.white,
   textButtonTheme: TextButtonThemeData(
     style: TextButton.styleFrom(
         primary: Colors.white, backgroundColor: Colors.blue.shade600),
   ),
-    // primarySwatch: MaterialColor(AppColors.orange[500]!.value, AppColors.orange),
-    scaffoldBackgroundColor: Colors.grey,
-    primaryColor:  Colors.blue,
-    backgroundColor: Colors.white,
-    primaryColorBrightness: Brightness.light,
-    accentColor: Colors.blue,
-    accentColorBrightness: Brightness.light,
+  // primarySwatch: MaterialColor(AppColors.orange[500]!.value, AppColors.orange),
+  scaffoldBackgroundColor: Colors.white,
+  // scaffoldBackgroundColor: Colors.grey,
+  primaryColor: Colors.blue,
+  backgroundColor: Colors.white,
+  primaryColorBrightness: Brightness.light,
+  accentColor: Colors.blue,
+  accentColorBrightness: Brightness.light,
+  primarySwatch: Colors.grey,
+  dividerColor: Colors.white54,
+  iconTheme: IconThemeData(color: Colors.white),
+  appBarTheme: AppBarTheme(
+    color: Colors.blue[800],
+    backwardsCompatibility: false,
+    iconTheme: IconThemeData(color: Colors.white),
 
-    primarySwatch: Colors.grey,
-
-    dividerColor: Colors.white54,
-  iconTheme: IconThemeData(color: Colors.white)
-
+    systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: Colors.blue[900]),
+  ),
 );
 
 final ThemeData themeDataDark = ThemeData(
-  appBarTheme: AppBarTheme(color: AppColors.scaffoldBackgroundColor,),
+  appBarTheme: AppBarTheme(
+    color: Colors.grey[800],
+    backwardsCompatibility: false,
+    systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: Colors.black),
+  ),
+
   textTheme: textTheme,
   fontFamily: FontFamily.productSans,
   brightness: Brightness.dark,
@@ -93,16 +104,16 @@ final ThemeData themeDataDark = ThemeData(
 
   scaffoldBackgroundColor: AppColors.scaffoldBackgroundColor,
   primaryColorBrightness: Brightness.dark,
-
-  floatingActionButtonTheme: FloatingActionButtonThemeData(foregroundColor: AppColors.scaffoldBackgroundColor),
+  floatingActionButtonTheme: FloatingActionButtonThemeData(
+      foregroundColor: AppColors.scaffoldBackgroundColor),
   textButtonTheme: TextButtonThemeData(
     style: TextButton.styleFrom(
-        primary: Colors.white, backgroundColor: Colors.blue.shade600),
+        primary: Colors.white, backgroundColor: Colors.green),
   ),
-  accentColor: AppColors.scaffoldBackgroundColor,
+  accentColor: AppColors.lightPurple,
 
   accentColorBrightness: Brightness.dark,
- // iconTheme: IconThemeData(color: Colors.red),
+  // iconTheme: IconThemeData(color: Colors.red),
   primarySwatch: Colors.grey,
   // backgroundColor: const Color(0xFF212121),
   accentIconTheme: IconThemeData(color: Colors.black),

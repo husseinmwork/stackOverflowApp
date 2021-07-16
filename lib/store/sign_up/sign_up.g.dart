@@ -87,13 +87,13 @@ mixin _$SignUpStore on _SignUpStore, Store {
   final _$imageAtom = Atom(name: '_SignUpStore.image');
 
   @override
-  String? get image {
+  File? get image {
     _$imageAtom.reportRead();
     return super.image;
   }
 
   @override
-  set image(String? value) {
+  set image(File? value) {
     _$imageAtom.reportWrite(value, super.image, () {
       super.image = value;
     });
@@ -174,6 +174,22 @@ mixin _$SignUpStore on _SignUpStore, Store {
     });
   }
 
+  final _$showConfirmPasswordAtom =
+      Atom(name: '_SignUpStore.showConfirmPassword');
+
+  @override
+  bool get showConfirmPassword {
+    _$showConfirmPasswordAtom.reportRead();
+    return super.showConfirmPassword;
+  }
+
+  @override
+  set showConfirmPassword(bool value) {
+    _$showConfirmPasswordAtom.reportWrite(value, super.showConfirmPassword, () {
+      super.showConfirmPassword = value;
+    });
+  }
+
   final _$signUpAsyncAction = AsyncAction('_SignUpStore.signUp');
 
   @override
@@ -194,7 +210,8 @@ score: ${score},
 isActive: ${isActive},
 success: ${success},
 loading: ${loading},
-showPassword: ${showPassword}
+showPassword: ${showPassword},
+showConfirmPassword: ${showConfirmPassword}
     ''';
   }
 }

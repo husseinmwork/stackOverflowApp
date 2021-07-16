@@ -8,26 +8,28 @@ part of 'profile.dart';
 
 Profile _$ProfileFromJson(Map<String, dynamic> json) {
   return Profile(
-    pk: json['pk'] as String?,
-    firstName: json['first_name'] as String?,
-    lastName: json['last_name'] as String?,
-    username: json['username'] as String?,
+    id: json['id'] as String?,
+    firstName: json['firstName'] as String?,
+    lastName: json['lastName'] as String?,
+    userName: json['username'] as String?,
     email: json['email'] as String?,
-    birthdate: json['birthdate'] as String?,
-    timezone: json['timezone'] as String?,
+    question: json['Question'] as List<dynamic>?,
+    answer: json['Answer'] as List<dynamic>?,
+    score: json['score'] as int?,
+    isActive: json['isActive'] as bool?,
     image: json['image'] as String?,
-    dailyProgress: (json['daily_progress'] as num?)?.toDouble(),
   );
 }
 
 Map<String, dynamic> _$ProfileToJson(Profile instance) => <String, dynamic>{
-      'pk': instance.pk,
-      'first_name': instance.firstName,
-      'last_name': instance.lastName,
-      'username': instance.username,
+      'id': instance.id,
+      'firstName': instance.firstName,
+      'lastName': instance.lastName,
+      'username': instance.userName,
       'email': instance.email,
-      'birthdate': instance.birthdate,
-      'timezone': instance.timezone,
+      'score': instance.score,
+      'isActive': instance.isActive,
       'image': instance.image,
-      'daily_progress': instance.dailyProgress,
+      'Question': instance.question,
+      'Answer': instance.answer,
     };

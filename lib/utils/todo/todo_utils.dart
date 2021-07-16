@@ -12,7 +12,8 @@ showErrorMessage(String message , BuildContext context) {
       if (message.isNotEmpty) {
         FlushbarHelper.createError(
           message: message,
-          title: AppLocalizations.of(context).translate('home_tv_error'),
+          //todo change languages
+          title: 'home_tv_error',
           duration: Duration(seconds: 3),
         )..show(context);
       }
@@ -46,4 +47,15 @@ extension mapper on Map<String, dynamic?> {
   }
 
   keyAt(int index) => this.keys.elementAt(index);
+}
+
+
+
+showDialogLang<T>({required BuildContext context, required Widget child}) {
+  showDialog<T>(
+    context: context,
+    builder: (BuildContext context) => child,
+  ).then<void>((T? value) {
+    // The value passed to Navigator.pop() or null.
+  });
 }

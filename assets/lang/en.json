@@ -2,34 +2,31 @@
   "login_start": "Below are list of strings for login",
   "using": "Using ",
   "to_login": "To Login ",
-  "login_btn_forgot_password":   "Forget your password ?",
+  "login_btn_forgot_password": "Forget your password ?",
   "login_text_field_password_title": "your password",
   "login_text_field_hint_password": "Password",
   "login_text_field_hint_email": "Username",
   "login_text_field_email_title": "your Username",
   "goto_register": "New member? Register",
+  "reset_password": "Reset Password",
   "goto_login": "Do you have an account? Login",
   "login_error_fill_fields": "Please fill in all fields",
   "login_end": "------------------------------------------------------------------------------------",
-
-
   "registration_start": "Below are list of strings for login",
   "regs_text_field_lable_email": "Your Email",
   "regs_text_field_hint_email": "Email",
   "regs_text_field_password_title": "your confirm password",
   "regs_text_field_hint_password": "Confirm Password",
+  "regs_text_field_lable_first_name": "First Name",
+  "regs_text_field_lable_last_name": "Last Name",
+  "regs_text_field_lable_user_name": "User Name",
   "registration_end": "------------------------------------------------------------------------------------",
-
-
-
-
   "home_start": "Below are list of strings for home",
   "home_tv_posts": "Posts",
   "home_tv_error": "Error",
   "home_tv_no_post_found": "No posts found",
   "home_tv_choose_language": "Choose Language",
   "home_end": "-------------------------------------------------------------------------------------",
-
   "welcome_start": "Below are list of strings for home",
   "welcome_title": "What’s your \nemail \naddress?",
   "welcome_text_field_title": "your email",
@@ -37,28 +34,22 @@
   "login": "Login",
   "sign_up": "Sign Up",
   "welcome_end": "-------------------------------------------------------------------------------------",
-
   "tab_bar_start_task_screen": "Below are list of strings for home",
   "today": "Today",
   "inbox": "Inbox",
   "done": "Done",
   "missed": "Missed",
   "tab_bar_end_task_screen": "-------------------------------------------------------------------------------------",
-
   "start_home_screen": "Below are list of strings for home",
   "task": "Task",
   "habits": "Habits",
+  "arabic": "Arabic",
+  "english": "English",
   "end_home_screen": "-------------------------------------------------------------------------------------",
-
-  "start_create_tasks": "Below are list of strings for home",
-  "create_tasks_title": "Create Task",
-  "create_tasks_text_field_title": "Task title",
-  "create_tasks_text_field_note": "Note",
-  "create_tasks_text_field_new_tag": "New Tag",
-  "create_tasks_date": "Date",
-  "create_tasks_selected_date": "Selected Date",
-  "create_tasks_text_field_sub_title": "Sub Task",
-  "create_tasks_priority": "Task Priority",
-  "create_tasks_deadline": "DeadLine",
-  "end_create_tasks": "-------------------------------------------------------------------------------------"
+  "start_otp_screen": "Below are list of strings for home",
+  "otp_screen_verification_code": "Verification Code",
+  "otp_screen_please_enter_OTP_gmail": "Please enter the OTP sent\non your registered gmail.",
+  "otp_screen_resend_OTP": "Resend OTP",
+  "otp_screen_verify_OTP": "Verify OTP",
+  "end_otp_screen": "-------------------------------------------------------------------------------------"
 }

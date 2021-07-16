@@ -9,6 +9,21 @@ part of 'home_store.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$HomeStore on _HomeStore, Store {
+  final _$userAtom = Atom(name: '_HomeStore.user');
+
+  @override
+  Account? get user {
+    _$userAtom.reportRead();
+    return super.user;
+  }
+
+  @override
+  set user(Account? value) {
+    _$userAtom.reportWrite(value, super.user, () {
+      super.user = value;
+    });
+  }
+
   final _$successAtom = Atom(name: '_HomeStore.success');
 
   @override
@@ -84,11 +99,40 @@ mixin _$HomeStore on _HomeStore, Store {
     });
   }
 
+  final _$questionAtom = Atom(name: '_HomeStore.question');
+
+  @override
+  ObservableList<List<Question>> get question {
+    _$questionAtom.reportRead();
+    return super.question;
+  }
+
+  @override
+  set question(ObservableList<List<Question>> value) {
+    _$questionAtom.reportWrite(value, super.question, () {
+      super.question = value;
+    });
+  }
+
   final _$logoutAsyncAction = AsyncAction('_HomeStore.logout');
 
   @override
   Future logout() {
     return _$logoutAsyncAction.run(() => super.logout());
+  }
+
+  final _$getPrefUserAsyncAction = AsyncAction('_HomeStore.getPrefUser');
+
+  @override
+  Future getPrefUser() {
+    return _$getPrefUserAsyncAction.run(() => super.getPrefUser());
+  }
+
+  final _$getQuestionAsyncAction = AsyncAction('_HomeStore.getQuestion');
+
+  @override
+  Future<dynamic> getQuestion(int skip) {
+    return _$getQuestionAsyncAction.run(() => super.getQuestion(skip));
   }
 
   final _$_HomeStoreActionController = ActionController(name: '_HomeStore');
@@ -118,11 +162,13 @@ mixin _$HomeStore on _HomeStore, Store {
   @override
   String toString() {
     return '''
+user: ${user},
 success: ${success},
 loading: ${loading},
 controller: ${controller},
 fabIsVisible: ${fabIsVisible},
-socialLinkAgent: ${socialLinkAgent}
+socialLinkAgent: ${socialLinkAgent},
+question: ${question}
     ''';
   }
 }

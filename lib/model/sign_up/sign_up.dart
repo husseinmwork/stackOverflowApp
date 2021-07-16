@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'sign_up.g.dart';
@@ -13,7 +14,7 @@ class SignUp {
   @JsonKey(name: 'email')
   final String? email;
   @JsonKey(name: 'image')
-  final String? image;
+  final Object? image;
   @JsonKey(name: 'password')
   final String? password;
   @JsonKey(name: 'score')
@@ -36,6 +37,8 @@ class SignUp {
       this.score,
       this.image,
        this.password});
+
   factory SignUp.fromJson(Map<String, dynamic> json) => _$SignUpFromJson(json);
+
   Map<String, dynamic> toJson() => _$SignUpToJson(this);
 }

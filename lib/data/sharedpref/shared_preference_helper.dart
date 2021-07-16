@@ -4,7 +4,8 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:todo_app/model/login/login.dart';
+import 'package:todo_app/model/user/user.dart';
+
 
 import 'constants/preferences.dart';
 
@@ -51,26 +52,24 @@ class SharedPreferenceHelper {
   }
 
   //save user after login ------------------------------------------------------
-  // Future<User?> get user async {
-  //   var userString = _sharedPreference.getString(Preferences.user);
-  //   debugPrint("this user in shared pref =" + "$userString");
-  //
-  //   if (userString != null) {
-  //     /// string -> json -> map
-  //     Map<String, dynamic> userMap = jsonDecode(userString);
-  //     return User.fromJson(userMap);
-  //   }
-  // }
-  //
-  // Future<bool> saveUser(User user) async {
-  //   var userToJson = user.toJson();
-  //   var userJsonToString = json.encode(userToJson);
-  //   debugPrint("this user after save in shared pref$userJsonToString");
-  //   return _sharedPreference.setString(Preferences.user, userJsonToString);
-  // }
-  //
-  // Future<Future<bool>> removeUser() async =>
-  //     _sharedPreference.remove(Preferences.user);
+  Future<Account?> get user async {
+    var userString = _sharedPreference.getString(Preferences.user);
+    if (userString != null) {
+      /// string -> json -> map
+      Map<String, dynamic> userMap = jsonDecode(userString);
+      return Account.fromJson(userMap);
+    }
+  }
+
+  Future<bool> saveUser(Account user) async {
+    var userToJson = user.toJson();
+    var userJsonToString = json.encode(userToJson);
+    debugPrint("this user after save in shared pref$userJsonToString");
+    return _sharedPreference.setString(Preferences.user, userJsonToString);
+  }
+
+  Future<Future<bool>> removeUser() async =>
+      _sharedPreference.remove(Preferences.user);
 
   // Theme:------------------------------------------------------
   bool get isDarkMode {

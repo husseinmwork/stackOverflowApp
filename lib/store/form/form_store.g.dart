@@ -15,6 +15,13 @@ mixin _$FormStore on _FormStore, Store {
   bool get canLogin => (_$canLoginComputed ??=
           Computed<bool>(() => super.canLogin, name: '_FormStore.canLogin'))
       .value;
+  Computed<bool>? _$canSendEmailComputed;
+
+  @override
+  bool get canSendEmail =>
+      (_$canSendEmailComputed ??= Computed<bool>(() => super.canSendEmail,
+              name: '_FormStore.canSendEmail'))
+          .value;
   Computed<bool>? _$canRegisterComputed;
 
   @override
@@ -42,6 +49,21 @@ mixin _$FormStore on _FormStore, Store {
   set userEmail(String value) {
     _$userEmailAtom.reportWrite(value, super.userEmail, () {
       super.userEmail = value;
+    });
+  }
+
+  final _$userNameAtom = Atom(name: '_FormStore.userName');
+
+  @override
+  String get userName {
+    _$userNameAtom.reportRead();
+    return super.userName;
+  }
+
+  @override
+  set userName(String value) {
+    _$userNameAtom.reportWrite(value, super.userName, () {
+      super.userName = value;
     });
   }
 
@@ -147,6 +169,17 @@ mixin _$FormStore on _FormStore, Store {
   }
 
   @override
+  void setUserName(String value) {
+    final _$actionInfo = _$_FormStoreActionController.startAction(
+        name: '_FormStore.setUserName');
+    try {
+      return super.setUserName(value);
+    } finally {
+      _$_FormStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void setPassword(String value) {
     final _$actionInfo = _$_FormStoreActionController.startAction(
         name: '_FormStore.setPassword');
@@ -180,6 +213,17 @@ mixin _$FormStore on _FormStore, Store {
   }
 
   @override
+  void validateUserName(String value) {
+    final _$actionInfo = _$_FormStoreActionController.startAction(
+        name: '_FormStore.validateUserName');
+    try {
+      return super.validateUserName(value);
+    } finally {
+      _$_FormStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void validatePassword(String value) {
     final _$actionInfo = _$_FormStoreActionController.startAction(
         name: '_FormStore.validatePassword');
@@ -205,11 +249,13 @@ mixin _$FormStore on _FormStore, Store {
   String toString() {
     return '''
 userEmail: ${userEmail},
+userName: ${userName},
 password: ${password},
 confirmPassword: ${confirmPassword},
 success: ${success},
 loading: ${loading},
 canLogin: ${canLogin},
+canSendEmail: ${canSendEmail},
 canRegister: ${canRegister},
 canForgetPassword: ${canForgetPassword}
     ''';
@@ -223,6 +269,13 @@ mixin _$FormErrorStore on _FormErrorStore, Store {
   bool get hasErrorsInLogin => (_$hasErrorsInLoginComputed ??= Computed<bool>(
           () => super.hasErrorsInLogin,
           name: '_FormErrorStore.hasErrorsInLogin'))
+      .value;
+  Computed<bool>? _$hasErrorsSendEmailComputed;
+
+  @override
+  bool get hasErrorsSendEmail => (_$hasErrorsSendEmailComputed ??=
+          Computed<bool>(() => super.hasErrorsSendEmail,
+              name: '_FormErrorStore.hasErrorsSendEmail'))
       .value;
   Computed<bool>? _$hasErrorsInRegisterComputed;
 
@@ -251,6 +304,21 @@ mixin _$FormErrorStore on _FormErrorStore, Store {
   set userEmail(String? value) {
     _$userEmailAtom.reportWrite(value, super.userEmail, () {
       super.userEmail = value;
+    });
+  }
+
+  final _$userNameAtom = Atom(name: '_FormErrorStore.userName');
+
+  @override
+  String? get userName {
+    _$userNameAtom.reportRead();
+    return super.userName;
+  }
+
+  @override
+  set userName(String? value) {
+    _$userNameAtom.reportWrite(value, super.userName, () {
+      super.userName = value;
     });
   }
 
@@ -288,9 +356,11 @@ mixin _$FormErrorStore on _FormErrorStore, Store {
   String toString() {
     return '''
 userEmail: ${userEmail},
+userName: ${userName},
 password: ${password},
 confirmPassword: ${confirmPassword},
 hasErrorsInLogin: ${hasErrorsInLogin},
+hasErrorsSendEmail: ${hasErrorsSendEmail},
 hasErrorsInRegister: ${hasErrorsInRegister},
 hasErrorInForgotPassword: ${hasErrorInForgotPassword}
     ''';

@@ -1,15 +1,15 @@
+import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:todo_app/data/local/datasources/post/post_datasource.dart';
 import 'package:todo_app/data/network/apis/services.dart';
 import 'package:todo_app/data/sharedpref/shared_preference_helper.dart';
-import 'package:todo_app/model/create_quick_task/create_quick_task.dart';
-import 'package:todo_app/model/create_tasks/create_tasks.dart';
-import 'package:todo_app/model/done_tasks/done_task.dart';
-import 'package:todo_app/model/get_tasks/get_tasks.dart';
+import 'package:todo_app/model/get_question/get_question.dart';
 import 'package:todo_app/model/helper/paging.dart';
 import 'package:todo_app/model/login/login.dart';
+import 'package:todo_app/model/user/user.dart';
+
 import 'package:todo_app/model/profile/profile.dart';
 import 'package:todo_app/model/sign_up/sign_up.dart';
-import 'package:todo_app/model/tags/tags.dart';
 
 class Repository {
   // data source object
@@ -36,14 +36,13 @@ class Repository {
   String? get currentLanguage => _sharedPrefsHelper.currentLanguage;
 
   // user ---------------------------------------------------------------------
-  // Future<void> saveUser(User value) => _sharedPrefsHelper.saveUser(value);
-  //
-  // Future<User?> get user => _sharedPrefsHelper.user;
+  Future<void> saveUser(Account value) => _sharedPrefsHelper.saveUser(value);
 
-  // Future<Future<bool>> removeUser() async => _sharedPrefsHelper.removeUser();
+  Future<Account?> get user => _sharedPrefsHelper.user;
+
+  Future<Future<bool>> removeUser() async => _sharedPrefsHelper.removeUser();
 
   // is login user -------------------------------------------------------------
-  // todo delete
   Future<void> saveIsLoggedIn(bool value) =>
       _sharedPrefsHelper.saveIsLoggedIn(value);
 
@@ -52,30 +51,31 @@ class Repository {
   Future<Future<bool>> removeIsLoggedIn() async =>
       _sharedPrefsHelper.removeIsLoggedIn();
 
-
   ///start Registration
-  Future<Map<String, dynamic>> signUp(SignUp signUp) async {
-    return await _services.signUp(signUp).catchError((error) => throw error);
+  Future<Map<String, dynamic>> signUp(FormData formData) async {
+    return await _services.signUp(formData).catchError((error) => throw error);
   }
-
 
   Future<Login> login(String userName, String password) async {
-    return await _services.login(userName, password).catchError((error) {
-      throw error;
-    });
+    return await _services
+        .login(userName, password)
+        .catchError((error) => throw error);
   }
 
-
   Future passwordResetRequest(String email) async {
-    return await _services.passwordResetRequest(email).catchError((e) {
-      throw e;
-    });
+    return await _services
+        .passwordResetRequest(email)
+        .catchError((e) => throw e);
+  }
+
+  Future sendOtpAndNewPassword(
+      String email, int otp, String newPassword) async {
+    return await _services
+        .sendOtpAndNewPassword(email, otp, newPassword)
+        .catchError((error) => throw error);
   }
 
   ///end Registration
-
-
-
 
   ///save token in shared preferences
   Future saveAuthToken(Map authToken) async {
@@ -86,48 +86,20 @@ class Repository {
     await _sharedPrefsHelper.removeAuthToken();
   }
 
+  ///get question with paging
+  Future<Paging<Question>> getQuestion(int skip) async {
+    return await _services.getQuestion(skip: skip).catchError((e) => throw e);
+  }
+
   ///get profile
-  Future<Profile> getProfile() async {
-    return await _services
-        .getProfile()
-        .catchError((e) {
-      throw e;
-    });
+  Future<Profile> getProfile()async{
+   return await _services.getProfile().catchError((error)=>throw error);
   }
 
-  ///create Quick task
-  Future<CreateQuickTask?> createQuickTasks(CreateQuickTask? createTask) async {
-    return await _services.createQuickTasks(createTask).then((value) {
-      return value;
-    }).catchError((e) {
-      throw e;
-    });
+  ///update profile
+  Future<Account> updateProfile(FormData profile)async{
+    return await _services.updateProfile(profile).catchError((error)=>throw error);
   }
 
-  ///create task
-  //this then is not needed
-  Future<CreateTasks?> createTasks(CreateTasks? createTask) async =>
-      await _services.createTasks(createTask).catchError((e) => throw e);
 
-  ///this function patch work any task into done
-  Future<DoneTask> doneTask(String id) async =>
-      await _services.doneTasks(id).catchError((e) => throw e);
-
-  ///get tags with paging
-  Future<Paging<Result>> getTags(int offset) async {
-    return await _services
-        .getTags(offset: offset)
-        .catchError((e) {
-      throw e;
-    });
-  }
-
-  ///get tags with paging
-  Future<Paging<GetTasks>> getTasks(int offset) async {
-    return await _services
-        .getTasks(offset: offset)
-        .catchError((e) {
-      throw e;
-    });
-  }
 }

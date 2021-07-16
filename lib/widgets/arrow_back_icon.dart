@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:todo_app/constants/dimens.dart';
-import 'package:todo_app/widgets/todo_button.dart';
 
 class ArrowBackIcon extends StatelessWidget {
   @override
@@ -14,6 +13,7 @@ class ArrowBackIcon extends StatelessWidget {
             borderRadius: BorderRadius.circular(Dimens.borderIcon)),
         child: Icon(
           Icons.arrow_back,
+          color: Colors.white,
         ),
       ),
       onPressed: () {

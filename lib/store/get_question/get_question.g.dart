@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'login.dart';
+part of 'get_question.dart';
 
 // **************************************************************************
 // StoreGenerator
@@ -8,8 +8,8 @@ part of 'login.dart';
 
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
-mixin _$LoginStore on _LoginStore, Store {
-  final _$userNameAtom = Atom(name: '_LoginStore.userName');
+mixin _$MyQuestionStore on _MyQuestionStore, Store {
+  final _$userNameAtom = Atom(name: '_MyQuestionStore.userName');
 
   @override
   String get userName {
@@ -24,7 +24,7 @@ mixin _$LoginStore on _LoginStore, Store {
     });
   }
 
-  final _$passwordAtom = Atom(name: '_LoginStore.password');
+  final _$passwordAtom = Atom(name: '_MyQuestionStore.password');
 
   @override
   String get password {
@@ -39,7 +39,7 @@ mixin _$LoginStore on _LoginStore, Store {
     });
   }
 
-  final _$showPasswordAtom = Atom(name: '_LoginStore.showPassword');
+  final _$showPasswordAtom = Atom(name: '_MyQuestionStore.showPassword');
 
   @override
   bool get showPassword {
@@ -54,7 +54,7 @@ mixin _$LoginStore on _LoginStore, Store {
     });
   }
 
-  final _$successAtom = Atom(name: '_LoginStore.success');
+  final _$successAtom = Atom(name: '_MyQuestionStore.success');
 
   @override
   bool get success {
@@ -69,7 +69,7 @@ mixin _$LoginStore on _LoginStore, Store {
     });
   }
 
-  final _$loadingAtom = Atom(name: '_LoginStore.loading');
+  final _$loadingAtom = Atom(name: '_MyQuestionStore.loading');
 
   @override
   bool get loading {
@@ -84,26 +84,26 @@ mixin _$LoginStore on _LoginStore, Store {
     });
   }
 
-  final _$errorLoginAtom = Atom(name: '_LoginStore.errorLogin');
+  final _$questionAtom = Atom(name: '_MyQuestionStore.question');
 
   @override
-  bool get errorLogin {
-    _$errorLoginAtom.reportRead();
-    return super.errorLogin;
+  ObservableList<List<Question>> get question {
+    _$questionAtom.reportRead();
+    return super.question;
   }
 
   @override
-  set errorLogin(bool value) {
-    _$errorLoginAtom.reportWrite(value, super.errorLogin, () {
-      super.errorLogin = value;
+  set question(ObservableList<List<Question>> value) {
+    _$questionAtom.reportWrite(value, super.question, () {
+      super.question = value;
     });
   }
 
-  final _$loginAsyncAction = AsyncAction('_LoginStore.login');
+  final _$getQuestionAsyncAction = AsyncAction('_MyQuestionStore.getQuestion');
 
   @override
-  Future<dynamic> login() {
-    return _$loginAsyncAction.run(() => super.login());
+  Future<dynamic> getQuestion(int skip) {
+    return _$getQuestionAsyncAction.run(() => super.getQuestion(skip));
   }
 
   @override
@@ -114,7 +114,7 @@ password: ${password},
 showPassword: ${showPassword},
 success: ${success},
 loading: ${loading},
-errorLogin: ${errorLogin}
+question: ${question}
     ''';
   }
 }
