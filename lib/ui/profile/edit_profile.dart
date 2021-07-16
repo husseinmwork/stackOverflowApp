@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app/constants/assets.dart';
@@ -44,10 +45,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     super.didChangeDependencies();
     _languageStore = Provider.of<LanguageStore>(context);
     _store = Provider.of<ProfileStore>(context);
-    _firstNameController.text = _store.profile?.firstName??"";
-    _lastNameController.text  = _store.profile?.lastName??"";
-    _userNameController.text  = _store.profile?.userName??"";
-    _emailController.text  = _store.profile?.email??"";
+    if (_store.firstName == null &&
+        _store.lastName == null &&
+        _store.email == null &&
+        _store.email == null) {
+      _firstNameController.text = _store.profile?.firstName ?? "";
+      _lastNameController.text = _store.profile?.lastName ?? "";
+      _userNameController.text = _store.profile?.userName ?? "";
+      _emailController.text = _store.profile?.email ?? "";
+    }
   }
 
   Future getImage() async {
@@ -70,58 +76,71 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   AppBar _buildAppBar() => AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0.0,
-        leading: ArrowBackIcon(),
+        leading: MaterialButton(
+          child: Container(
+            decoration: BoxDecoration(
+                border: Border.all(
+                  color: Color(0xFF5E6272),
+                ),
+                borderRadius: BorderRadius.circular(Dimens.borderIcon)),
+            child: Icon(
+              Icons.arrow_back,
+            ),
+          ),
+          onPressed: () {
+            Navigator.of(context).pushReplacementNamed(Routes.profile_screen);
+          },
+        ),
         //todo  LocaleKeys.goto_register.tr(), change language after complete all section profile
         title:
             Text("Edit Profile", style: Theme.of(context).textTheme.headline6),
       );
 
-  Widget _buildBody() =>  Stack(
-    children: [
-      Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  _buildImage(),
-                  _buildTextField(),
-                ],
-              ),
-
-      Align(
-        alignment: Alignment.center,
-        child: Observer(
-          builder: (_) => Visibility(
-            visible: _store.loading == true,
-            child: CircularProgressIndicator(),
+  Widget _buildBody() => Stack(
+        children: [
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              _buildImage(),
+              _buildTextField(),
+            ],
           ),
-        ),
-      ),
-      Observer(builder: (_) {
-        return _store.success
-            ? _navigateToLoginScreen(context)
-            : _buildClosed();
-      }),
-    ],
-  );
-
-
+          Align(
+            alignment: Alignment.center,
+            child: Observer(
+              builder: (_) => Visibility(
+                visible: _store.loading == true,
+                child: SpinKitFoldingCube(color: Colors.purple[200]),
+              ),
+            ),
+          ),
+          Observer(builder: (_) {
+            return _store.success
+                ? _navigateToLoginScreen(context)
+                : _buildClosed();
+          }),
+        ],
+      );
 
   Widget _buildImage() => GestureDetector(
-   onTap: ()async{
-     await getImage();
-   },
-    child: Stack(
+        onTap: () async {
+          await getImage();
+        },
+        child: Stack(
           children: [
-            CircleAvatar(
-              radius: Dimens.imageProfile,
-              child: ClipOval(
-                child: _store.image == null
-                    ? Icon(Icons.add_a_photo, size: Dimens.padding_xxl)
-                    : Image.file(
-                  _store.image!,
-                  fit: BoxFit.cover,
-                  height: double.infinity,
-                  width: double.infinity,
+            Observer(
+              builder: (_) => CircleAvatar(
+                radius: Dimens.imageProfile,
+                child: ClipOval(
+                  child: _store.image == null
+                      ? Image.asset(Assets.placeHolder, fit: BoxFit.cover)
+                      : Image.file(
+                          _store.image!,
+                          fit: BoxFit.cover,
+                          height: double.infinity,
+                          width: double.infinity,
+                        ),
                 ),
               ),
             ),
@@ -129,15 +148,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               bottom: 0,
               right: 0,
               child: CircleAvatar(
-                radius: 25,
-                backgroundColor: Colors.green,
+                radius: 22,
+                backgroundColor: Theme.of(context).primaryColor,
                 child: Icon(Icons.add_a_photo_outlined,
-                    size: 35, color: Colors.white),
+                    size: 30, color: Colors.white),
               ),
             )
           ],
         ),
-  );
+      );
 
   Widget _buildTextField() {
     return Expanded(
@@ -197,13 +216,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               onPressed: () async {
                 DeviceUtils.hideKeyboard(context);
                 await _store.updateProfile();
-                if(_store.errorEditProfile) onSaveTaped();
-                // if (_formStore.canLogin) {
-                //   await _store.login();
-                //   if (_store.errorLogin) onSaveTaped();
-                // } else {
-                //   showErrorMessage('Please check all fields', context);
-                // }
+                if (_store.errorEditProfile) onSaveTaped();
+                _store.firstName = null;
+                _store.lastName = null;
+                _store.userName = null;
+                _store.email= null;
               },
               title: Text("Edit", style: Theme.of(context).textTheme.button),
             ),
@@ -242,4 +259,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     return Container();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    _userNameController.dispose();
+    _emailController.dispose();
+  }
 }

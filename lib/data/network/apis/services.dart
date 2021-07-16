@@ -9,7 +9,7 @@ import 'package:todo_app/model/get_question/get_question.dart';
 import 'package:todo_app/model/helper/paging.dart';
 import 'package:todo_app/model/login/login.dart';
 import 'package:todo_app/model/profile/profile.dart';
-import 'package:todo_app/model/sign_up/sign_up.dart';
+import 'package:todo_app/model/user/user.dart';
 import 'package:todo_app/utils/todo/todo_utils.dart';
 
 @Singleton()

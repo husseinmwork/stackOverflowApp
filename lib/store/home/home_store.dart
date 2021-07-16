@@ -4,7 +4,7 @@ import 'package:injectable/injectable.dart';
 import 'package:mobx/mobx.dart';
 import 'package:todo_app/data/repositry.dart';
 import 'package:todo_app/model/get_question/get_question.dart';
-import 'package:todo_app/model/login/login.dart';
+import 'package:todo_app/model/user/user.dart';
 import 'package:todo_app/store/error/error_store.dart';
 
 part 'home_store.g.dart';

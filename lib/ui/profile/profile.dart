@@ -27,6 +27,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    //todo send request after edit
+
     return Scaffold(
       appBar: _buildAppBar(),
       body: _buildBody(),
@@ -42,13 +44,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
         actions: [
           OutlinedButton(
-              onPressed: () {
-                Navigator.of(context).pushReplacementNamed(Routes.edit_profile_screen);
-              },
-              child: Text(
-                "Edit",
-                style: Theme.of(context).textTheme.button,
-              ))
+            onPressed: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).pushNamed(Routes.edit_profile_screen);
+            },
+            child: Text(
+              "Edit",
+              style: Theme.of(context).textTheme.button,
+            ),
+          )
         ],
       );
 

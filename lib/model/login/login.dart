@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:todo_app/model/user/user.dart';
 
 part 'login.g.dart';
 
@@ -22,35 +23,3 @@ class Login {
   Map<String, dynamic> toJson() => _$LoginToJson(this);
 }
 
-@JsonSerializable()
-class Account {
-  @JsonKey(name: 'id')
-  final String? id;
-  @JsonKey(name: 'username')
-  final String? username;
-  @JsonKey(name: 'email')
-  final String? email;
-  @JsonKey(name: 'firstName')
-  final String? firstName;
-  @JsonKey(name: 'lastName')
-  final String? lastName;
-  @JsonKey(name: 'image')
-  final String? image;
-  @JsonKey(name: 'score')
-  final int? score;
-
-  Account(
-      { this.id,
-     this.username,
-     this.email,
-     this.firstName,
-     this.lastName,
-     this.score,
-     this.image});
-
-  factory Account.fromJson(Map<String, dynamic> json) => _$AccountFromJson(json);
-
-  Map<String, dynamic> toJson() => _$AccountToJson(this);
-
-  String get fullName => (firstName??"null") + (lastName??"null") ;
-}

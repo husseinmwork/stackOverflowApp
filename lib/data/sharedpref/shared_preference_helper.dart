@@ -4,7 +4,8 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:todo_app/model/login/login.dart';
+import 'package:todo_app/model/user/user.dart';
+
 
 import 'constants/preferences.dart';
 
@@ -53,8 +54,6 @@ class SharedPreferenceHelper {
   //save user after login ------------------------------------------------------
   Future<Account?> get user async {
     var userString = _sharedPreference.getString(Preferences.user);
-    debugPrint("this user in shared pref =" + "$userString");
-
     if (userString != null) {
       /// string -> json -> map
       Map<String, dynamic> userMap = jsonDecode(userString);

@@ -1,14 +1,12 @@
 import 'dart:io';
-
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
-
 import 'package:injectable/injectable.dart';
 import 'package:mobx/mobx.dart';
 import 'package:todo_app/data/repositry.dart';
 import 'package:todo_app/model/profile/profile.dart';
 import 'package:todo_app/store/error/error_store.dart';
 import 'package:todo_app/utils/todo/todo_utils.dart';
+import 'package:todo_app/model/user/user.dart';
 
 import 'package:todo_app/utils/dio/dio_error_util.dart';
 
@@ -50,6 +48,9 @@ abstract class _ProfileStore with Store {
   Profile? profile;
 
   @observable
+  Account? user;
+
+  @observable
   bool errorEditProfile = false;
 
   ///get profile
@@ -65,7 +66,6 @@ abstract class _ProfileStore with Store {
   ///update profile
   Future updateProfile() async {
     this.loading = true;
-
     List<MultipartFile>? multiPartFile = [];
     if (image != null) {
       multiPartFile.add(
