@@ -74,8 +74,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   AppBar _buildAppBar() => AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0.0,
+    elevation: 4,
         leading: MaterialButton(
           child: Container(
             decoration: BoxDecoration(
@@ -102,6 +101,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              SizedBox(height: Dimens.padding_xl),
               _buildImage(),
               _buildTextField(),
             ],
@@ -149,7 +149,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               right: 0,
               child: CircleAvatar(
                 radius: 22,
-                backgroundColor: Theme.of(context).primaryColor,
+                backgroundColor: Colors.green,
                 child: Icon(Icons.add_a_photo_outlined,
                     size: 30, color: Colors.white),
               ),

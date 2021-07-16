@@ -30,22 +30,22 @@ class _AppDrawerState extends State<AppDrawer> {
         padding: EdgeInsets.zero,
         children: <Widget>[
           _createHeader(),
-          _createDrawerItem(
-              icon: Icons.contacts,
-              text: 'My Question',
-              onTap: () {
-                // Navigator.of(context).pushNamed(Routes.my_question);
-              }),
-          _createDrawerItem(icon: Icons.event, text: 'Events', onTap: () {}),
-          _createDrawerItem(icon: Icons.note, text: 'Notes', onTap: () {}),
-          Divider(),
-          _createDrawerItem(
-              icon: Icons.collections_bookmark, text: 'Steps', onTap: () {}),
-          _createDrawerItem(icon: Icons.face, text: 'Authors', onTap: () {}),
-          _createDrawerItem(
-              icon: Icons.account_box,
-              text: 'Flutter Documentation',
-              onTap: () {}),
+          // _createDrawerItem(
+          //     icon: Icons.contacts,
+          //     text: 'My Question',
+          //     onTap: () {
+          //       // Navigator.of(context).pushNamed(Routes.my_question);
+          //     }),
+          // _createDrawerItem(icon: Icons.event, text: 'Events', onTap: () {}),
+          // _createDrawerItem(icon: Icons.note, text: 'Notes', onTap: () {}),
+          // Divider(),
+          // _createDrawerItem(
+          //     icon: Icons.collections_bookmark, text: 'Steps', onTap: () {}),
+          // _createDrawerItem(icon: Icons.face, text: 'Authors', onTap: () {}),
+          // _createDrawerItem(
+          //     icon: Icons.account_box,
+          //     text: 'Flutter Documentation',
+          //     onTap: () {}),
           _createDrawerItem(
               icon: Icons.logout,
               text: 'Logout',
@@ -90,7 +90,7 @@ class _AppDrawerState extends State<AppDrawer> {
                   ),
                 ),
               ),
-              Text(_store.user?.email ?? "null"),
+              Text(_store.user?.email ?? "null" , style: Theme.of(context).textTheme.headline6,),
               Text(_store.user?.username ?? "null"),
             ],
           )),
@@ -104,10 +104,10 @@ class _AppDrawerState extends State<AppDrawer> {
     return ListTile(
       title: Row(
         children: <Widget>[
-          Icon(icon),
+          Icon(icon , color: _themeStore.darkMode?Colors.white:Colors.black),
           Padding(
             padding: EdgeInsets.only(left: 8.0),
-            child: Text(text),
+            child: Text(text , style: Theme.of(context).textTheme.bodyText2?.copyWith(color: _themeStore.darkMode?Colors.white:Colors.black),),
           )
         ],
       ),

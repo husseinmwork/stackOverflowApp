@@ -5,6 +5,7 @@ import 'package:todo_app/constants/assets.dart';
 import 'package:todo_app/constants/dimens.dart';
 import 'package:todo_app/store/language/language_store.dart';
 import 'package:todo_app/store/profile/profile_store.dart';
+import 'package:todo_app/store/theme/theme_store.dart';
 import 'package:todo_app/utils/routes/routes.dart';
 import 'package:todo_app/widgets/arrow_back_icon.dart';
 
@@ -16,12 +17,14 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   late LanguageStore _languageStore;
   late ProfileStore _store;
+  late ThemeStore _themeStore;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _languageStore = Provider.of<LanguageStore>(context);
     _store = Provider.of<ProfileStore>(context);
+    _themeStore = Provider.of<ThemeStore>(context);
     _store.getProfile();
   }
 
@@ -36,14 +39,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   AppBar _buildAppBar() => AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0.0,
+        elevation: 4,
         leading: ArrowBackIcon(),
         //todo  LocaleKeys.goto_register.tr(), change language after complete all section profile
         title: Text("Profile", style: Theme.of(context).textTheme.headline6),
-
         actions: [
-          OutlinedButton(
+          TextButton(
+            style: TextButton.styleFrom(backgroundColor: Colors.transparent),
             onPressed: () {
               Navigator.of(context).pop();
               Navigator.of(context).pushNamed(Routes.edit_profile_screen);
@@ -66,11 +68,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              _buildImage(),
-              _buildFullName(),
-              _buildEmail(),
-              _buildUserName(),
-              SizedBox(height: Dimens.padding_xl),
+              Container(
+                //todo add color
+                // color:Colors.grey[800],
+                height: MediaQuery.of(context).size.height * 0.40,
+                width: double.infinity,
+                child: Column(
+                  children: [
+                    SizedBox(height: Dimens.padding_xl),
+
+                    _buildImage(),
+                    SizedBox(height: Dimens.padding_normal),
+                    _buildFullName(),
+                    SizedBox(height: Dimens.padding_normal),
+                    _buildEmail(),
+                    SizedBox(height: Dimens.padding_normal),
+                    _buildUserName(),
+                  ],
+                ),
+              ),
+
               _buildRow(),
             ],
           ),
@@ -93,51 +110,100 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
       );
 
-  Widget _buildFullName() => Text(_store.profile?.fullName ?? "null",
-      style: Theme.of(context).textTheme.headline6);
-
-  Widget _buildUserName() => Text(_store.profile?.userName ?? "",
-      style: Theme.of(context).textTheme.subtitle2);
-
-  Widget _buildEmail() => Text(_store.profile?.email ?? "",
-      style: Theme.of(context).textTheme.subtitle2);
-
-  Widget _buildRow() => Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Column(
-            children: [
-              Text(_store.profile?.score?.toString() ?? "0",
-                  style: Theme.of(context).textTheme.headline6),
-              Text("Score", style: Theme.of(context).textTheme.subtitle2),
-            ],
-          ),
-          SizedBox(
-            height: Dimens.padding_xxl,
-            child: VerticalDivider(
-              color: Colors.white,
+  Widget _buildFullName() => Text(
+        _store.profile?.fullName ?? "null",
+        style: Theme.of(context).textTheme.headline6?.copyWith(
+              color: _themeStore.darkMode ? Colors.white : Colors.black,
             ),
-          ),
-          Column(
-            children: [
-              Text(_store.profile?.question?.length.toString() ?? "0",
-                  style: Theme.of(context).textTheme.headline6),
-              Text("Question", style: Theme.of(context).textTheme.subtitle2),
-            ],
-          ),
-          SizedBox(
-            height: Dimens.padding_xxl,
-            child: VerticalDivider(
-              color: Colors.white,
-            ),
-          ),
-          Column(
-            children: [
-              Text(_store.profile?.answer?.length.toString() ?? "0",
-                  style: Theme.of(context).textTheme.headline6),
-              Text("Answers", style: Theme.of(context).textTheme.subtitle2),
-            ],
-          ),
-        ],
       );
+
+  Widget _buildUserName() => Text(
+        _store.profile?.userName ?? "",
+        style: Theme.of(context).textTheme.subtitle2?.copyWith(
+              color: _themeStore.darkMode ? Colors.white : Colors.black,
+            ),
+      );
+
+  Widget _buildEmail() => Text(
+        _store.profile?.email ?? "",
+        style: Theme.of(context).textTheme.subtitle2?.copyWith(
+              color: _themeStore.darkMode ? Colors.white : Colors.black,
+            ),
+      );
+
+  Widget _buildRow() => Transform.translate(
+    offset: Offset(0,-35),
+    child: Card(
+      elevation: Dimens.padding_mini,
+      margin: EdgeInsets.symmetric(horizontal: Dimens.padding_normal),
+      child: Container(
+        padding: EdgeInsets.all(Dimens.padding_normal),
+        child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Column(
+                  children: [
+                    Text(
+                      _store.profile?.score?.toString() ?? "0",
+                      style: Theme.of(context).textTheme.headline6?.copyWith(
+                            color: _themeStore.darkMode ? Colors.white : Colors.black,
+                          ),
+                    ),
+                    Text(
+                      "Score",
+                      style: Theme.of(context).textTheme.subtitle2?.copyWith(
+                            color: _themeStore.darkMode ? Colors.white : Colors.black,
+                          ),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: Dimens.padding_xxl,
+                  child: VerticalDivider(
+                    color: _themeStore.darkMode ? Colors.white : Colors.black,
+                  ),
+                ),
+                Column(
+                  children: [
+                    Text(
+                      _store.profile?.question?.length.toString() ?? "0",
+                      style: Theme.of(context).textTheme.headline6?.copyWith(
+                            color: _themeStore.darkMode ? Colors.white : Colors.black,
+                          ),
+                    ),
+                    Text(
+                      "Question",
+                      style: Theme.of(context).textTheme.subtitle2?.copyWith(
+                            color: _themeStore.darkMode ? Colors.white : Colors.black,
+                          ),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: Dimens.padding_xxl,
+                  child: VerticalDivider(
+                    color: _themeStore.darkMode ? Colors.white : Colors.black,
+                  ),
+                ),
+                Column(
+                  children: [
+                    Text(
+                      _store.profile?.answer?.length.toString() ?? "0",
+                      style: Theme.of(context).textTheme.headline6?.copyWith(
+                            color: _themeStore.darkMode ? Colors.white : Colors.black,
+                          ),
+                    ),
+                    Text(
+                      "Answers",
+                      style: Theme.of(context).textTheme.subtitle2?.copyWith(
+                            color: _themeStore.darkMode ? Colors.white : Colors.black,
+                          ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+      ),
+    ),
+  );
 }
