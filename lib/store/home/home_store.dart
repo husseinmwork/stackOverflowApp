@@ -85,9 +85,9 @@ abstract class _HomeStore with Store {
   ///get question with paging
   @action
   Future getQuestion(int skip) async {
-    return await _repository
+     await _repository
         .getQuestion(skip)
-        .then((value) => question.addAll(value.results))
+        .then((value) => question = value.results)
         .catchError((e) {
       throw e;
     });
