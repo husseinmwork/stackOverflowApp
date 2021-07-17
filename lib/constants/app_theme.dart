@@ -99,6 +99,7 @@ final ThemeData themeDataDark = ThemeData(
   textTheme: textTheme,
   fontFamily: FontFamily.productSans,
   brightness: Brightness.dark,
+
   primaryColor: Colors.purple.shade300,
   // cardColor:Colors.white,
 
