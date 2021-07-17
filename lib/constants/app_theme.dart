@@ -84,7 +84,6 @@ final ThemeData themeData = new ThemeData(
     color: Colors.blue[800],
     backwardsCompatibility: false,
     iconTheme: IconThemeData(color: Colors.white),
-
     systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: Colors.blue[900]),
   ),
 );
@@ -95,14 +94,11 @@ final ThemeData themeDataDark = ThemeData(
     backwardsCompatibility: false,
     systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: Colors.black),
   ),
-
   textTheme: textTheme,
   fontFamily: FontFamily.productSans,
   brightness: Brightness.dark,
-
   primaryColor: Colors.purple.shade300,
   // cardColor:Colors.white,
-
   scaffoldBackgroundColor: AppColors.scaffoldBackgroundColor,
   primaryColorBrightness: Brightness.dark,
   floatingActionButtonTheme: FloatingActionButtonThemeData(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app/constants/assets.dart';
 import 'package:todo_app/constants/dimens.dart';
@@ -62,7 +63,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         builder: (_) => Visibility(
           visible: _store.profile != null,
           replacement: Center(
-            child: CircularProgressIndicator(),
+            child: SpinKitFoldingCube(color: Colors.purple[200]),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,

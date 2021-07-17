@@ -102,13 +102,13 @@ mixin _$HomeStore on _HomeStore, Store {
   final _$questionAtom = Atom(name: '_HomeStore.question');
 
   @override
-  ObservableList<List<Question>> get question {
+  List<Question> get question {
     _$questionAtom.reportRead();
     return super.question;
   }
 
   @override
-  set question(ObservableList<List<Question>> value) {
+  set question(List<Question> value) {
     _$questionAtom.reportWrite(value, super.question, () {
       super.question = value;
     });

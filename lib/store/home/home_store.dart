@@ -79,14 +79,15 @@ abstract class _HomeStore with Store {
   }
 
   @observable
-  ObservableList<List<Question>> question = ObservableList<List<Question>>();
+  List<Question> question = ObservableList<Question>();
+
 
   ///get question with paging
   @action
   Future getQuestion(int skip) async {
     return await _repository
         .getQuestion(skip)
-        .then((value) => question.add(value.results))
+        .then((value) => question.addAll(value.results))
         .catchError((e) {
       throw e;
     });
