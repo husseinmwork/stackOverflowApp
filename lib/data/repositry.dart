@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:todo_app/data/local/datasources/post/post_datasource.dart';
 import 'package:todo_app/data/network/apis/services.dart';
 import 'package:todo_app/data/sharedpref/shared_preference_helper.dart';
+import 'package:todo_app/model/create_question/create_question.dart';
 import 'package:todo_app/model/get_question/get_question.dart';
 import 'package:todo_app/model/helper/paging.dart';
 import 'package:todo_app/model/login/login.dart';
@@ -89,6 +90,11 @@ class Repository {
   ///get question with paging
   Future<Paging<Question>> getQuestion(int skip) async {
     return await _services.getQuestion(skip: skip).catchError((e) => throw e);
+  }
+
+  ///get question with paging
+  Future<CreateQuestion> createQuestion(CreateQuestion createQuestion) async {
+    return await _services.createQuestion(createQuestion).catchError((e) => throw e);
   }
 
   ///get profile

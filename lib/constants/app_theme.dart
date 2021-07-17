@@ -44,7 +44,7 @@ TextTheme textTheme = TextTheme(
     subtitle1: TextStyle(
         fontSize: 18, fontWeight: FontWeight.w600, color: Colors.white),
     subtitle2: TextStyle(
-        fontSize: 16, fontWeight: FontWeight.w600, color: Colors.white),
+        fontSize: 15, fontWeight: FontWeight.w600, color: Colors.white),
     button: TextStyle(
         fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
     bodyText1: TextStyle(

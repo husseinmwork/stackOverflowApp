@@ -17,10 +17,12 @@ class Endpoints {
   static const String sendEmail = baseUrl + "/accounts/passwords/email";
   static const String resetPassword = baseUrl + "/accounts/passwords/reset";
 
+  static const String refreshToken = baseUrl + "/accounts/tokens/refresh";
+
   ///end: end point of Registration
 
-  ///get my question
-  static const String getQuestion = baseUrl + "/questions";
+  // question
+  static const String question = baseUrl + "/questions";
   static const String querySkip = 'skip';
   static const String queryLimit = 'take';
 
@@ -28,6 +30,5 @@ class Endpoints {
   static const String profile = baseUrl + "/accounts/profile";
   static const String updateProfile = baseUrl + "/accounts/profile";
 
-  static const String refreshToken = baseUrl + "/accounts/tokens/refresh";
 
 }

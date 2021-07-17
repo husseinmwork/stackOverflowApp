@@ -5,12 +5,12 @@ import 'package:injectable/injectable.dart';
 import 'package:todo_app/data/network/constant/end_points.dart';
 import 'package:todo_app/data/network/dio_client.dart';
 import 'package:todo_app/data/network/rest_client.dart';
+import 'package:todo_app/model/create_question/create_question.dart';
 import 'package:todo_app/model/get_question/get_question.dart';
 import 'package:todo_app/model/helper/paging.dart';
 import 'package:todo_app/model/login/login.dart';
 import 'package:todo_app/model/profile/profile.dart';
 import 'package:todo_app/model/user/user.dart';
-import 'package:todo_app/utils/todo/todo_utils.dart';
 
 @Singleton()
 class Services {
@@ -96,7 +96,7 @@ class Services {
       };
 
       var response =
-          await _dioClient.get(Endpoints.getQuestion, queryParameters: queries);
+          await _dioClient.get(Endpoints.question, queryParameters: queries);
       var pagination =
           Paging<Question>.fromJson(response, Question.fromJsonModel);
       return pagination;
@@ -104,4 +104,15 @@ class Services {
       throw e;
     }
   }
+
+  ///create question
+  Future createQuestion(CreateQuestion createQuestion)async{
+    try{
+      var response = await _dioClient.post(Endpoints.question , data: createQuestion.toJson());
+      return CreateQuestion.fromJson(response);
+    }catch(error){
+      throw error;
+    }
+  }
+
 }

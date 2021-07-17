@@ -1,4 +1,5 @@
-import 'package:json_annotation/json_annotation.dart'; 
+import 'package:json_annotation/json_annotation.dart';
+import 'package:todo_app/model/user/user.dart';
 
 part 'get_question.g.dart';
 
@@ -12,8 +13,10 @@ class Question {
   final  double? votes;
   @JsonKey(name: 'userId')
   final  String? userId;
+  @JsonKey(name: 'user')
+  final  Account? user;
 
-  Question({this.id, this.body, this.votes, this.userId});
+  Question({this.id, this.body, this.votes, this.user, this.userId});
 
   factory Question.fromJson(Map<String, dynamic> json) => _$QuestionFromJson(json);
 

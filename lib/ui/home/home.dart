@@ -4,6 +4,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:provider/provider.dart';
+import 'package:todo_app/constants/assets.dart';
 import 'package:todo_app/constants/dimens.dart';
 import 'package:todo_app/model/get_question/get_question.dart';
 import 'package:todo_app/store/home/home_store.dart';
@@ -189,34 +190,20 @@ class _QuestionItemState extends State<QuestionItem> {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  ImageAvatar(
-                      radius: 18,
-                      onTap: () {},
-                      image:
-                          "https://www.dmarge.com/wp-content/uploads/2021/01/dwayne-the-rock-.jpg"),
+                  _buildImage(),
                   SizedBox(width: Dimens.padding_mini),
-                  Text(
-                    widget.item.userId!,
-                    style: Theme.of(context).textTheme.subtitle2?.copyWith(
-                          color: _themeStore.darkMode
-                              ? Colors.white
-                              : Colors.black,
-                        ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [_buildUserName(), _buildUserScore()],
                   ),
                 ],
               ),
               SizedBox(height: Dimens.padding_mid),
-              //this regExp is remove space and order the any text get from api
-              Text(
-                widget.item.body
-                    .toString()
-                    .replaceAll(new RegExp(r"\n|\s\n"), ""),
-                maxLines: 6,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.start,
-                style: Theme.of(context).textTheme.caption?.copyWith(
-                      color: _themeStore.darkMode ? Colors.white : Colors.black,
-                    ),
+              _buildQuestion(),
+              SizedBox(height: Dimens.padding_large),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [_buildLike(), _buildAnswer()],
               ),
             ],
           ),
@@ -224,4 +211,70 @@ class _QuestionItemState extends State<QuestionItem> {
       ),
     );
   }
+
+  Widget _buildImage() => CircleAvatar(
+        radius: Dimens.cardQuestionImage,
+        child: ClipOval(
+          child: FadeInImage.assetNetwork(
+            fit: BoxFit.cover,
+            placeholder: Assets.placeHolder,
+            height: double.infinity,
+            width: double.infinity,
+            image: widget.item.user!.image ?? "null",
+            imageErrorBuilder: (_, __, ___) {
+              return Image.asset(Assets.placeHolder, fit: BoxFit.cover);
+            },
+          ),
+        ),
+      );
+
+  Widget _buildUserName() => Text(
+        widget.item.user!.cardUserName,
+        style: Theme.of(context).textTheme.subtitle2?.copyWith(
+              color: _themeStore.darkMode ? Colors.white : Colors.black,
+            ),
+      );
+
+  Widget _buildUserScore() => Text(
+        widget.item.user!.score.toString(),
+        style: Theme.of(context).textTheme.caption?.copyWith(
+              color: _themeStore.darkMode ? Colors.white : Colors.black,
+            ),
+      );
+
+  Widget _buildQuestion() => Text(
+        widget.item.body.toString().replaceAll(new RegExp(r"\n|\s\n"), ""),
+        maxLines: 6,
+        overflow: TextOverflow.ellipsis,
+        textAlign: TextAlign.start,
+        style: Theme.of(context).textTheme.caption?.copyWith(
+              color: _themeStore.darkMode ? Colors.white : Colors.black,
+            ),
+      );
+
+  Widget _buildLike() => Row(
+        children: [
+          Icon(Icons.favorite, size: 20),
+          SizedBox(width: Dimens.padding_normal),
+          Text(
+            widget.item.votes.toString(),
+            style: Theme.of(context).textTheme.caption?.copyWith(
+                  color: _themeStore.darkMode ? Colors.white : Colors.black,
+                ),
+          )
+        ],
+      );
+
+  Widget _buildAnswer() => Row(
+        children: [
+          Icon(Icons.comment, size: 20),
+          SizedBox(width: Dimens.padding_normal),
+          Text(
+            widget.item.user?.answer?.length.toString() ?? "0",
+            style: Theme.of(context).textTheme.caption?.copyWith(
+                  color: _themeStore.darkMode ? Colors.white : Colors.black,
+                ),
+          )
+        ],
+      );
 }

@@ -39,5 +39,7 @@ class Account {
 
   Map<String, dynamic> toJson() => _$AccountToJson(this);
 
-  String get fullName => (firstName ?? "null") + (lastName ?? "null");
+  String get fullName => (firstName??"") + (lastName??"");
+
+  String get cardUserName =>fullName.isEmpty? "${username}" : "${fullName}";
 }
