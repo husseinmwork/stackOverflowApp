@@ -24,5 +24,4 @@ abstract class _CreateQuestionStore with Store {
 
   @observable
   bool errorCreateQuestion = false;
-
 }

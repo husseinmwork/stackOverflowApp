@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo_app/ui/create_question/create_question.dart';
 import 'package:todo_app/ui/home/home.dart';
 import 'package:todo_app/ui/login/login.dart';
 import 'package:todo_app/ui/my_question/my_question.dart';
@@ -19,7 +20,7 @@ class Routes {
   static const String otp_screen = '/otp';
   static const String profile_screen = '/profile';
   static const String edit_profile_screen = '/editProfile';
-  // static const String my_question = '/myQuestion';
+  static const String create_question = '/createQuestion';
 
   static final routes = <String, WidgetBuilder>{
     login: (BuildContext context) => LoginScreen(),
@@ -29,8 +30,6 @@ class Routes {
     otp_screen: (BuildContext context) => OtpScreen(),
     profile_screen: (BuildContext context) => ProfileScreen(),
     edit_profile_screen: (BuildContext context) => EditProfileScreen(),
-    // my_question: (BuildContext context) => MyQuestionScreen(),
+    create_question: (BuildContext context) => CreateQuestionScreen(),
   };
-
-
 }

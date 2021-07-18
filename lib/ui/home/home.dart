@@ -10,7 +10,7 @@ import 'package:todo_app/model/get_question/get_question.dart';
 import 'package:todo_app/store/home/home_store.dart';
 import 'package:todo_app/store/theme/theme_store.dart';
 import 'package:todo_app/ui/home/app_drawer.dart';
-import 'package:todo_app/widgets/image_avatar.dart';
+import 'package:todo_app/utils/routes/routes.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -65,19 +65,31 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       drawer: AppDrawer(),
       appBar: _buildAppBar(),
-      floatingActionButton: _buildFAB(),
+      floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.of(context).pushNamed(Routes.create_question);
+          },
+          child: Icon(Icons.add)),
       body: _buildBody(),
     );
   }
 
   AppBar _buildAppBar() => AppBar(
-        elevation: 0,
         title: Row(
           children: [
-            Text(
-              //todo RichText and change color
-              "Stackoverflow",
-              style: Theme.of(context).textTheme.headline6,
+            RichText(
+              text: TextSpan(children: [
+                TextSpan(
+                  text: "Stack",
+                  style: Theme.of(context).textTheme.headline6,
+                ),
+                TextSpan(
+                  text: "overflow",
+                  style: Theme.of(context).textTheme.headline6?.copyWith(
+                      color: /*_themeStore.darkMode? AppColors.lightPurple:*/ Colors
+                          .amber),
+                ),
+              ]),
             ),
           ],
         ),
@@ -86,7 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       );
 
-  Widget _buildFAB() => Observer(
+/*  Widget _buildFAB() => Observer(
         builder: (_) => AnimatedOpacity(
           child: FloatingActionButton(
             child: Icon(Icons.arrow_upward, color: Colors.black),
@@ -102,7 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
           duration: Duration(milliseconds: 100),
           opacity: _store.fabIsVisible ? 1 : 0,
         ),
-      );
+      );*/
 
   Widget _buildThemeButton() => Observer(
         builder: (context) {
@@ -203,7 +215,11 @@ class _QuestionItemState extends State<QuestionItem> {
               SizedBox(height: Dimens.padding_large),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [_buildLike(), _buildAnswer()],
+                children: [
+                  _buildAnswer(),
+                  _buildViews(),
+                  _buildLike(),
+                ],
               ),
             ],
           ),
@@ -269,6 +285,20 @@ class _QuestionItemState extends State<QuestionItem> {
         children: [
           Icon(Icons.comment, size: 20),
           SizedBox(width: Dimens.padding_normal),
+          Text(
+            widget.item.user?.answer?.length.toString() ?? "0",
+            style: Theme.of(context).textTheme.caption?.copyWith(
+                  color: _themeStore.darkMode ? Colors.white : Colors.black,
+                ),
+          )
+        ],
+      );
+
+  Widget _buildViews() => Row(
+        children: [
+          Icon(Icons.visibility, size: 20),
+          SizedBox(width: Dimens.padding_normal),
+          //todo this into views after add in backend
           Text(
             widget.item.user?.answer?.length.toString() ?? "0",
             style: Theme.of(context).textTheme.caption?.copyWith(

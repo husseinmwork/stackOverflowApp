@@ -89,15 +89,15 @@ final ThemeData themeData = new ThemeData(
 );
 
 final ThemeData themeDataDark = ThemeData(
-  appBarTheme: AppBarTheme(
-    color: Colors.grey[800],
-    backwardsCompatibility: false,
-    systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: Colors.black),
-  ),
+  // appBarTheme: AppBarTheme(
+  //   color: Colors.grey[800],
+  //   backwardsCompatibility: false,
+  //   systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: Colors.black),
+  // ),
   textTheme: textTheme,
   fontFamily: FontFamily.productSans,
   brightness: Brightness.dark,
-  primaryColor: Colors.purple.shade300,
+  primaryColor: Colors.purple.shade700,
   // cardColor:Colors.white,
   scaffoldBackgroundColor: AppColors.scaffoldBackgroundColor,
   primaryColorBrightness: Brightness.dark,
@@ -107,7 +107,7 @@ final ThemeData themeDataDark = ThemeData(
     style: TextButton.styleFrom(
         primary: Colors.white, backgroundColor: Colors.green),
   ),
-  accentColor: AppColors.lightPurple,
+  accentColor: Colors.purple.shade500,
 
   accentColorBrightness: Brightness.dark,
   // iconTheme: IconThemeData(color: Colors.red),
