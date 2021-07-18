@@ -11,6 +11,7 @@ import 'package:todo_app/store/home/home_store.dart';
 import 'package:todo_app/store/theme/theme_store.dart';
 import 'package:todo_app/ui/home/app_drawer.dart';
 import 'package:todo_app/utils/routes/routes.dart';
+import 'package:todo_app/widgets/arrow_back_icon.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -95,8 +96,15 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         actions: [
           _buildThemeButton(),
+          _buildSearchIcon(),
         ],
       );
+
+  Widget _buildSearchIcon() => IconButton(
+      icon: Icon(Icons.search),
+      onPressed: () {
+        showSearch(context: context, delegate: SearchQuestion());
+      });
 
 /*  Widget _buildFAB() => Observer(
         builder: (_) => AnimatedOpacity(
@@ -307,4 +315,30 @@ class _QuestionItemState extends State<QuestionItem> {
           )
         ],
       );
+}
+
+class SearchQuestion extends SearchDelegate<String> {
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    // TODO: action for appBar
+    return [IconButton(icon: Icon(Icons.clear), onPressed: () {})];
+  }
+
+  @override
+  Widget buildLeading(BuildContext context) {
+    // TODO: Icon Leading
+    return IconButton(icon: ArrowBackIcon(), onPressed: () {});
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    // TODO: result search
+    throw UnimplementedError();
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    // TODO: show when someone searchers for something
+    return Text("body search");
+  }
 }
