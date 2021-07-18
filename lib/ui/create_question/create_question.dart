@@ -45,7 +45,6 @@ class _CreateQuestionScreenState extends State<CreateQuestionScreen> {
               SizedBox(height: Dimens.padding_large),
               _buildQuestionBody(),
               SizedBox(height: Dimens.padding_large),
-
               _buildQuestionTags(),
             ],
           ),
