@@ -5,6 +5,7 @@ import 'package:mobx/mobx.dart';
 import 'package:todo_app/data/repositry.dart';
 import 'package:todo_app/model/get_question/get_question.dart';
 import 'package:todo_app/model/user/user.dart';
+import 'package:todo_app/model/filter/filter.dart';
 import 'package:todo_app/store/error/error_store.dart';
 
 part 'home_store.g.dart';
@@ -47,6 +48,29 @@ abstract class _HomeStore with Store {
   @observable
   List<String> socialLinkAgent = ObservableList<String>();
 
+  @observable
+  QuestionFilter? filter;
+
+  @observable
+  int? minVotes;
+
+  @observable
+  int? maxVotes;
+
+  @observable
+  String? body;
+
+  @observable
+  String? id;
+
+  @observable
+  String? userId;
+
+
+  @computed
+  bool get showIconFilter => minVotes == null && maxVotes == null
+      && body == null && id == null && userId == null;
+
   // actions:-------------------------------------------------------------------
   @action
   void updateScrolling() {
@@ -59,6 +83,15 @@ abstract class _HomeStore with Store {
   @action
   void disposeController() {
     controller.removeListener(() {});
+  }
+
+  @action
+  void removeFilter() {
+   body = null;
+   userId = null;
+   id = null;
+   minVotes = null;
+   maxVotes = null;
   }
 
   ///this method work logout and remove (user , authToken , IsLoggedIn) shared preferences
@@ -81,13 +114,20 @@ abstract class _HomeStore with Store {
   @observable
   List<Question> question = ObservableList<Question>();
 
-
   ///get question with paging
   @action
-  Future getQuestion(int skip) async {
-     await _repository
-        .getQuestion(skip)
-        .then((value) => question = value.results)
+  Future getQuestion(int skip, {int? limit}) async {
+    await _repository
+        .getQuestion(skip, filter: QuestionFilter(
+              body: body,
+              maxVotes: maxVotes,
+              minVotes: minVotes,
+              id: id,
+              userId: userId,
+            ))
+        .then((value) {
+          return question = value.results;
+        })
         .catchError((e) {
       throw e;
     });

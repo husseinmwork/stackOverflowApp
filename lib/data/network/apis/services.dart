@@ -6,11 +6,13 @@ import 'package:todo_app/data/network/constant/end_points.dart';
 import 'package:todo_app/data/network/dio_client.dart';
 import 'package:todo_app/data/network/rest_client.dart';
 import 'package:todo_app/model/create_question/create_question.dart';
+import 'package:todo_app/model/filter/filter.dart';
 import 'package:todo_app/model/get_question/get_question.dart';
 import 'package:todo_app/model/helper/paging.dart';
 import 'package:todo_app/model/login/login.dart';
 import 'package:todo_app/model/profile/profile.dart';
 import 'package:todo_app/model/user/user.dart';
+import 'package:todo_app/utils/todo/todo_utils.dart';
 
 @Singleton()
 class Services {
@@ -85,18 +87,19 @@ class Services {
   }
 
   ///get question with paging
-  Future<Paging<Question>> getQuestion({
-    int skip = 0,
-    int? take = 1000,
-  }) async {
+  Future<Paging<Question>> getQuestion(
+      {int skip = 0, int? take = 1000, QuestionFilter? filter}) async {
     try {
       Map<String, dynamic?> queries = {
         Endpoints.querySkip: skip,
         Endpoints.queryLimit: take
       };
 
+      if (filter != null) {
+        queries.addAll(filter.toJson());
+      }
       var response =
-          await _dioClient.get(Endpoints.question, queryParameters: queries);
+          await _dioClient.get(Endpoints.question, queryParameters: queries.removeNull());
       var pagination =
           Paging<Question>.fromJson(response, Question.fromJsonModel);
       return pagination;
@@ -106,13 +109,13 @@ class Services {
   }
 
   ///create question
-  Future createQuestion(CreateQuestion createQuestion)async{
-    try{
-      var response = await _dioClient.post(Endpoints.question , data: createQuestion.toJson());
+  Future createQuestion(CreateQuestion createQuestion) async {
+    try {
+      var response = await _dioClient.post(Endpoints.question,
+          data: createQuestion.toJson());
       return CreateQuestion.fromJson(response);
-    }catch(error){
+    } catch (error) {
       throw error;
     }
   }
-
 }

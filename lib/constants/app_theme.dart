@@ -29,35 +29,24 @@ import 'package:todo_app/constants/colors.dart';
 import 'package:todo_app/constants/font_family.dart';
 
 TextTheme textTheme = TextTheme(
-    headline1: TextStyle(
-        fontSize: 48, fontWeight: FontWeight.w600, color: Colors.white),
-    headline2: TextStyle(
-        fontSize: 40, fontWeight: FontWeight.w600, color: Colors.white),
-    headline3: TextStyle(
-        fontSize: 36, fontWeight: FontWeight.w600, color: Colors.white),
-    headline4: TextStyle(
-        fontSize: 32, fontWeight: FontWeight.w600, color: Colors.white),
-    headline5: TextStyle(
-        fontSize: 24, fontWeight: FontWeight.w600, color: Colors.white),
-    headline6: TextStyle(
-        fontSize: 20, fontWeight: FontWeight.w600, color: Colors.white),
-    subtitle1: TextStyle(
-        fontSize: 18, fontWeight: FontWeight.w600, color: Colors.white),
-    subtitle2: TextStyle(
-        fontSize: 15, fontWeight: FontWeight.w600, color: Colors.white),
-    button: TextStyle(
-        fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
-    bodyText1: TextStyle(
-        fontSize: 14, fontWeight: FontWeight.w500, color: Colors.white),
-    bodyText2: TextStyle(
-        fontSize: 13, fontWeight: FontWeight.w500, color: Colors.white),
-    caption: TextStyle(
-        fontSize: 12, fontWeight: FontWeight.w500, color: Colors.white),
-    overline: TextStyle(
-        fontSize: 10,
-        fontWeight: FontWeight.bold,
-        letterSpacing: 1.5,
-        color: Color(0xFF3A3D46)));
+  headline1: TextStyle(fontSize: 48, fontWeight: FontWeight.w600),
+  headline2: TextStyle(fontSize: 40, fontWeight: FontWeight.w600),
+  headline3: TextStyle(fontSize: 36, fontWeight: FontWeight.w600),
+  headline4: TextStyle(fontSize: 32, fontWeight: FontWeight.w600),
+  headline5: TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
+  headline6: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+  subtitle1: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+  subtitle2: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+  button: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+  bodyText1: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+  bodyText2: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+  caption: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+  overline: TextStyle(
+      fontSize: 10,
+      fontWeight: FontWeight.bold,
+      letterSpacing: 1.5,
+      color: Color(0xFF3A3D46)),
+);
 
 final ThemeData themeData = new ThemeData(
   textTheme: textTheme,

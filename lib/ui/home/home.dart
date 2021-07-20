@@ -4,14 +4,15 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:provider/provider.dart';
-import 'package:todo_app/constants/assets.dart';
+import 'package:side_sheet/side_sheet.dart';
 import 'package:todo_app/constants/dimens.dart';
 import 'package:todo_app/model/get_question/get_question.dart';
 import 'package:todo_app/store/home/home_store.dart';
 import 'package:todo_app/store/theme/theme_store.dart';
 import 'package:todo_app/ui/home/app_drawer.dart';
+import 'package:todo_app/ui/home/question_item.dart';
 import 'package:todo_app/utils/routes/routes.dart';
-import 'package:todo_app/widgets/arrow_back_icon.dart';
+import 'package:todo_app/widgets/todo_button.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -24,6 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final PagingController<int, Question> _pagingController =
       PagingController(firstPageKey: 0);
+  RangeValues _currentRangeValues = const RangeValues(0, 200);
 
   Future<void> _fetchPage(int pageKey) async {
     try {
@@ -66,11 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       drawer: AppDrawer(),
       appBar: _buildAppBar(),
-      floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.of(context).pushNamed(Routes.create_question);
-          },
-          child: Icon(Icons.add)),
+      floatingActionButton: _buildFAB(),
       body: _buildBody(),
     );
   }
@@ -97,7 +95,23 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           _buildThemeButton(),
           _buildSearchIcon(),
+          _buildFilterIcon(),
         ],
+      );
+
+  Widget _buildFAB() => Observer(
+        builder: (_) => Visibility(
+          visible: _store.showIconFilter == false,
+          child: FloatingActionButton(
+              backgroundColor: Colors.red,
+              onPressed: () {
+                _store.removeFilter();
+                _pagingController.refresh();
+                // Navigator.of(context).pushNamed(Routes.create_question);
+              },
+              child: Icon(Icons.clear,
+                  color: Colors.white, size: Dimens.padding_xxl)),
+        ),
       );
 
   Widget _buildSearchIcon() => IconButton(
@@ -105,6 +119,12 @@ class _HomeScreenState extends State<HomeScreen> {
       onPressed: () {
         showSearch(context: context, delegate: SearchQuestion());
       });
+
+  Widget _buildFilterIcon() => IconButton(
+        icon: Icon(Icons.filter_alt),
+        onPressed: () =>
+            SideSheet.right(body: _buildBodyFilter(), context: context),
+      );
 
 /*  Widget _buildFAB() => Observer(
         builder: (_) => AnimatedOpacity(
@@ -174,171 +194,95 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       );
-}
 
-class QuestionItem extends StatefulWidget {
-  final Question item;
-
-  QuestionItem({required this.item});
-
-  @override
-  _QuestionItemState createState() => _QuestionItemState();
-}
-
-class _QuestionItemState extends State<QuestionItem> {
-  late ThemeStore _themeStore;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _themeStore = Provider.of<ThemeStore>(context);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.symmetric(vertical: Dimens.padding_mini),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
-      child: InkWell(
-        onTap: () {},
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-              horizontal: Dimens.padding_mid, vertical: Dimens.padding_mid),
+  Widget _buildBodyFilter() => StatefulBuilder(
+        builder: (BuildContext context, StateSetter setState) => Container(
+          height: double.infinity,
+          width: double.infinity,
+          // padding: EdgeInsets.symmetric(
+          //     horizontal: Dimens.padding_normal, vertical: Dimens.padding_xl),
+          color: Theme.of(context).scaffoldBackgroundColor,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildImage(),
-                  SizedBox(width: Dimens.padding_mini),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [_buildUserName(), _buildUserScore()],
-                  ),
-                ],
+              AppBar(
+                automaticallyImplyLeading: false,
+
+                title:Text("Filter", style: Theme.of(context).textTheme.headline6),
+               actions: [  IconButton(
+                   icon: Icon(Icons.clear),
+                   onPressed: () {
+                     Navigator.pop(context);
+                   })],
+
               ),
-              SizedBox(height: Dimens.padding_mid),
-              _buildQuestion(),
-              SizedBox(height: Dimens.padding_large),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _buildAnswer(),
-                  _buildViews(),
-                  _buildLike(),
-                ],
+
+              SizedBox(height: Dimens.padding_xxl),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: Dimens.padding_normal),
+                child: Row(
+                  children: [
+                    Text("Votes", style: Theme.of(context).textTheme.subtitle2),
+                    Expanded(
+                      child: RangeSlider(
+                        values: _currentRangeValues,
+                        min: 0,
+                        max: 200,
+                        divisions: 10,
+                        labels: RangeLabels(
+                          _currentRangeValues.start.round().toString(),
+                          _currentRangeValues.end.round().toString(),
+                        ),
+                        onChanged: (RangeValues values) {
+                          setState(() {
+                            _currentRangeValues = values;
+                          });
+                          _store.minVotes = _currentRangeValues.start.toInt();
+                          _store.maxVotes = _currentRangeValues.end.toInt();
+                        },
+                      ),
+                    ),
+                  ],
+                ),
               ),
+              RoundedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    // _store.getQuestion(skip);
+                    _pagingController.refresh();
+                  },
+                  title: Text('Show Result'))
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildImage() => CircleAvatar(
-        radius: Dimens.cardQuestionImage,
-        child: ClipOval(
-          child: FadeInImage.assetNetwork(
-            fit: BoxFit.cover,
-            placeholder: Assets.placeHolder,
-            height: double.infinity,
-            width: double.infinity,
-            image: widget.item.user!.image ?? "null",
-            imageErrorBuilder: (_, __, ___) {
-              return Image.asset(Assets.placeHolder, fit: BoxFit.cover);
-            },
-          ),
-        ),
-      );
-
-  Widget _buildUserName() => Text(
-        widget.item.user!.cardUserName,
-        style: Theme.of(context).textTheme.subtitle2?.copyWith(
-              color: _themeStore.darkMode ? Colors.white : Colors.black,
-            ),
-      );
-
-  Widget _buildUserScore() => Text(
-        widget.item.user!.score.toString(),
-        style: Theme.of(context).textTheme.caption?.copyWith(
-              color: _themeStore.darkMode ? Colors.white : Colors.black,
-            ),
-      );
-
-  Widget _buildQuestion() => Text(
-        widget.item.body.toString().replaceAll(new RegExp(r"\n|\s\n"), ""),
-        maxLines: 6,
-        overflow: TextOverflow.ellipsis,
-        textAlign: TextAlign.start,
-        style: Theme.of(context).textTheme.caption?.copyWith(
-              color: _themeStore.darkMode ? Colors.white : Colors.black,
-            ),
-      );
-
-  Widget _buildLike() => Row(
-        children: [
-          Icon(Icons.favorite, size: 20),
-          SizedBox(width: Dimens.padding_normal),
-          Text(
-            widget.item.votes.toString(),
-            style: Theme.of(context).textTheme.caption?.copyWith(
-                  color: _themeStore.darkMode ? Colors.white : Colors.black,
-                ),
-          )
-        ],
-      );
-
-  Widget _buildAnswer() => Row(
-        children: [
-          Icon(Icons.comment, size: 20),
-          SizedBox(width: Dimens.padding_normal),
-          Text(
-            widget.item.user?.answer?.length.toString() ?? "0",
-            style: Theme.of(context).textTheme.caption?.copyWith(
-                  color: _themeStore.darkMode ? Colors.white : Colors.black,
-                ),
-          )
-        ],
-      );
-
-  Widget _buildViews() => Row(
-        children: [
-          Icon(Icons.visibility, size: 20),
-          SizedBox(width: Dimens.padding_normal),
-          //todo this into views after add in backend
-          Text(
-            widget.item.user?.answer?.length.toString() ?? "0",
-            style: Theme.of(context).textTheme.caption?.copyWith(
-                  color: _themeStore.darkMode ? Colors.white : Colors.black,
-                ),
-          )
-        ],
       );
 }
 
 class SearchQuestion extends SearchDelegate<String> {
+
   @override
   List<Widget> buildActions(BuildContext context) {
-    // TODO: action for appBar
     return [IconButton(icon: Icon(Icons.clear), onPressed: () {})];
   }
 
   @override
   Widget buildLeading(BuildContext context) {
-    // TODO: Icon Leading
-    return IconButton(icon: ArrowBackIcon(), onPressed: () {});
+    return IconButton(
+        icon: Icon(Icons.arrow_back),
+        onPressed: () {
+          Navigator.of(context).pop();
+        });
   }
 
   @override
   Widget buildResults(BuildContext context) {
-    // TODO: result search
     throw UnimplementedError();
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    // TODO: show when someone searchers for something
     return Text("body search");
   }
 }

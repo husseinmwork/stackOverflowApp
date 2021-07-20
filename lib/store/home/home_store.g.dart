@@ -99,6 +99,96 @@ mixin _$HomeStore on _HomeStore, Store {
     });
   }
 
+  final _$filterAtom = Atom(name: '_HomeStore.filter');
+
+  @override
+  QuestionFilter? get filter {
+    _$filterAtom.reportRead();
+    return super.filter;
+  }
+
+  @override
+  set filter(QuestionFilter? value) {
+    _$filterAtom.reportWrite(value, super.filter, () {
+      super.filter = value;
+    });
+  }
+
+  final _$minVotesAtom = Atom(name: '_HomeStore.minVotes');
+
+  @override
+  int? get minVotes {
+    _$minVotesAtom.reportRead();
+    return super.minVotes;
+  }
+
+  @override
+  set minVotes(int? value) {
+    _$minVotesAtom.reportWrite(value, super.minVotes, () {
+      super.minVotes = value;
+    });
+  }
+
+  final _$maxVotesAtom = Atom(name: '_HomeStore.maxVotes');
+
+  @override
+  int? get maxVotes {
+    _$maxVotesAtom.reportRead();
+    return super.maxVotes;
+  }
+
+  @override
+  set maxVotes(int? value) {
+    _$maxVotesAtom.reportWrite(value, super.maxVotes, () {
+      super.maxVotes = value;
+    });
+  }
+
+  final _$bodyAtom = Atom(name: '_HomeStore.body');
+
+  @override
+  String? get body {
+    _$bodyAtom.reportRead();
+    return super.body;
+  }
+
+  @override
+  set body(String? value) {
+    _$bodyAtom.reportWrite(value, super.body, () {
+      super.body = value;
+    });
+  }
+
+  final _$idAtom = Atom(name: '_HomeStore.id');
+
+  @override
+  String? get id {
+    _$idAtom.reportRead();
+    return super.id;
+  }
+
+  @override
+  set id(String? value) {
+    _$idAtom.reportWrite(value, super.id, () {
+      super.id = value;
+    });
+  }
+
+  final _$userIdAtom = Atom(name: '_HomeStore.userId');
+
+  @override
+  String? get userId {
+    _$userIdAtom.reportRead();
+    return super.userId;
+  }
+
+  @override
+  set userId(String? value) {
+    _$userIdAtom.reportWrite(value, super.userId, () {
+      super.userId = value;
+    });
+  }
+
   final _$questionAtom = Atom(name: '_HomeStore.question');
 
   @override
@@ -131,8 +221,9 @@ mixin _$HomeStore on _HomeStore, Store {
   final _$getQuestionAsyncAction = AsyncAction('_HomeStore.getQuestion');
 
   @override
-  Future<dynamic> getQuestion(int skip) {
-    return _$getQuestionAsyncAction.run(() => super.getQuestion(skip));
+  Future<dynamic> getQuestion(int skip, {int? limit}) {
+    return _$getQuestionAsyncAction
+        .run(() => super.getQuestion(skip, limit: limit));
   }
 
   final _$_HomeStoreActionController = ActionController(name: '_HomeStore');
@@ -160,6 +251,17 @@ mixin _$HomeStore on _HomeStore, Store {
   }
 
   @override
+  void removeFilter() {
+    final _$actionInfo = _$_HomeStoreActionController.startAction(
+        name: '_HomeStore.removeFilter');
+    try {
+      return super.removeFilter();
+    } finally {
+      _$_HomeStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 user: ${user},
@@ -168,6 +270,12 @@ loading: ${loading},
 controller: ${controller},
 fabIsVisible: ${fabIsVisible},
 socialLinkAgent: ${socialLinkAgent},
+filter: ${filter},
+minVotes: ${minVotes},
+maxVotes: ${maxVotes},
+body: ${body},
+id: ${id},
+userId: ${userId},
 question: ${question}
     ''';
   }
