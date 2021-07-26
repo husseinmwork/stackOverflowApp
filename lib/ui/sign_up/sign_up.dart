@@ -286,11 +286,11 @@ class _SignUpScreenState extends State<SignUpScreen>
 
   Widget _buildButtonRegistration() {
     return RoundedButton(
-        onPressed: () {
+        onPressed: ()async {
           DeviceUtils.hideKeyboard(context);
 
           if (_formStore.canRegister) {
-            _store.signUp();
+            await _store.signUp();
           } else {
             showErrorMessage('Please check all fields', context);
           }

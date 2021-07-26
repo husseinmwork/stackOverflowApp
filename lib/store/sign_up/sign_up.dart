@@ -57,6 +57,9 @@ abstract class _SignUpStore with Store {
   @observable
   bool showConfirmPassword = true;
 
+  @observable
+  bool errorRegister = false;
+
   @action
   Future signUp() async {
     List<MultipartFile> multiPartFile = [];
@@ -76,10 +79,11 @@ abstract class _SignUpStore with Store {
     var response = _repository.signUp(formData);
     response.then((value) {
       success = true;
+      errorRegister = false;
     }).catchError((error) {
       this.loading = false;
       this.success = false;
-      DioErrorUtil.handleError(error);
+      errorRegister = true;
       errorStore.errorMessage = DioErrorUtil.handleError(error);
     });
     return response;

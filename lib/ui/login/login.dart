@@ -42,17 +42,17 @@ class _LoginScreenState extends State<LoginScreen> {
     _themeStore = Provider.of<ThemeStore>(context);
     _languageStore = Provider.of<LanguageStore>(context);
     //
-    _store
-      ..userName = _userNameController.text = "hu1996"
-      ..password = _passwordController.text = "newpasswordddd1212";
-    _store.userName = "hu1996";
-    _store.password = "newpasswordddd1212";
-    //
     // _store
-    //   ..userName = _userNameController.text = "username2"
-    //   ..password = _passwordController.text = "username2";
-    // _store.userName = "username2";
-    // _store.password = "username2";
+    //   ..userName = _userNameController.text = "hu1996"
+    //   ..password = _passwordController.text = "newpasswordddd1212";
+    // _store.userName = "hu1996";
+    // _store.password = "newpasswordddd1212";
+
+    _store
+      ..userName = _userNameController.text = "superadmin"
+      ..password = _passwordController.text = "superadmin";
+    _store.userName = "superadmin";
+    _store.password = "superadmin";
   }
 
   @override
@@ -214,9 +214,11 @@ class _LoginScreenState extends State<LoginScreen> {
               RoundedButton(
                 onPressed: () async {
                   DeviceUtils.hideKeyboard(context);
-                  if (_formStore.canLogin) {
+                  if (_formStore.canLogin == true) {
                     await _store.login();
-                    if (_store.errorLogin) onSaveTaped();
+                    if ( _store.errorLogin == true) {
+                      onSaveTaped(context);
+                    }
                   } else {
                     showErrorMessage('Please check all fields', context);
                   }
@@ -247,7 +249,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void onSaveTaped() async {
+  void onSaveTaped(BuildContext context) async {
     final snackBar = SnackBar(
       content: Observer(
         builder: (_) => Text(

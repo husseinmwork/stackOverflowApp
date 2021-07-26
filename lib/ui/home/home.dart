@@ -1,3 +1,4 @@
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -7,10 +8,12 @@ import 'package:provider/provider.dart';
 import 'package:side_sheet/side_sheet.dart';
 import 'package:todo_app/constants/dimens.dart';
 import 'package:todo_app/model/get_question/get_question.dart';
+import 'package:todo_app/packages/anim_search_widget.dart';
 import 'package:todo_app/store/home/home_store.dart';
 import 'package:todo_app/store/theme/theme_store.dart';
 import 'package:todo_app/ui/home/app_drawer.dart';
 import 'package:todo_app/ui/home/question_item.dart';
+import 'package:todo_app/utils/device/device_utils.dart';
 import 'package:todo_app/utils/routes/routes.dart';
 import 'package:todo_app/widgets/todo_button.dart';
 
@@ -26,6 +29,9 @@ class _HomeScreenState extends State<HomeScreen> {
   final PagingController<int, Question> _pagingController =
       PagingController(firstPageKey: 0);
   RangeValues _currentRangeValues = const RangeValues(0, 200);
+  TextEditingController searchController = TextEditingController();
+  bool _showNameApp = true;
+  bool _showSearchColor = false;
 
   Future<void> _fetchPage(int pageKey) async {
     try {
@@ -76,24 +82,26 @@ class _HomeScreenState extends State<HomeScreen> {
   AppBar _buildAppBar() => AppBar(
         title: Row(
           children: [
-            RichText(
-              text: TextSpan(children: [
-                TextSpan(
-                  text: "Stack",
-                  style: Theme.of(context).textTheme.headline6,
-                ),
-                TextSpan(
-                  text: "overflow",
-                  style: Theme.of(context).textTheme.headline6?.copyWith(
-                      color: /*_themeStore.darkMode? AppColors.lightPurple:*/ Colors
-                          .amber),
-                ),
-              ]),
+            Visibility(
+              visible: _showNameApp == true,
+              child: RichText(
+                text: TextSpan(children: [
+                  TextSpan(
+                    text: "Stack",
+                    style: Theme.of(context).textTheme.headline6,
+                  ),
+                  TextSpan(
+                    text: "overflow",
+                    style: Theme.of(context).textTheme.headline6?.copyWith(
+                        color: /*_themeStore.darkMode? AppColors.lightPurple:*/ Colors
+                            .amber),
+                  ),
+                ]),
+              ),
             ),
           ],
         ),
         actions: [
-          _buildThemeButton(),
           _buildSearchIcon(),
           _buildFilterIcon(),
         ],
@@ -107,6 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onPressed: () {
                 _store.removeFilter();
                 _pagingController.refresh();
+                DeviceUtils.hideKeyboard(context);
                 // Navigator.of(context).pushNamed(Routes.create_question);
               },
               child: Icon(Icons.clear,
@@ -114,16 +123,107 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       );
 
-  Widget _buildSearchIcon() => IconButton(
-      icon: Icon(Icons.search),
-      onPressed: () {
-        showSearch(context: context, delegate: SearchQuestion());
-      });
+  void _modalBottomSheetMenu() {
+    showModalBottomSheet(
+        context: context,
+        builder: (builder) {
+          return new Container(
+              height: 350.0,
+              color: Colors.transparent,
+              //could change this to Color(0xFF737373),
+              //so you don't have to change MaterialApp canvasColor
+              child: StatefulBuilder(
+                builder: (BuildContext context, StateSetter setState) =>
+                    Container(
+                  height: double.infinity,
+                  width: double.infinity,
+                  // padding: EdgeInsets.symmetric(
+                  //     horizontal: Dimens.padding_normal, vertical: Dimens.padding_xl),
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text("Filter",
+                          style: Theme.of(context).textTheme.headline6),
+                      SizedBox(height: Dimens.padding_xxl),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: Dimens.padding_normal),
+                        child: Row(
+                          children: [
+                            Text("Votes",
+                                style: Theme.of(context).textTheme.subtitle2),
+                            Expanded(
+                              child: RangeSlider(
+                                values: _currentRangeValues,
+                                min: 0,
+                                max: 200,
+                                divisions: 10,
+                                labels: RangeLabels(
+                                  _currentRangeValues.start.round().toString(),
+                                  _currentRangeValues.end.round().toString(),
+                                ),
+                                onChanged: (RangeValues values) {
+                                  setState(() {
+                                    _currentRangeValues = values;
+                                  });
+                                  _store.minVotes =
+                                      _currentRangeValues.start.toInt();
+                                  _store.maxVotes =
+                                      _currentRangeValues.end.toInt();
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      RoundedButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            // _store.getQuestion(skip);
+                            _pagingController.refresh();
+                          },
+                          title: Text('Show Result'))
+                    ],
+                  ),
+                ),
+              ));
+        });
+  }
+
+  Widget _buildSearchIcon() => AnimSearchBar(
+        onTap: () async {
+          await Future.delayed(
+              Duration(milliseconds: _showNameApp == true ? 100 : 300));
+          setState(() {
+            _showSearchColor = !_showSearchColor;
+            _showNameApp = !_showNameApp;
+          });
+        },
+        autoFocus: true,
+        color:_showSearchColor ?Colors.black: Colors.transparent,
+        width: MediaQuery.of(context).size.width * 0.70,
+        textController: searchController,
+        onChange: (value) {
+          print(value);
+          _store.body = value;
+          _pagingController.refresh();
+        },
+        onSuffixTap: () {
+          setState(() {
+            searchController.clear();
+            _showNameApp = true;
+          });
+        },
+      );
 
   Widget _buildFilterIcon() => IconButton(
         icon: Icon(Icons.filter_alt),
-        onPressed: () =>
-            SideSheet.right(body: _buildBodyFilter(), context: context),
+        onPressed: () {
+          // SideSheet.right(body: _buildBodyFilter(), context: context);
+          _modalBottomSheetMenu();
+        },
       );
 
 /*  Widget _buildFAB() => Observer(
@@ -144,18 +244,6 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       );*/
 
-  Widget _buildThemeButton() => Observer(
-        builder: (context) {
-          return IconButton(
-            onPressed: () {
-              _themeStore.changeBrightnessToDark(!_themeStore.darkMode);
-            },
-            icon: Icon(
-              _themeStore.darkMode ? Icons.brightness_5 : Icons.brightness_3,
-            ),
-          );
-        },
-      );
 
   Widget _buildBody() => _buildMainPaging();
 
@@ -194,95 +282,4 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       );
-
-  Widget _buildBodyFilter() => StatefulBuilder(
-        builder: (BuildContext context, StateSetter setState) => Container(
-          height: double.infinity,
-          width: double.infinity,
-          // padding: EdgeInsets.symmetric(
-          //     horizontal: Dimens.padding_normal, vertical: Dimens.padding_xl),
-          color: Theme.of(context).scaffoldBackgroundColor,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              AppBar(
-                automaticallyImplyLeading: false,
-
-                title:Text("Filter", style: Theme.of(context).textTheme.headline6),
-               actions: [  IconButton(
-                   icon: Icon(Icons.clear),
-                   onPressed: () {
-                     Navigator.pop(context);
-                   })],
-
-              ),
-
-              SizedBox(height: Dimens.padding_xxl),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: Dimens.padding_normal),
-                child: Row(
-                  children: [
-                    Text("Votes", style: Theme.of(context).textTheme.subtitle2),
-                    Expanded(
-                      child: RangeSlider(
-                        values: _currentRangeValues,
-                        min: 0,
-                        max: 200,
-                        divisions: 10,
-                        labels: RangeLabels(
-                          _currentRangeValues.start.round().toString(),
-                          _currentRangeValues.end.round().toString(),
-                        ),
-                        onChanged: (RangeValues values) {
-                          setState(() {
-                            _currentRangeValues = values;
-                          });
-                          _store.minVotes = _currentRangeValues.start.toInt();
-                          _store.maxVotes = _currentRangeValues.end.toInt();
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              RoundedButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    // _store.getQuestion(skip);
-                    _pagingController.refresh();
-                  },
-                  title: Text('Show Result'))
-            ],
-          ),
-        ),
-      );
-}
-
-class SearchQuestion extends SearchDelegate<String> {
-
-  @override
-  List<Widget> buildActions(BuildContext context) {
-    return [IconButton(icon: Icon(Icons.clear), onPressed: () {})];
-  }
-
-  @override
-  Widget buildLeading(BuildContext context) {
-    return IconButton(
-        icon: Icon(Icons.arrow_back),
-        onPressed: () {
-          Navigator.of(context).pop();
-        });
-  }
-
-  @override
-  Widget buildResults(BuildContext context) {
-    throw UnimplementedError();
-  }
-
-  @override
-  Widget buildSuggestions(BuildContext context) {
-    return Text("body search");
-  }
 }

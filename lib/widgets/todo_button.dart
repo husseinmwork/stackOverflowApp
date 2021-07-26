@@ -19,7 +19,7 @@ class RoundedButton extends StatelessWidget {
       style: TextButton.styleFrom(
           minimumSize: Size(double.infinity, 48),
           shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(Dimens.borderButton)),
+              borderRadius: BorderRadius.circular(Dimens.padding_small)),
 
           primary: Colors.white),
       onPressed: () {

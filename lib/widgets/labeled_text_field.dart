@@ -100,7 +100,7 @@ class _LabeledTextFieldState extends State<LabeledTextField> {
             focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(
                   color: _themeStore.darkMode
-                      ? Color(0xFFA5F59C)
+                      ? Colors.amber[500]!
                       : AppColors.DarkPurple),
             ),
             hintStyle: Theme.of(context).textTheme.subtitle2?.copyWith(

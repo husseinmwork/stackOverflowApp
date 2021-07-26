@@ -53,15 +53,17 @@ final ThemeData themeData = new ThemeData(
   fontFamily: FontFamily.productSans,
   brightness: Brightness.light,
   buttonColor: AppColors.shapeColor,
-  cardColor: Colors.white,
+/*  cardColor: Colors.white,
   textButtonTheme: TextButtonThemeData(
     style: TextButton.styleFrom(
         primary: Colors.white, backgroundColor: Colors.blue.shade600),
-  ),
+  ),*/
   // primarySwatch: MaterialColor(AppColors.orange[500]!.value, AppColors.orange),
+/*
   scaffoldBackgroundColor: Colors.white,
+*/
   // scaffoldBackgroundColor: Colors.grey,
-  primaryColor: Colors.blue,
+/*  primaryColor: Colors.blue,
   backgroundColor: Colors.white,
   primaryColorBrightness: Brightness.light,
   accentColor: Colors.blue,
@@ -74,34 +76,43 @@ final ThemeData themeData = new ThemeData(
     backwardsCompatibility: false,
     iconTheme: IconThemeData(color: Colors.white),
     systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: Colors.blue[900]),
-  ),
+  ),*/
 );
 
 final ThemeData themeDataDark = ThemeData(
-  // appBarTheme: AppBarTheme(
-  //   color: Colors.grey[800],
-  //   backwardsCompatibility: false,
-  //   systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: Colors.black),
-  // ),
+  appBarTheme: AppBarTheme(
+    color: Colors.grey[800],
+    backwardsCompatibility: false,
+    systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: Colors.black),
+  ),
   textTheme: textTheme,
-  fontFamily: FontFamily.productSans,
-  brightness: Brightness.dark,
-  primaryColor: Colors.purple.shade700,
-  // cardColor:Colors.white,
-  scaffoldBackgroundColor: AppColors.scaffoldBackgroundColor,
-  primaryColorBrightness: Brightness.dark,
-  floatingActionButtonTheme: FloatingActionButtonThemeData(
-      foregroundColor: AppColors.scaffoldBackgroundColor),
+  // fontFamily: FontFamily.productSans,
+  // brightness: Brightness.dark,
+  // primaryColor: Colors.purple.shade700,
+  // cardColor:Colors.grey.shade900,
+  // scaffoldBackgroundColor: AppColors.scaffoldBackgroundColor,
+  // primaryColorBrightness: Brightness.dark,
+  //
+  // floatingActionButtonTheme: FloatingActionButtonThemeData(
+  //     foregroundColor: AppColors.scaffoldBackgroundColor),
+
+  // accentColor: Colors.purple.shade500,
+  //
+  // accentColorBrightness: Brightness.dark,
+  // // iconTheme: IconThemeData(color: Colors.red),
+  // primarySwatch: Colors.grey,
+  // // backgroundColor: const Color(0xFF212121),
+  // accentIconTheme: IconThemeData(color: Colors.black),
   textButtonTheme: TextButtonThemeData(
     style: TextButton.styleFrom(
-        primary: Colors.white, backgroundColor: Colors.green),
+        primary: Colors.white, backgroundColor: Colors.amber),
   ),
-  accentColor: Colors.purple.shade500,
-
-  accentColorBrightness: Brightness.dark,
-  // iconTheme: IconThemeData(color: Colors.red),
   primarySwatch: Colors.grey,
-  // backgroundColor: const Color(0xFF212121),
+  primaryColor:  Colors.grey[800],
+  brightness: Brightness.dark,
+  backgroundColor: const Color(0xFF212121),
+  accentColor: Colors.white,
   accentIconTheme: IconThemeData(color: Colors.black),
   dividerColor: Colors.black12,
+
 );

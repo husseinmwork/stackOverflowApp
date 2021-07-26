@@ -13,6 +13,7 @@ import 'package:todo_app/store/sign_up/sign_up.dart';
 import 'package:todo_app/store/theme/theme_store.dart';
 import 'package:todo_app/ui/home/home.dart';
 import 'package:todo_app/ui/login/login.dart';
+import 'package:todo_app/ui/welcome/welcome_screen.dart';
 import 'package:todo_app/utils/routes/routes.dart';
 import 'package:todo_app/data/repositry.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -55,7 +56,7 @@ class MyApp extends StatelessWidget {
             title: Strings.appName,
             theme: _themeStore.darkMode ? themeDataDark : themeData,
             routes: Routes.routes,
-            home: _homeStore.isLoggedIn ? HomeScreen() : LoginScreen(),
+            home: _homeStore.isLoggedIn ? HomeScreen() : WelcomeScreen(),
           );
         },
       ),

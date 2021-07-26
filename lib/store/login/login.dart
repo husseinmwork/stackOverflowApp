@@ -51,11 +51,9 @@ abstract class _LoginStore with Store {
     }).catchError((error) {
       this.loading = false;
       this.success = false;
-      errorLogin = true;
-      // if (error is DioError) {
-        DioErrorUtil.handleError(error);
+      this.errorLogin = true;
+         DioErrorUtil.handleError(error);
         errorStore.errorMessage = DioErrorUtil.handleError(error);
-      // }
     });
   }
 }
