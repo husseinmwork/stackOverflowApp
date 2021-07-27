@@ -84,11 +84,6 @@ class _LoginScreenState extends State<LoginScreen> {
           style: Theme.of(context).textTheme.headline6),
       actions: [
         _buildThemeButton(),
-        IconButton(
-            icon: Icon(Icons.language),
-            onPressed: () {
-              _buildLanguageDialog();
-            }),
       ],
     );
   }
@@ -264,67 +259,9 @@ class _LoginScreenState extends State<LoginScreen> {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
-//toast
-// Observer(builder: (_)=>_store.resultForgetPassword.isEmpty?SizedBox(height: 0): _showToast(context)),
-// Widget _showToast(BuildContext context) {
-//   Future.delayed(Duration.zero, () {
-//     showToast(_store.resultForgetPassword['detail'], duration: 4  , gravity: 1 );
-//   });
-//   return SizedBox.shrink();
-// }
 
-//
-//   void showToast(String msg, {int? duration, int? gravity}) {
-//     Toast.show(msg, context, duration: duration, gravity: gravity);
-//   }
 
-  _buildLanguageDialog() {
-    showDialogLang<String>(
-      context: context,
-      child: MaterialDialog(
-          borderRadius: Dimens.border_mid,
-          enableFullWidth: true,
-          title: Text(
-            LocaleKeys.home_tv_choose_language.tr(),
-            style: Theme.of(context).textTheme.subtitle2,
-          ),
-          headerColor: Theme.of(context).primaryColor,
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          closeButtonColor: Colors.white,
-          enableCloseButton: true,
-          enableBackButton: false,
-          onCloseButtonClicked: () {
-            Navigator.of(context).pop();
-          },
-          children: [
-            _buildListTileLang(() {
-              Navigator.of(context).pop();
-              _languageStore.selectedLanguage = Language.ar;
-              context.setLocale(Locale('ar'));
-            }, LocaleKeys.arabic.tr()),
-            _buildListTileLang(() {
-              Navigator.of(context).pop();
-              _languageStore.selectedLanguage = Language.en;
-              context.setLocale(Locale('en'));
-            }, LocaleKeys.english.tr()),
-          ]),
-    );
-  }
 
-  _buildListTileLang(Function onTap, title) {
-    return ListTile(
-      dense: true,
-      contentPadding: EdgeInsets.all(0.0),
-      title: Text(
-        title,
-        style: Theme.of(context).textTheme.bodyText2?.copyWith(
-            color: _themeStore.darkMode ? Colors.white : Colors.black),
-      ),
-      onTap: () {
-        onTap();
-      },
-    );
-  }
 
   ///this  Navigation to another page
   _buildClosed() {

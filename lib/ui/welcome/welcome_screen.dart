@@ -1,19 +1,105 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
+import 'package:material_dialog/material_dialog.dart';
+import 'package:provider/provider.dart';
 import 'package:todo_app/constants/dimens.dart';
+import 'package:todo_app/generated/locale_keys.g.dart';
+import 'package:todo_app/store/language/language_store.dart';
+import 'package:todo_app/store/theme/theme_store.dart';
+import 'package:todo_app/utils/routes/routes.dart';
+import 'package:todo_app/utils/todo/todo_utils.dart';
+import 'package:todo_app/widgets/item_fade_animation.dart';
 import 'package:todo_app/widgets/outlined_button.dart';
 import 'package:todo_app/widgets/todo_button.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:vector_math/vector_math.dart' as math;
 
 class WelcomeScreen extends StatefulWidget {
   @override
   _WelcomeScreenState createState() => _WelcomeScreenState();
 }
 
-class _WelcomeScreenState extends State<WelcomeScreen> {
+class _WelcomeScreenState extends State<WelcomeScreen>
+    with SingleTickerProviderStateMixin {
+  late LanguageStore _languageStore;
+  late ThemeStore _themeStore;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _themeStore = Provider.of<ThemeStore>(context);
+    _languageStore = Provider.of<LanguageStore>(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: _buildBody(),
+    );
+  }
+
+  _buildLanguageDialog() {
+    showGeneralDialog(
+        barrierColor: Colors.black.withOpacity(0.5),
+        transitionBuilder: (context, a1, a2, widget) {
+          final curvedValue = Curves.easeInOutBack.transform(a1.value) - 1.0;
+          return Transform(
+            transform: Matrix4.translationValues(0.0, curvedValue * 200, 0.0),
+            child: Opacity(
+              opacity: a1.value,
+              child: MaterialDialog(
+                  borderRadius: Dimens.border_mid,
+                  enableFullWidth: true,
+                  title: Text(
+                    LocaleKeys.home_tv_choose_language.tr(),
+                    style: Theme.of(context).textTheme.subtitle2,
+                  ),
+                  headerColor: Theme.of(context).primaryColor,
+                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                  closeButtonColor: Colors.white,
+                  enableCloseButton: true,
+                  enableBackButton: false,
+                  onCloseButtonClicked: () {
+                    Navigator.of(context).pop();
+                  },
+                  children: [
+                    _buildListTileLang(() {
+                      Navigator.of(context).pop();
+                      _languageStore.selectedLanguage = Language.ar;
+                      context.setLocale(Locale('ar'));
+                    }, LocaleKeys.arabic.tr()),
+                    _buildListTileLang(() {
+                      Navigator.of(context).pop();
+                      _languageStore.selectedLanguage = Language.en;
+                      context.setLocale(Locale('en'));
+                    }, LocaleKeys.english.tr()),
+                  ]),
+            ),
+          );
+        },
+        transitionDuration: Duration(milliseconds: 400),
+        barrierDismissible: true,
+        barrierLabel: '',
+        context: context,
+        pageBuilder: (context, animation1, animation2) {
+          return Text("");
+        });
+  }
+
+  _buildListTileLang(Function onTap, title) {
+    return ListTile(
+      dense: true,
+      contentPadding: EdgeInsets.all(0.0),
+      title: Text(
+        title,
+        style: Theme.of(context).textTheme.bodyText2?.copyWith(
+            color: _themeStore.darkMode ? Colors.white : Colors.black),
+      ),
+      onTap: () {
+        onTap();
+      },
     );
   }
 
@@ -23,54 +109,77 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            RichText(
-              text: TextSpan(children: [
-                TextSpan(
-                  text: "Stack",
-                  style: Theme.of(context).textTheme.headline4,
-                ),
-                TextSpan(
-                  text: "overflow",
-                  style: Theme.of(context).textTheme.headline4?.copyWith(
-                      color: /*_themeStore.darkMode? AppColors.lightPurple:*/ Colors
-                          .amber),
-                ),
-              ]),
+            ItemFader(
+              duration: 300,
+              child: RichText(
+                text: TextSpan(children: [
+                  TextSpan(
+                    text: "Stack",
+                    style: Theme.of(context).textTheme.headline4,
+                  ),
+                  TextSpan(
+                    text: "overflow",
+                    style: Theme.of(context).textTheme.headline4?.copyWith(
+                        color: /*_themeStore.darkMode? AppColors.lightPurple:*/ Colors
+                            .amber),
+                  ),
+                ]),
+              ),
             ),
             Column(
               children: [
-                Text(
-                  "Welcome!",
-                  style: Theme.of(context).textTheme.headline5,
+                ItemFader(
+                  duration: 400,
+                  child: Text(
+                    "Welcome!",
+                    style: Theme.of(context).textTheme.headline5,
+                  ),
                 ),
                 SizedBox(height: Dimens.padding_xxl),
-                RoundedButton(
-                    onPressed: () {},
-                    title: Text("Sign In",
-                        style: Theme.of(context).textTheme.subtitle1)),
+                ItemFader(
+                  duration: 600,
+                  child: RoundedButton(
+                      onPressed: () {
+                        Navigator.of(context)
+                            .pushReplacementNamed(Routes.login);
+                      },
+                      title: Text("Sign In",
+                          style: Theme.of(context).textTheme.subtitle1)),
+                ),
                 SizedBox(height: Dimens.padding_large),
-                OutlinedButtonS(
-                  onPressed: () {},
-                  title: Text("Sign Up",
-                      style: Theme.of(context)
-                          .textTheme
-                          .subtitle1
-                          ?.copyWith(color: Colors.amber)),
+                ItemFader(
+                  duration: 800,
+                  child: OutlinedButtonS(
+                    onPressed: () {
+                      Navigator.of(context)
+                          .pushReplacementNamed(Routes.sign_up);
+                    },
+                    title: Text("Sign Up",
+                        style: Theme.of(context)
+                            .textTheme
+                            .subtitle1
+                            ?.copyWith(color: Colors.amber)),
+                  ),
                 ),
                 SizedBox(height: Dimens.padding_xxl),
-                RichText(
-                  text: TextSpan(children: [
-                    TextSpan(
-                      text: "Language ",
-                      style: Theme.of(context)
-                          .textTheme
-                          .headline6
-                          ?.copyWith(fontWeight: FontWeight.w400),
-                    ),
-                    TextSpan(
-                        text: "English",
-                        style: Theme.of(context).textTheme.headline6),
-                  ]),
+                ItemFader(
+                  duration: 600,
+                  child: RichText(
+                    text: TextSpan(children: [
+                      TextSpan(
+                        text: "Language ",
+                        style: Theme.of(context)
+                            .textTheme
+                            .headline6
+                            ?.copyWith(fontWeight: FontWeight.w400),
+                      ),
+                      TextSpan(
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () => _buildLanguageDialog(),
+                          text: "English",
+                          style: Theme.of(context).textTheme.headline6),
+                    ]),
+                  ),
                 ),
               ],
             )
