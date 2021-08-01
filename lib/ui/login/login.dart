@@ -15,7 +15,6 @@ import 'package:todo_app/widgets/labeled_text_field.dart';
 import 'package:todo_app/widgets/todo_button.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:todo_app/generated/locale_keys.g.dart';
-import 'package:material_dialog/material_dialog.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -41,18 +40,11 @@ class _LoginScreenState extends State<LoginScreen> {
     _store = Provider.of<LoginStore>(context);
     _themeStore = Provider.of<ThemeStore>(context);
     _languageStore = Provider.of<LanguageStore>(context);
-    //
-    // _store
-    //   ..userName = _userNameController.text = "hu1996"
-    //   ..password = _passwordController.text = "newpasswordddd1212";
-    // _store.userName = "hu1996";
-    // _store.password = "newpasswordddd1212";
-
     _store
-      ..userName = _userNameController.text = "superadmin"
-      ..password = _passwordController.text = "superadmin";
-    _store.userName = "superadmin";
-    _store.password = "superadmin";
+      ..userName = _userNameController.text = "user1993xx"
+      ..password = _passwordController.text = "password1";
+    _store.userName = "user1993xx";
+    _store.password = "password1";
   }
 
   @override
@@ -82,24 +74,6 @@ class _LoginScreenState extends State<LoginScreen> {
       leading: ArrowBackIcon(),
       title: Text(LocaleKeys.login.tr(),
           style: Theme.of(context).textTheme.headline6),
-      actions: [
-        _buildThemeButton(),
-      ],
-    );
-  }
-
-  Widget _buildThemeButton() {
-    return Observer(
-      builder: (context) {
-        return IconButton(
-          onPressed: () {
-            _themeStore.changeBrightnessToDark(!_themeStore.darkMode);
-          },
-          icon: Icon(
-            _themeStore.darkMode ? Icons.brightness_5 : Icons.brightness_3,
-          ),
-        );
-      },
     );
   }
 
@@ -135,7 +109,6 @@ class _LoginScreenState extends State<LoginScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
               Container(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
@@ -211,7 +184,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   DeviceUtils.hideKeyboard(context);
                   if (_formStore.canLogin == true) {
                     await _store.login();
-                    if ( _store.errorLogin == true) {
+                    if (_store.errorLogin == true) {
                       onSaveTaped(context);
                     }
                   } else {
@@ -258,10 +231,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
-
-
-
-
 
   ///this  Navigation to another page
   _buildClosed() {

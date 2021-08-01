@@ -9,6 +9,14 @@ part of 'home_store.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$HomeStore on _HomeStore, Store {
+  Computed<bool>? _$showIconFilterComputed;
+
+  @override
+  bool get showIconFilter =>
+      (_$showIconFilterComputed ??= Computed<bool>(() => super.showIconFilter,
+              name: '_HomeStore.showIconFilter'))
+          .value;
+
   final _$userAtom = Atom(name: '_HomeStore.user');
 
   @override
@@ -144,6 +152,36 @@ mixin _$HomeStore on _HomeStore, Store {
     });
   }
 
+  final _$minViewsAtom = Atom(name: '_HomeStore.minViews');
+
+  @override
+  int? get minViews {
+    _$minViewsAtom.reportRead();
+    return super.minViews;
+  }
+
+  @override
+  set minViews(int? value) {
+    _$minViewsAtom.reportWrite(value, super.minViews, () {
+      super.minViews = value;
+    });
+  }
+
+  final _$maxViewsAtom = Atom(name: '_HomeStore.maxViews');
+
+  @override
+  int? get maxViews {
+    _$maxViewsAtom.reportRead();
+    return super.maxViews;
+  }
+
+  @override
+  set maxViews(int? value) {
+    _$maxViewsAtom.reportWrite(value, super.maxViews, () {
+      super.maxViews = value;
+    });
+  }
+
   final _$bodyAtom = Atom(name: '_HomeStore.body');
 
   @override
@@ -189,6 +227,21 @@ mixin _$HomeStore on _HomeStore, Store {
     });
   }
 
+  final _$tagsAtom = Atom(name: '_HomeStore.tags');
+
+  @override
+  List<String>? get tags {
+    _$tagsAtom.reportRead();
+    return super.tags;
+  }
+
+  @override
+  set tags(List<String>? value) {
+    _$tagsAtom.reportWrite(value, super.tags, () {
+      super.tags = value;
+    });
+  }
+
   final _$questionAtom = Atom(name: '_HomeStore.question');
 
   @override
@@ -201,6 +254,21 @@ mixin _$HomeStore on _HomeStore, Store {
   set question(List<Question> value) {
     _$questionAtom.reportWrite(value, super.question, () {
       super.question = value;
+    });
+  }
+
+  final _$categoryAtom = Atom(name: '_HomeStore.category');
+
+  @override
+  List<Category> get category {
+    _$categoryAtom.reportRead();
+    return super.category;
+  }
+
+  @override
+  set category(List<Category> value) {
+    _$categoryAtom.reportWrite(value, super.category, () {
+      super.category = value;
     });
   }
 
@@ -224,6 +292,14 @@ mixin _$HomeStore on _HomeStore, Store {
   Future<dynamic> getQuestion(int skip, {int? limit}) {
     return _$getQuestionAsyncAction
         .run(() => super.getQuestion(skip, limit: limit));
+  }
+
+  final _$getCategoryAsyncAction = AsyncAction('_HomeStore.getCategory');
+
+  @override
+  Future<dynamic> getCategory(int skip, {int? limit}) {
+    return _$getCategoryAsyncAction
+        .run(() => super.getCategory(skip, limit: limit));
   }
 
   final _$_HomeStoreActionController = ActionController(name: '_HomeStore');
@@ -273,10 +349,15 @@ socialLinkAgent: ${socialLinkAgent},
 filter: ${filter},
 minVotes: ${minVotes},
 maxVotes: ${maxVotes},
+minViews: ${minViews},
+maxViews: ${maxViews},
 body: ${body},
 id: ${id},
 userId: ${userId},
-question: ${question}
+tags: ${tags},
+question: ${question},
+category: ${category},
+showIconFilter: ${showIconFilter}
     ''';
   }
 }

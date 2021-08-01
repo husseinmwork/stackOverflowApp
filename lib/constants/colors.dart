@@ -29,4 +29,7 @@ class AppColors {
 
   ///this bg2
   static const shapeColor = Color(0xFF262A34);
+
+
+  static const borderButtonColor = Colors.amber;
 }

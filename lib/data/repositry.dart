@@ -5,6 +5,7 @@ import 'package:todo_app/data/network/apis/services.dart';
 import 'package:todo_app/data/sharedpref/shared_preference_helper.dart';
 import 'package:todo_app/model/create_question/create_question.dart';
 import 'package:todo_app/model/filter/filter.dart';
+import 'package:todo_app/model/get_category/get_category.dart';
 import 'package:todo_app/model/get_question/get_question.dart';
 import 'package:todo_app/model/helper/paging.dart';
 import 'package:todo_app/model/login/login.dart';
@@ -107,6 +108,11 @@ class Repository {
   ///update profile
   Future<Account> updateProfile(FormData profile)async{
     return await _services.updateProfile(profile).catchError((error)=>throw error);
+  }
+
+  ///get category with paging
+  Future<Paging<Category>> getCategory(int skip) async {
+    return await _services.getCategory(skip: skip ).catchError((e) => throw e);
   }
 
 

@@ -1,14 +1,18 @@
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app/constants/assets.dart';
 import 'package:todo_app/constants/dimens.dart';
 import 'package:todo_app/model/get_question/get_question.dart';
 import 'package:todo_app/store/theme/theme_store.dart';
+import 'package:todo_app/ui/details_question/details_question.dart';
 
 class QuestionItem extends StatefulWidget {
   final Question item;
+  final Function onTap;
+  final VoidCallback openContainer;
 
-  QuestionItem({required this.item});
+  QuestionItem({required this.item , required this.onTap , required this.openContainer});
 
   @override
   _QuestionItemState createState() => _QuestionItemState();
@@ -23,45 +27,53 @@ class _QuestionItemState extends State<QuestionItem> {
     _themeStore = Provider.of<ThemeStore>(context);
   }
 
+
+
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.symmetric(vertical: Dimens.padding_mini),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
-      child: InkWell(
-        onTap: () {},
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-              horizontal: Dimens.padding_mid, vertical: Dimens.padding_mid),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
+    return  _InkWellOverlay(
+
+        child: Card(
+          margin: EdgeInsets.symmetric(vertical: Dimens.padding_mini),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
+          child: InkWell(
+            onTap:(){ widget.onTap();},
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                  horizontal: Dimens.padding_mid, vertical: Dimens.padding_mid),
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildImage(),
-                  SizedBox(width: Dimens.padding_mini),
-                  Column(
+                  Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [_buildUserName(), _buildUserScore()],
+                    children: [
+                      _buildImage(),
+                      SizedBox(width: Dimens.padding_mini),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [_buildUserName(), _buildUserScore()],
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: Dimens.padding_mid),
+                  _buildQuestionTitle(),
+                  SizedBox(height: Dimens.padding_mini),
+                  _buildQuestion(),
+                  SizedBox(height: Dimens.padding_large),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _buildAnswer(),
+                      _buildViews(),
+                      _buildLike(),
+                    ],
                   ),
                 ],
               ),
-              SizedBox(height: Dimens.padding_mid),
-              _buildQuestion(),
-              SizedBox(height: Dimens.padding_large),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _buildAnswer(),
-                  _buildViews(),
-                  _buildLike(),
-                ],
-              ),
-            ],
+            ),
           ),
         ),
-      ),
+
     );
   }
 
@@ -95,6 +107,10 @@ class _QuestionItemState extends State<QuestionItem> {
             ),
       );
 
+  Widget _buildQuestionTitle()=>Text("this title of question",
+    style: Theme.of(context).textTheme.bodyText1?.copyWith(
+    color: _themeStore.darkMode ? Colors.white : Colors.black,
+  ),);
   Widget _buildQuestion() => Text(
         widget.item.body.toString().replaceAll(new RegExp(r"\n|\s\n"), ""),
         maxLines: 6,
@@ -144,4 +160,32 @@ class _QuestionItemState extends State<QuestionItem> {
           )
         ],
       );
+}
+
+
+
+class _InkWellOverlay extends StatelessWidget {
+  const _InkWellOverlay({
+    this.openContainer,
+    this.width,
+    this.height,
+    this.child,
+  });
+
+  final VoidCallback? openContainer;
+  final double? width;
+  final double? height;
+  final Widget? child;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: height,
+      width: width,
+      child: InkWell(
+        onTap: openContainer,
+        child: child,
+      ),
+    );
+  }
 }

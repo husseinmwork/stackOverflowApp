@@ -26,9 +26,10 @@ class Endpoints {
   static const String querySkip = 'skip';
   static const String queryLimit = 'take';
 
-  ///get profile
+  ///profile
   static const String profile = baseUrl + "/accounts/profile";
   static const String updateProfile = baseUrl + "/accounts/profile";
-
+/// category
+  static const String category = baseUrl + "/fields";
 
 }

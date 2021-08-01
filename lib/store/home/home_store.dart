@@ -3,6 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:injectable/injectable.dart';
 import 'package:mobx/mobx.dart';
 import 'package:todo_app/data/repositry.dart';
+import 'package:todo_app/model/get_category/get_category.dart';
 import 'package:todo_app/model/get_question/get_question.dart';
 import 'package:todo_app/model/user/user.dart';
 import 'package:todo_app/model/filter/filter.dart';
@@ -58,6 +59,12 @@ abstract class _HomeStore with Store {
   int? maxVotes;
 
   @observable
+  int? minViews;
+
+  @observable
+  int? maxViews;
+
+  @observable
   String? body;
 
   @observable
@@ -66,10 +73,28 @@ abstract class _HomeStore with Store {
   @observable
   String? userId;
 
+  @observable
+  List<String>? tags = [];
+
+  @observable
+  List<Question> question = ObservableList<Question>();
+
+  @observable
+  List<Category> category = ObservableList<Category>();
+
+  @observable
+  bool selectedCategory = false;
+
+  @observable
+  List<String>? categoryFilter = [];
 
   @computed
-  bool get showIconFilter => minVotes == null && maxVotes == null
-      && body == null && id == null && userId == null;
+  bool get showIconFilter =>
+      minVotes == null &&
+      maxVotes == null &&
+      body == null &&
+      id == null &&
+      userId == null;
 
   // actions:-------------------------------------------------------------------
   @action
@@ -87,11 +112,11 @@ abstract class _HomeStore with Store {
 
   @action
   void removeFilter() {
-   body = null;
-   userId = null;
-   id = null;
-   minVotes = null;
-   maxVotes = null;
+    body = null;
+    userId = null;
+    id = null;
+    minVotes = null;
+    maxVotes = null;
   }
 
   ///this method work logout and remove (user , authToken , IsLoggedIn) shared preferences
@@ -111,14 +136,13 @@ abstract class _HomeStore with Store {
     user = await _repository.user;
   }
 
-  @observable
-  List<Question> question = ObservableList<Question>();
 
   ///get question with paging
   @action
   Future getQuestion(int skip, {int? limit}) async {
     await _repository
-        .getQuestion(skip, filter: QuestionFilter(
+        .getQuestion(skip,
+            filter: QuestionFilter(
               body: body,
               maxVotes: maxVotes,
               minVotes: minVotes,
@@ -126,9 +150,18 @@ abstract class _HomeStore with Store {
               userId: userId,
             ))
         .then((value) {
-          return question = value.results;
-        })
-        .catchError((e) {
+      return question = value.results;
+    }).catchError((e) {
+      throw e;
+    });
+  }
+
+  ///get category with paging
+  @action
+  Future getCategory(int skip, {int? limit}) async {
+    await _repository.getCategory(skip).then((value) {
+      return category = value.results;
+    }).catchError((e) {
       throw e;
     });
   }

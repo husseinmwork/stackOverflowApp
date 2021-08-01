@@ -115,4 +115,11 @@ final ThemeData themeDataDark = ThemeData(
   accentIconTheme: IconThemeData(color: Colors.black),
   dividerColor: Colors.black12,
 
+).copyWith(
+  pageTransitionsTheme: const PageTransitionsTheme(
+
+  builders: <TargetPlatform, PageTransitionsBuilder>{
+    TargetPlatform.android: ZoomPageTransitionsBuilder(),
+  },
+),
 );

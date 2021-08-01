@@ -1,20 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:material_dialog/material_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app/constants/dimens.dart';
 import 'package:todo_app/generated/locale_keys.g.dart';
 import 'package:todo_app/store/language/language_store.dart';
 import 'package:todo_app/store/theme/theme_store.dart';
-import 'package:todo_app/utils/routes/routes.dart';
-import 'package:todo_app/utils/todo/todo_utils.dart';
+import 'package:todo_app/ui/login/login.dart';
+import 'package:todo_app/ui/sign_up/sign_up.dart';
 import 'package:todo_app/widgets/item_fade_animation.dart';
 import 'package:todo_app/widgets/outlined_button.dart';
 import 'package:todo_app/widgets/todo_button.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:vector_math/vector_math.dart' as math;
 
 class WelcomeScreen extends StatefulWidget {
   @override
@@ -140,8 +138,19 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                   duration: 600,
                   child: RoundedButton(
                       onPressed: () {
-                        Navigator.of(context)
-                            .pushReplacementNamed(Routes.login);
+                        Navigator.of(context).push(
+                          PageRouteBuilder<String>(
+                            pageBuilder:
+                                (context, animation, secondaryAnimation) =>
+                                    LoginScreen(),
+                            transitionsBuilder:
+                                (context, animation, a2, child) =>
+                                    FadeTransition(
+                                        opacity: animation, child: child),
+                            transitionDuration:
+                                Duration(milliseconds: Dimens.navigator_anim),
+                          ),
+                        );
                       },
                       title: Text("Sign In",
                           style: Theme.of(context).textTheme.subtitle1)),
@@ -151,8 +160,17 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                   duration: 800,
                   child: OutlinedButtonS(
                     onPressed: () {
-                      Navigator.of(context)
-                          .pushReplacementNamed(Routes.sign_up);
+                      Navigator.of(context).push(
+                        PageRouteBuilder<String>(
+                          pageBuilder:
+                              (context, animation, secondaryAnimation) =>
+                                  SignUpScreen(),
+                          transitionsBuilder: (context, animation, a2, child) =>
+                              FadeTransition(opacity: animation, child: child),
+                          transitionDuration:
+                              Duration(milliseconds: Dimens.navigator_anim),
+                        ),
+                      );
                     },
                     title: Text("Sign Up",
                         style: Theme.of(context)

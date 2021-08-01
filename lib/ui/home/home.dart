@@ -1,20 +1,22 @@
-import 'package:another_flushbar/flushbar.dart';
+import 'package:animations/animations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:provider/provider.dart';
-import 'package:side_sheet/side_sheet.dart';
 import 'package:todo_app/constants/dimens.dart';
 import 'package:todo_app/model/get_question/get_question.dart';
 import 'package:todo_app/packages/anim_search_widget.dart';
+import 'package:todo_app/packages/textfield_tags.dart';
 import 'package:todo_app/store/home/home_store.dart';
 import 'package:todo_app/store/theme/theme_store.dart';
+import 'package:todo_app/ui/details_question/details_question.dart';
 import 'package:todo_app/ui/home/app_drawer.dart';
 import 'package:todo_app/ui/home/question_item.dart';
 import 'package:todo_app/utils/device/device_utils.dart';
 import 'package:todo_app/utils/routes/routes.dart';
+import 'package:todo_app/widgets/filter_dropdown.dart';
 import 'package:todo_app/widgets/todo_button.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -25,6 +27,46 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   late HomeStore _store;
   late ThemeStore _themeStore;
+
+  //filter section
+  String? _valueMinVotes;
+  String? _valueMaxVotes;
+  String? _valueMinViews;
+  String? _valueMaxViews;
+
+  final List<String> _minVotes = ['10', '20', '30', '40', '50'];
+  final List<String> _maxVotes = ['100', '110', '120', '130', '140'];
+  final List<String> _minViews = ['10', '20', '30', '40', '50'];
+  final List<String> _maxViews = ['100', '110', '120', '130', '140'];
+
+  //tags
+  bool selectedCategory = false;
+
+  List<String> tags = [];
+  List<String> options = [
+    'News',
+    'Entertainment',
+    'Politics',
+    'Automotive',
+    'Sports',
+    'Education',
+    'Fashion',
+    'Travel',
+    'Food',
+    'Tech',
+    'Science',
+  ];
+
+  ContainerTransitionType _transitionType = ContainerTransitionType.fade;
+
+  void _showMarkedAsDoneSnackbar(bool? isMarkedAsDone) {
+    if (isMarkedAsDone ?? false)
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Marked as done!'),
+      ));
+  }
+
+  //end filter section
 
   final PagingController<int, Question> _pagingController =
       PagingController(firstPageKey: 0);
@@ -67,6 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _themeStore = Provider.of<ThemeStore>(context);
     _store.getPrefUser();
     _store.updateScrolling();
+    _store.getCategory(0);
   }
 
   @override
@@ -123,75 +166,6 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       );
 
-  void _modalBottomSheetMenu() {
-    showModalBottomSheet(
-        context: context,
-        builder: (builder) {
-          return new Container(
-              height: 350.0,
-              color: Colors.transparent,
-              //could change this to Color(0xFF737373),
-              //so you don't have to change MaterialApp canvasColor
-              child: StatefulBuilder(
-                builder: (BuildContext context, StateSetter setState) =>
-                    Container(
-                  height: double.infinity,
-                  width: double.infinity,
-                  // padding: EdgeInsets.symmetric(
-                  //     horizontal: Dimens.padding_normal, vertical: Dimens.padding_xl),
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text("Filter",
-                          style: Theme.of(context).textTheme.headline6),
-                      SizedBox(height: Dimens.padding_xxl),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: Dimens.padding_normal),
-                        child: Row(
-                          children: [
-                            Text("Votes",
-                                style: Theme.of(context).textTheme.subtitle2),
-                            Expanded(
-                              child: RangeSlider(
-                                values: _currentRangeValues,
-                                min: 0,
-                                max: 200,
-                                divisions: 10,
-                                labels: RangeLabels(
-                                  _currentRangeValues.start.round().toString(),
-                                  _currentRangeValues.end.round().toString(),
-                                ),
-                                onChanged: (RangeValues values) {
-                                  setState(() {
-                                    _currentRangeValues = values;
-                                  });
-                                  _store.minVotes =
-                                      _currentRangeValues.start.toInt();
-                                  _store.maxVotes =
-                                      _currentRangeValues.end.toInt();
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      RoundedButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            // _store.getQuestion(skip);
-                            _pagingController.refresh();
-                          },
-                          title: Text('Show Result'))
-                    ],
-                  ),
-                ),
-              ));
-        });
-  }
-
   Widget _buildSearchIcon() => AnimSearchBar(
         onTap: () async {
           await Future.delayed(
@@ -202,7 +176,7 @@ class _HomeScreenState extends State<HomeScreen> {
           });
         },
         autoFocus: true,
-        color:_showSearchColor ?Colors.black: Colors.transparent,
+        color: _showSearchColor ? Colors.black : Colors.transparent,
         width: MediaQuery.of(context).size.width * 0.70,
         textController: searchController,
         onChange: (value) {
@@ -244,7 +218,6 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       );*/
 
-
   Widget _buildBody() => _buildMainPaging();
 
   Widget _buildMainPaging() => RefreshIndicator(
@@ -274,12 +247,257 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ],
             ),
-            itemBuilder: (context, item, index) => QuestionItem(
-              // currentLocation: LatLng(position.latitude, position.longitude),
-              // onLike: (bool isLiked) => onLikeButtonTapped(item.id, isLiked),
-              item: item,
+            itemBuilder: (context, item, index) => _OpenContainerWrapper(
+              id: item.id!,
+              transitionType: _transitionType,
+              onClosed: _showMarkedAsDoneSnackbar,
+              closedBuilder: (BuildContext _, VoidCallback openContainer)=> QuestionItem(
+                openContainer: openContainer,
+                onTap: (){
+                  openContainer();
+                },
+                // currentLocation: LatLng(position.latitude, position.longitude),
+                // onLike: (bool isLiked) => onLikeButtonTapped(item.id, isLiked),
+                item: item,
+              ),
             ),
           ),
         ),
       );
+
+  void _modalBottomSheetMenu() {
+    showModalBottomSheet(
+        context: context,
+        builder: (builder) {
+          return _buildContantSheetFilter();
+        });
+  }
+
+  Widget _buildContantSheetFilter() => Container(
+        height: MediaQuery.of(context).size.height * 0.60,
+        color: Colors.transparent,
+        padding: const EdgeInsets.symmetric(
+            vertical: Dimens.padding_normal, horizontal: Dimens.padding_xxl),
+        child: StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) => Container(
+            height: double.infinity,
+            width: double.infinity,
+            color: Theme.of(context).scaffoldBackgroundColor,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  children: [
+                    _buildSelectCategory(),
+                    SizedBox(height: Dimens.padding_large),
+                    _buildTags(),
+                    SizedBox(height: Dimens.padding_large),
+                    _buildVotes(),
+                    SizedBox(height: Dimens.padding_normal),
+                    _buildViews(),
+                  ],
+                ),
+                SizedBox(
+                  width: 250,
+                  height: 40,
+                  child: RoundedButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        // _store.getQuestion(skip);
+                        _pagingController.refresh();
+                      },
+                      title: Text('Show Result')),
+                )
+              ],
+            ),
+          ),
+        ),
+      );
+
+  Widget _buildVotes() => Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("Min Votes", style: Theme.of(context).textTheme.subtitle2),
+              SizedBox(height: Dimens.padding_mini),
+              FilterDropDown(
+                value: _valueMinVotes,
+                hint: "1",
+                list: _minVotes,
+                onChanged: (value) {
+                  setState(() {
+                    _valueMinVotes = value;
+                  });
+                  _store.minVotes = int.parse(_valueMinVotes!);
+                },
+              ),
+            ],
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("Max Votes", style: Theme.of(context).textTheme.subtitle2),
+              SizedBox(height: Dimens.padding_mini),
+              FilterDropDown(
+                value: _valueMaxVotes,
+                hint: "1",
+                list: _maxVotes,
+                onChanged: (value) {
+                  setState(() {
+                    _valueMaxVotes = value;
+                  });
+                  _store.maxVotes = int.parse(_valueMaxVotes!);
+                },
+              ),
+            ],
+          ),
+        ],
+      );
+
+  Widget _buildViews() => Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("Min Views", style: Theme.of(context).textTheme.subtitle2),
+              SizedBox(height: Dimens.padding_mini),
+              FilterDropDown(
+                value: _valueMinViews,
+                hint: "1",
+                list: _minViews,
+                onChanged: (value) {
+                  setState(() {
+                    _valueMinViews = value;
+                  });
+                  _store.minViews = int.parse(_valueMinVotes!);
+                },
+              ),
+            ],
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("Max Views", style: Theme.of(context).textTheme.subtitle2),
+              SizedBox(height: Dimens.padding_mini),
+              FilterDropDown(
+                value: _valueMaxViews,
+                hint: "1",
+                list: _maxViews,
+                onChanged: (value) {
+                  setState(() {
+                    _valueMaxViews = value;
+                  });
+                  _store.maxViews = int.parse(_valueMaxViews!);
+                },
+              ),
+            ],
+          ),
+        ],
+      );
+
+  Widget _buildTags() => TextFieldTags(
+      tagsStyler: TagsStyler(
+          tagTextStyle: TextStyle(fontWeight: FontWeight.normal),
+          tagDecoration: BoxDecoration(
+            color: Colors.blue[300],
+            borderRadius: BorderRadius.circular(0.0),
+          ),
+          tagCancelIcon:
+              Icon(Icons.cancel, size: 18.0, color: Colors.blue[900]),
+          tagPadding: const EdgeInsets.all(6.0)),
+      textFieldStyler: TextFieldStyler(
+        helperText: "",
+        hintStyle: TextStyle(color: Colors.white),
+      ),
+      onTag: (tag) {},
+      onDelete: (tag) {
+        _store.tags!.removeWhere((element) => element == tag);
+        print(_store.tags);
+      },
+      validator: (tag) {
+        _store.tags!.add(tag!);
+        print(_store.tags);
+        if (tag.length > 15) {
+          return "hey that's too long";
+        }
+        return null;
+      });
+
+  Widget _buildSelectCategory() => Visibility(
+        visible: _store.category.isNotEmpty,
+        child: Wrap(
+          children: [
+            ..._store.category
+                .map(
+                  (e) => InkWell(
+                    onTap: () {
+                      setState(() {
+                        selectedCategory = !selectedCategory;
+                      });
+                      _store.categoryFilter!.add(e.id!);
+                      print(_store.categoryFilter!);
+                      if (_store.categoryFilter!.contains(e.id)) {
+                        _store.categoryFilter!
+                            .removeWhere((element) => element == e.id);
+                        print(_store.categoryFilter!);
+                        print("true");
+                      }
+                    },
+                    child: Container(
+                        color: selectedCategory == true
+                            ? Colors.amber
+                            : Colors.grey,
+                        padding: EdgeInsets.all(Dimens.padding_normal),
+                        margin: EdgeInsets.all(Dimens.padding_mini),
+                        child: Text(
+                          e.name!,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText2
+                              ?.copyWith(color: Colors.white),
+                        )),
+                  ),
+                )
+                .toList(),
+          ],
+        ),
+      );
 }
+
+class _OpenContainerWrapper extends StatelessWidget {
+  const _OpenContainerWrapper({
+    required this.closedBuilder,
+    required this.transitionType,
+    required this.onClosed,
+    required this.id,
+  });
+  final String id;
+  final CloseContainerBuilder closedBuilder;
+  final ContainerTransitionType transitionType;
+  final ClosedCallback<bool?> onClosed;
+
+  @override
+  Widget build(BuildContext context) {
+    return OpenContainer<bool>(
+      transitionType: transitionType,
+      openBuilder: (BuildContext context, VoidCallback _) {
+        return  DetailsQuestion(id: id);
+      },
+
+      onClosed: onClosed,
+        transitionDuration: Duration(milliseconds: 500),
+      tappable: false,
+      closedBuilder: closedBuilder,
+      openColor: Theme.of(context).accentColor,
+      closedColor: Theme.of(context).scaffoldBackgroundColor  );
+  }
+}
+
+
+
+
+
