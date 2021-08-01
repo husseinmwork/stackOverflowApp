@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:todo_app/constants/app_theme.dart';
 import 'package:todo_app/constants/strings.dart';
 import 'package:todo_app/di/components/injection.dart';
+import 'package:todo_app/store/details_question/details_question_store.dart';
 import 'package:todo_app/store/home/home_store.dart';
 import 'package:todo_app/store/language/language_store.dart';
 import 'package:todo_app/store/login/login.dart';
@@ -28,6 +29,7 @@ class MyApp extends StatelessWidget {
   final SignUpStore _signUpStore = SignUpStore(getIt<Repository>());
   final HomeStore _homeStore = HomeStore(getIt<Repository>());
   final ProfileStore _profileStore = ProfileStore(getIt<Repository>());
+  final DetailsQuestionStore _detailsQuestionStore = DetailsQuestionStore(getIt<Repository>());
   // final MyQuestionStore _myQuestionStore = MyQuestionStore(getIt<Repository>());
   final ResetPasswordStore _resetPasswordStore =
       ResetPasswordStore(getIt<Repository>());
@@ -43,6 +45,7 @@ class MyApp extends StatelessWidget {
         Provider<SignUpStore>(create: (_) => _signUpStore),
         Provider<HomeStore>(create: (_) => _homeStore),
         Provider<ProfileStore>(create: (_) => _profileStore),
+        Provider<DetailsQuestionStore>(create: (_) => _detailsQuestionStore),
         // Provider<MyQuestionStore>(create: (_) => _myQuestionStore),
       ],
       child: Observer(

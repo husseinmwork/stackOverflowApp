@@ -272,6 +272,36 @@ mixin _$HomeStore on _HomeStore, Store {
     });
   }
 
+  final _$selectedCategoryAtom = Atom(name: '_HomeStore.selectedCategory');
+
+  @override
+  bool get selectedCategory {
+    _$selectedCategoryAtom.reportRead();
+    return super.selectedCategory;
+  }
+
+  @override
+  set selectedCategory(bool value) {
+    _$selectedCategoryAtom.reportWrite(value, super.selectedCategory, () {
+      super.selectedCategory = value;
+    });
+  }
+
+  final _$categoryFilterAtom = Atom(name: '_HomeStore.categoryFilter');
+
+  @override
+  List<String>? get categoryFilter {
+    _$categoryFilterAtom.reportRead();
+    return super.categoryFilter;
+  }
+
+  @override
+  set categoryFilter(List<String>? value) {
+    _$categoryFilterAtom.reportWrite(value, super.categoryFilter, () {
+      super.categoryFilter = value;
+    });
+  }
+
   final _$logoutAsyncAction = AsyncAction('_HomeStore.logout');
 
   @override
@@ -357,6 +387,8 @@ userId: ${userId},
 tags: ${tags},
 question: ${question},
 category: ${category},
+selectedCategory: ${selectedCategory},
+categoryFilter: ${categoryFilter},
 showIconFilter: ${showIconFilter}
     ''';
   }

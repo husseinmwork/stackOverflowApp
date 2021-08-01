@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:provider/provider.dart';
+import 'package:todo_app/store/details_question/details_question_store.dart';
 import 'package:todo_app/widgets/arrow_back_icon.dart';
 
 class DetailsQuestion extends StatefulWidget {
@@ -13,10 +17,14 @@ class DetailsQuestion extends StatefulWidget {
 }
 
 class _DetailsQuestionState extends State<DetailsQuestion> {
+  late DetailsQuestionStore _store;
+
   @override
-  void initState() {
-    super.initState();
-    print(widget.id);
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    _store = Provider.of<DetailsQuestionStore>(context);
+    _store.getQuestion(0);
   }
 
   @override
@@ -27,13 +35,24 @@ class _DetailsQuestionState extends State<DetailsQuestion> {
     );
   }
 
-  AppBar _buildAppBar() => AppBar(
+  AppBar _buildAppBar() =>
+      AppBar(
         elevation: 4,
         leading: ArrowBackIcon(),
         //todo  LocaleKeys.goto_register.tr(), change language after complete all section profile
         title: Text("Details Question",
-            style: Theme.of(context).textTheme.headline6),
+            style: Theme
+                .of(context)
+                .textTheme
+                .headline6),
       );
 
-  Widget _buildBody() => Container();
+  Widget _buildBody() =>
+      Observer(builder: (_) =>
+      _store.question != null ? ListView(
+        children: [
+          Text(_store.question!.body!)
+        ],
+      ) : SpinKitFoldingCube(color: Colors.purple[200])
+      );
 }
