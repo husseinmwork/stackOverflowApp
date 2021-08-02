@@ -24,7 +24,7 @@ class _DetailsQuestionState extends State<DetailsQuestion> {
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
     _store = Provider.of<DetailsQuestionStore>(context);
-    _store.getQuestion(0);
+    _store.getQuestion(widget.id);
   }
 
   @override
@@ -39,7 +39,6 @@ class _DetailsQuestionState extends State<DetailsQuestion> {
       AppBar(
         elevation: 4,
         leading: ArrowBackIcon(),
-        //todo  LocaleKeys.goto_register.tr(), change language after complete all section profile
         title: Text("Details Question",
             style: Theme
                 .of(context)
@@ -51,7 +50,7 @@ class _DetailsQuestionState extends State<DetailsQuestion> {
       Observer(builder: (_) =>
       _store.question != null ? ListView(
         children: [
-          Text(_store.question!.body!)
+          Text(_store.question!.title!)
         ],
       ) : SpinKitFoldingCube(color: Colors.purple[200])
       );

@@ -107,7 +107,7 @@ class _QuestionItemState extends State<QuestionItem> {
             ),
       );
 
-  Widget _buildQuestionTitle()=>Text("this title of question",
+  Widget _buildQuestionTitle()=>Text(widget.item.title.toString(),
     style: Theme.of(context).textTheme.bodyText1?.copyWith(
     color: _themeStore.darkMode ? Colors.white : Colors.black,
   ),);

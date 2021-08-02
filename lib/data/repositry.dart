@@ -94,6 +94,10 @@ class Repository {
       {QuestionFilter? filter}) async {
     return await _services.getQuestion(skip: skip , filter:filter).catchError((e) => throw e);
   }
+  ///get question details page
+  Future<Question> getDetailsQuestion(String id) async {
+    return await _services.getDetailsQuestion(id).catchError((e) => throw e);
+  }
 
   ///get question with paging
   Future<CreateQuestion> createQuestion(CreateQuestion createQuestion) async {

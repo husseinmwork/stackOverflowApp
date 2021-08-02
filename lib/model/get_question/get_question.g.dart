@@ -15,6 +15,7 @@ Question _$QuestionFromJson(Map<String, dynamic> json) {
         ? null
         : Account.fromJson(json['user'] as Map<String, dynamic>),
     userId: json['userId'] as String?,
+    title: json['title'] as String?,
   );
 }
 
@@ -24,4 +25,5 @@ Map<String, dynamic> _$QuestionToJson(Question instance) => <String, dynamic>{
       'votes': instance.votes,
       'userId': instance.userId,
       'user': instance.user,
+      'title': instance.title,
     };

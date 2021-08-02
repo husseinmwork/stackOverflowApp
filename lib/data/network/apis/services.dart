@@ -108,6 +108,16 @@ class Services {
       throw e;
     }
   }
+  ///get question details
+  Future<Question> getDetailsQuestion(String id) async {
+    try {
+      var response = await _dioClient.get(Endpoints.question,
+          queryParameters: {"id":id});
+      return Question.fromJson(response['results'][0]);
+    } catch (e) {
+      throw e;
+    }
+  }
 
   ///create question
   Future createQuestion(CreateQuestion createQuestion) async {

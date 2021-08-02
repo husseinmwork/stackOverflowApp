@@ -37,23 +37,18 @@ abstract class _DetailsQuestionStore with Store {
   @observable
   bool errorLogin = false;
 
-  @observable
-  String? id;
 
   @observable
   Question? question;
 
-  ///get question with paging
+  ///get question details
   @action
-  Future getQuestion(int skip, {int? limit}) async {
+  Future getQuestion(String id) async {
     loading = true;
      await _repository
-        .getQuestion(skip,
-        filter: QuestionFilter(
-          id: id,
-        ))
+        .getDetailsQuestion(id)
         .then((value) {
-      return question = value.results.first;
+      return question = value;
     }).catchError((e) {
       loading = false;
       throw e;
