@@ -6,6 +6,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app/constants/dimens.dart';
+import 'package:todo_app/model/get_category/get_category.dart';
 import 'package:todo_app/model/get_question/get_question.dart';
 import 'package:todo_app/packages/anim_search_widget.dart';
 import 'package:todo_app/packages/textfield_tags.dart';
@@ -17,6 +18,7 @@ import 'package:todo_app/ui/home/question_item.dart';
 import 'package:todo_app/utils/device/device_utils.dart';
 import 'package:todo_app/utils/routes/routes.dart';
 import 'package:todo_app/widgets/filter_dropdown.dart';
+import 'package:todo_app/widgets/stack_overflow_indecator.dart';
 import 'package:todo_app/widgets/todo_button.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -227,8 +229,8 @@ class _HomeScreenState extends State<HomeScreen> {
         child: PagedListView(
           pagingController: _pagingController,
           builderDelegate: PagedChildBuilderDelegate<Question>(
-            firstPageProgressIndicatorBuilder: (_) =>
-                SpinKitFoldingCube(color: Colors.purple[200]),
+            firstPageProgressIndicatorBuilder: (_) =>StackOverFlowIndecator(),
+
             noItemsFoundIndicatorBuilder: (_) => Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -252,8 +254,7 @@ class _HomeScreenState extends State<HomeScreen> {
               transitionType: _transitionType,
               onClosed: _showMarkedAsDoneSnackbar,
               closedBuilder: (BuildContext _, VoidCallback openContainer)=> QuestionItem(
-                openContainer: openContainer,
-                onTap: (){
+                openContainer: (){
                   openContainer();
                 },
                 // currentLocation: LatLng(position.latitude, position.longitude),
@@ -289,13 +290,15 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 Column(
                   children: [
-                    _buildSelectCategory(),
-                    SizedBox(height: Dimens.padding_large),
+
                     _buildTags(),
                     SizedBox(height: Dimens.padding_large),
                     _buildVotes(),
                     SizedBox(height: Dimens.padding_normal),
                     _buildViews(),
+                    SizedBox(height: Dimens.padding_large),
+
+                    _buildSelectCategory(),
                   ],
                 ),
                 SizedBox(
@@ -324,9 +327,17 @@ class _HomeScreenState extends State<HomeScreen> {
               Text("Min Votes", style: Theme.of(context).textTheme.subtitle2),
               SizedBox(height: Dimens.padding_mini),
               FilterDropDown(
+                items: [
+                  ..._minVotes.map((e) {
+                    return DropdownMenuItem(
+                      child: Text(e.toString()),
+                      value: e,
+                    );
+                  }).toList(),
+                ],
                 value: _valueMinVotes,
                 hint: "1",
-                list: _minVotes,
+
                 onChanged: (value) {
                   setState(() {
                     _valueMinVotes = value;
@@ -342,9 +353,16 @@ class _HomeScreenState extends State<HomeScreen> {
               Text("Max Votes", style: Theme.of(context).textTheme.subtitle2),
               SizedBox(height: Dimens.padding_mini),
               FilterDropDown(
+                items: [
+                  ..._maxVotes.map((e) {
+                    return DropdownMenuItem(
+                      child: Text(e.toString()),
+                      value: e,
+                    );
+                  }).toList(),
+                ],
                 value: _valueMaxVotes,
                 hint: "1",
-                list: _maxVotes,
                 onChanged: (value) {
                   setState(() {
                     _valueMaxVotes = value;
@@ -366,9 +384,17 @@ class _HomeScreenState extends State<HomeScreen> {
               Text("Min Views", style: Theme.of(context).textTheme.subtitle2),
               SizedBox(height: Dimens.padding_mini),
               FilterDropDown(
+                items: [
+                  ..._minViews.map((e) {
+                    return DropdownMenuItem(
+                      child: Text(e.toString()),
+                      value: e,
+                    );
+                  }).toList(),
+                ],
                 value: _valueMinViews,
                 hint: "1",
-                list: _minViews,
+
                 onChanged: (value) {
                   setState(() {
                     _valueMinViews = value;
@@ -384,9 +410,17 @@ class _HomeScreenState extends State<HomeScreen> {
               Text("Max Views", style: Theme.of(context).textTheme.subtitle2),
               SizedBox(height: Dimens.padding_mini),
               FilterDropDown(
+                items: [
+                  ..._maxViews.map((e) {
+                    return DropdownMenuItem(
+                      child: Text(e.toString()),
+                      value: e,
+                    );
+                  }).toList(),
+                ],
                 value: _valueMaxViews,
                 hint: "1",
-                list: _maxViews,
+
                 onChanged: (value) {
                   setState(() {
                     _valueMaxViews = value;
@@ -429,41 +463,37 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildSelectCategory() => Visibility(
         visible: _store.category.isNotEmpty,
-        child: Wrap(
-          children: [
-            ..._store.category
-                .map(
-                  (e) => InkWell(
-                    onTap: () {
-                      setState(() {
-                        selectedCategory = !selectedCategory;
-                      });
-                      _store.categoryFilter!.add(e.id!);
-                      print(_store.categoryFilter!);
-                      if (_store.categoryFilter!.contains(e.id)) {
-                        _store.categoryFilter!
-                            .removeWhere((element) => element == e.id);
-                        print(_store.categoryFilter!);
-                        print("true");
-                      }
-                    },
-                    child: Container(
-                        color: selectedCategory == true
-                            ? Colors.amber
-                            : Colors.grey,
-                        padding: EdgeInsets.all(Dimens.padding_normal),
-                        margin: EdgeInsets.all(Dimens.padding_mini),
-                        child: Text(
-                          e.name!,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyText2
-                              ?.copyWith(color: Colors.white),
-                        )),
-                  ),
-                )
-                .toList(),
-          ],
+        child:  Observer(
+          builder:(_)=> Container(
+            padding: EdgeInsets.symmetric(horizontal: Dimens.padding_small),
+            width: double.infinity,
+            height: 37,
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey),
+              borderRadius: BorderRadius.circular(Dimens.border_small),
+            ),
+            child: DropdownButton(
+              value: _store.categoryId,
+              icon: Icon(
+                Icons.keyboard_arrow_down,
+              ),
+              underline: Text(""),
+              isExpanded: true,
+              hint: Text(  "Select Category", style: Theme.of(context).textTheme.bodyText1),
+              style: Theme.of(context).textTheme.bodyText1,
+              items: [
+                ..._store.category.map((e) {
+                  return DropdownMenuItem<String>(
+                    child: Text(e.name.toString()),
+                    value: e.id,
+                  );
+                }).toList(),
+              ],
+              onChanged: (String? value)  {
+              _store.categoryId = value;
+              },
+            ),
+          )
         ),
       );
 }

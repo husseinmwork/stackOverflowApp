@@ -5,6 +5,7 @@ import 'package:todo_app/data/repositry.dart';
 import 'package:todo_app/model/filter/filter.dart';
 import 'package:todo_app/model/get_question/get_question.dart';
 import 'package:todo_app/store/error/error_store.dart';
+import 'package:todo_app/utils/dio/dio_error_util.dart';
 
 part 'details_question_store.g.dart';
 
@@ -48,10 +49,13 @@ abstract class _DetailsQuestionStore with Store {
      await _repository
         .getDetailsQuestion(id)
         .then((value) {
-      return question = value;
-    }).catchError((e) {
+       question = value;
+      success = true;
+    }).catchError((error) {
       loading = false;
-      throw e;
+      success = false;
+      DioErrorUtil.handleError(error);
+      errorStore.errorMessage = DioErrorUtil.handleError(error);
     });
   }
 

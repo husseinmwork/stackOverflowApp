@@ -92,21 +92,6 @@ mixin _$HomeStore on _HomeStore, Store {
     });
   }
 
-  final _$socialLinkAgentAtom = Atom(name: '_HomeStore.socialLinkAgent');
-
-  @override
-  List<String> get socialLinkAgent {
-    _$socialLinkAgentAtom.reportRead();
-    return super.socialLinkAgent;
-  }
-
-  @override
-  set socialLinkAgent(List<String> value) {
-    _$socialLinkAgentAtom.reportWrite(value, super.socialLinkAgent, () {
-      super.socialLinkAgent = value;
-    });
-  }
-
   final _$filterAtom = Atom(name: '_HomeStore.filter');
 
   @override
@@ -272,33 +257,18 @@ mixin _$HomeStore on _HomeStore, Store {
     });
   }
 
-  final _$selectedCategoryAtom = Atom(name: '_HomeStore.selectedCategory');
+  final _$categoryIdAtom = Atom(name: '_HomeStore.categoryId');
 
   @override
-  bool get selectedCategory {
-    _$selectedCategoryAtom.reportRead();
-    return super.selectedCategory;
+  String? get categoryId {
+    _$categoryIdAtom.reportRead();
+    return super.categoryId;
   }
 
   @override
-  set selectedCategory(bool value) {
-    _$selectedCategoryAtom.reportWrite(value, super.selectedCategory, () {
-      super.selectedCategory = value;
-    });
-  }
-
-  final _$categoryFilterAtom = Atom(name: '_HomeStore.categoryFilter');
-
-  @override
-  List<String>? get categoryFilter {
-    _$categoryFilterAtom.reportRead();
-    return super.categoryFilter;
-  }
-
-  @override
-  set categoryFilter(List<String>? value) {
-    _$categoryFilterAtom.reportWrite(value, super.categoryFilter, () {
-      super.categoryFilter = value;
+  set categoryId(String? value) {
+    _$categoryIdAtom.reportWrite(value, super.categoryId, () {
+      super.categoryId = value;
     });
   }
 
@@ -375,7 +345,6 @@ success: ${success},
 loading: ${loading},
 controller: ${controller},
 fabIsVisible: ${fabIsVisible},
-socialLinkAgent: ${socialLinkAgent},
 filter: ${filter},
 minVotes: ${minVotes},
 maxVotes: ${maxVotes},
@@ -387,8 +356,7 @@ userId: ${userId},
 tags: ${tags},
 question: ${question},
 category: ${category},
-selectedCategory: ${selectedCategory},
-categoryFilter: ${categoryFilter},
+categoryId: ${categoryId},
 showIconFilter: ${showIconFilter}
     ''';
   }

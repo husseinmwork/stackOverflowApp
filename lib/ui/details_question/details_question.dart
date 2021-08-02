@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
+import 'package:todo_app/constants/dimens.dart';
 import 'package:todo_app/store/details_question/details_question_store.dart';
 import 'package:todo_app/widgets/arrow_back_icon.dart';
+import 'package:todo_app/widgets/stack_overflow_indecator.dart';
 
 class DetailsQuestion extends StatefulWidget {
   const DetailsQuestion(
@@ -21,7 +22,6 @@ class _DetailsQuestionState extends State<DetailsQuestion> {
 
   @override
   void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
     super.didChangeDependencies();
     _store = Provider.of<DetailsQuestionStore>(context);
     _store.getQuestion(widget.id);
@@ -35,23 +35,53 @@ class _DetailsQuestionState extends State<DetailsQuestion> {
     );
   }
 
-  AppBar _buildAppBar() =>
-      AppBar(
+  AppBar _buildAppBar() => AppBar(
         elevation: 4,
         leading: ArrowBackIcon(),
         title: Text("Details Question",
-            style: Theme
-                .of(context)
-                .textTheme
-                .headline6),
+            style: Theme.of(context).textTheme.headline6),
       );
 
-  Widget _buildBody() =>
-      Observer(builder: (_) =>
-      _store.question != null ? ListView(
+  Widget _buildBody() => Observer(
+        builder: (_) => _store.success
+            ? ListView(
+                children: [
+                  _buildTitle(),
+
+                  SizedBox(height: Dimens.padding_normal),
+                  _buildQuestionBody(),
+                  _buildTags(),
+                ],
+              )
+            : StackOverFlowIndecator(),
+      );
+
+  Widget _buildTitle() =>Text(
+    _store.question!.title!,
+    style: Theme.of(context)
+        .textTheme
+        .headline6
+        ?.copyWith(fontWeight: FontWeight.w500),
+  );
+  Widget _buildQuestionBody() =>Text(
+    _store.question!.body!,
+    style: Theme.of(context).textTheme.subtitle2,
+  );
+
+  Widget _buildTags() => Wrap(
         children: [
-          Text(_store.question!.title!)
+          ..._store.question!.tags!
+              .map((e) => Container(
+                    color: Colors.amber.shade600,
+                    padding: EdgeInsets.all(Dimens.padding_normal),
+                    margin: EdgeInsets.only(right: Dimens.padding_normal),
+                    child: Text(e,
+                        style: Theme.of(context)
+                            .textTheme
+                            .subtitle2
+                            ?.copyWith(color: Colors.black)),
+                  ))
+              .toList()
         ],
-      ) : SpinKitFoldingCube(color: Colors.purple[200])
       );
 }

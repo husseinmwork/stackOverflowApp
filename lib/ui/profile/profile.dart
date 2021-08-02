@@ -9,6 +9,7 @@ import 'package:todo_app/store/profile/profile_store.dart';
 import 'package:todo_app/store/theme/theme_store.dart';
 import 'package:todo_app/utils/routes/routes.dart';
 import 'package:todo_app/widgets/arrow_back_icon.dart';
+import 'package:todo_app/widgets/stack_overflow_indecator.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -63,7 +64,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         builder: (_) => Visibility(
           visible: _store.profile != null,
           replacement: Center(
-            child: SpinKitFoldingCube(color: Colors.purple[200]),
+            child: StackOverFlowIndecator(),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,

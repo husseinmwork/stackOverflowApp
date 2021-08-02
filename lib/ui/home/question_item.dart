@@ -1,18 +1,15 @@
-import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app/constants/assets.dart';
 import 'package:todo_app/constants/dimens.dart';
 import 'package:todo_app/model/get_question/get_question.dart';
 import 'package:todo_app/store/theme/theme_store.dart';
-import 'package:todo_app/ui/details_question/details_question.dart';
 
 class QuestionItem extends StatefulWidget {
   final Question item;
-  final Function onTap;
   final VoidCallback openContainer;
 
-  QuestionItem({required this.item , required this.onTap , required this.openContainer});
+  QuestionItem({required this.item  , required this.openContainer});
 
   @override
   _QuestionItemState createState() => _QuestionItemState();
@@ -25,55 +22,61 @@ class _QuestionItemState extends State<QuestionItem> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _themeStore = Provider.of<ThemeStore>(context);
+    print("this.void");
   }
 
 
 
   @override
   Widget build(BuildContext context) {
-    return  _InkWellOverlay(
 
-        child: Card(
-          margin: EdgeInsets.symmetric(vertical: Dimens.padding_mini),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
-          child: InkWell(
-            onTap:(){ widget.onTap();},
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                  horizontal: Dimens.padding_mid, vertical: Dimens.padding_mid),
-              child: Column(
+    return  Card(
+      margin: EdgeInsets.symmetric(vertical: Dimens.padding_mini),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
+      child: InkWell(
+        onTap: widget.openContainer,
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+              horizontal: Dimens.padding_mid, vertical: Dimens.padding_mid),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
+                  _buildImage(),
+                  SizedBox(width: Dimens.padding_mini),
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildImage(),
-                      SizedBox(width: Dimens.padding_mini),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [_buildUserName(), _buildUserScore()],
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: Dimens.padding_mid),
-                  _buildQuestionTitle(),
-                  SizedBox(height: Dimens.padding_mini),
-                  _buildQuestion(),
-                  SizedBox(height: Dimens.padding_large),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      _buildAnswer(),
-                      _buildViews(),
-                      _buildLike(),
-                    ],
+                    children: [Row(
+                      children: [
+                        _buildUserName(),
+                        SizedBox(width: Dimens.padding_mini),
+                        _buildUserScore()
+                      ],
+                    ), _buildAskDate()],
                   ),
                 ],
               ),
-            ),
+              SizedBox(height: Dimens.padding_mid),
+              _buildQuestionTitle(),
+              SizedBox(height: Dimens.padding_mini),
+              _buildQuestion(),
+              SizedBox(height: Dimens.padding_large),
+              _buildTags(),
+              SizedBox(height: Dimens.padding_large),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _buildAnswer(),
+                  _buildViews(),
+                  _buildLike(),
+                ],
+              ),
+            ],
           ),
         ),
-
+      ),
     );
   }
 
@@ -102,6 +105,14 @@ class _QuestionItemState extends State<QuestionItem> {
 
   Widget _buildUserScore() => Text(
         widget.item.user!.score.toString(),
+    style: Theme.of(context).textTheme.subtitle2?.copyWith(
+      color: _themeStore.darkMode ? Colors.white : Colors.black,
+    ),
+      );
+  Widget _buildAskDate() => Text(
+    //todo this after add created at from backend
+    /*    widget.item.user!.createdAt.toString(),*/
+    "asked 49 secs ago",
         style: Theme.of(context).textTheme.caption?.copyWith(
               color: _themeStore.darkMode ? Colors.white : Colors.black,
             ),
@@ -121,12 +132,21 @@ class _QuestionItemState extends State<QuestionItem> {
             ),
       );
 
+  Widget _buildTags()=>Wrap(
+    children: [...widget.item.tags!.map((e) => Container(
+  color: Colors.amber.shade600,
+  padding: EdgeInsets.all(Dimens.padding_normal),
+  margin: EdgeInsets.only(right: Dimens.padding_normal),
+  child: Text(e , style: Theme.of(context).textTheme.subtitle2?.copyWith(color: Colors.black)),
+  )).toList()],
+  );
+
   Widget _buildLike() => Row(
         children: [
           Icon(Icons.favorite, size: 20),
           SizedBox(width: Dimens.padding_normal),
           Text(
-            widget.item.votes.toString(),
+            widget.item.votes!.toInt().toString(),
             style: Theme.of(context).textTheme.caption?.copyWith(
                   color: _themeStore.darkMode ? Colors.white : Colors.black,
                 ),
@@ -153,7 +173,7 @@ class _QuestionItemState extends State<QuestionItem> {
           SizedBox(width: Dimens.padding_normal),
           //todo this into views after add in backend
           Text(
-            widget.item.user?.answer?.length.toString() ?? "0",
+            widget.item.views!.toInt().toString(),
             style: Theme.of(context).textTheme.caption?.copyWith(
                   color: _themeStore.darkMode ? Colors.white : Colors.black,
                 ),
@@ -164,28 +184,4 @@ class _QuestionItemState extends State<QuestionItem> {
 
 
 
-class _InkWellOverlay extends StatelessWidget {
-  const _InkWellOverlay({
-    this.openContainer,
-    this.width,
-    this.height,
-    this.child,
-  });
 
-  final VoidCallback? openContainer;
-  final double? width;
-  final double? height;
-  final Widget? child;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: height,
-      width: width,
-      child: InkWell(
-        onTap: openContainer,
-        child: child,
-      ),
-    );
-  }
-}

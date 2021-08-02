@@ -5,20 +5,23 @@ import 'package:todo_app/constants/dimens.dart';
 class FilterDropDown extends StatelessWidget {
   final String? value;
   final String hint;
-  final List list;
   final Function onChanged;
+  final double width;
+  final List<DropdownMenuItem<String>>? items;
 
   FilterDropDown(
       {required this.hint,
-        required this.list,
         required this.onChanged,
-        this.value});
+        this.value,
+      this.width = 120,
+        required this.items
+      });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: Dimens.padding_small),
-      width: 120,
+      width: width,
       height: 37,
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey),
@@ -34,14 +37,7 @@ class FilterDropDown extends StatelessWidget {
         isExpanded: true,
         hint: Text(hint , style: Theme.of(context).textTheme.bodyText1),
         style: Theme.of(context).textTheme.bodyText1,
-        items: [
-          ...list.map((e) {
-            return DropdownMenuItem(
-              child: Text(e.toString()),
-              value: e,
-            );
-          }).toList(),
-        ],
+        items: items,
         onChanged: (value) => onChanged(value),
       ),
     );

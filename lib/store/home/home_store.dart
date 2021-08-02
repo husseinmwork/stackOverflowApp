@@ -46,8 +46,6 @@ abstract class _HomeStore with Store {
   @observable
   bool fabIsVisible = false;
 
-  @observable
-  List<String> socialLinkAgent = ObservableList<String>();
 
   @observable
   QuestionFilter? filter;
@@ -82,11 +80,10 @@ abstract class _HomeStore with Store {
   @observable
   List<Category> category = ObservableList<Category>();
 
-  @observable
-  bool selectedCategory = false;
+
 
   @observable
-  List<String>? categoryFilter = [];
+  String? categoryId;
 
   @computed
   bool get showIconFilter =>
@@ -148,6 +145,7 @@ abstract class _HomeStore with Store {
               minVotes: minVotes,
               id: id,
               userId: userId,
+              fieldId:categoryId
             ))
         .then((value) {
       return question = value.results;
@@ -162,7 +160,6 @@ abstract class _HomeStore with Store {
     await _repository.getCategory(skip).then((value) {
       return category = value.results;
     }).catchError((e) {
-      throw e;
     });
   }
 }
