@@ -1,5 +1,6 @@
 // import 'package:boilerplate/constants/colors.dart';
 // import 'package:boilerplate/constants/font_family.dart';
+
 /**
  * Creating custom color palettes is part of creating a custom app. The idea is to create
  * your class of custom colors, in this case `CompanyColors` and then create a `ThemeData`
@@ -107,6 +108,14 @@ final ThemeData themeDataDark = ThemeData(
     style: TextButton.styleFrom(
         primary: Colors.white, backgroundColor: Colors.amber),
   ),
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ElevatedButton.styleFrom(
+      padding: EdgeInsets.zero,
+      primary: Colors.grey[800],
+      elevation: 0,
+    ),
+  ),
+
   primarySwatch: Colors.grey,
   primaryColor:  Colors.grey[800],
   brightness: Brightness.dark,

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:injectable/injectable.dart';
 import 'package:mobx/mobx.dart';
 import 'package:todo_app/data/repositry.dart';
@@ -71,6 +72,7 @@ abstract class _HomeStore with Store {
   @observable
   String? userId;
 
+
   @observable
   List<String>? tags = [];
 
@@ -79,6 +81,9 @@ abstract class _HomeStore with Store {
 
   @observable
   List<Category> category = ObservableList<Category>();
+  @observable
+  PagingController<int, Question> pagingController =
+  PagingController(firstPageKey: 0);
 
 
 

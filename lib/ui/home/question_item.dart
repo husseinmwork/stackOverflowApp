@@ -26,7 +26,6 @@ class _QuestionItemState extends State<QuestionItem> {
   }
 
 
-
   @override
   Widget build(BuildContext context) {
 
@@ -41,6 +40,7 @@ class _QuestionItemState extends State<QuestionItem> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -141,37 +141,44 @@ class _QuestionItemState extends State<QuestionItem> {
   )).toList()],
   );
 
-  Widget _buildLike() => Row(
-        children: [
-          Icon(Icons.favorite, size: 20),
-          SizedBox(width: Dimens.padding_normal),
-          Text(
-            widget.item.votes!.toInt().toString(),
-            style: Theme.of(context).textTheme.caption?.copyWith(
-                  color: _themeStore.darkMode ? Colors.white : Colors.black,
-                ),
-          )
-        ],
-      );
+  Widget _buildLike() => ElevatedButton(
 
-  Widget _buildAnswer() => Row(
-        children: [
-          Icon(Icons.comment, size: 20),
-          SizedBox(width: Dimens.padding_normal),
-          Text(
-            widget.item.user?.answer?.length.toString() ?? "0",
-            style: Theme.of(context).textTheme.caption?.copyWith(
-                  color: _themeStore.darkMode ? Colors.white : Colors.black,
-                ),
-          )
-        ],
-      );
+    onPressed: (){},
+    child: Row(
+          children: [
+            Icon(Icons.favorite, size: 20 , color: Theme.of(context).iconTheme.color),
+            SizedBox(width: Dimens.padding_normal),
+            Text(
+              widget.item.votes!.toInt().toString(),
+              style: Theme.of(context).textTheme.caption?.copyWith(
+                    color: _themeStore.darkMode ? Colors.white : Colors.black,
+                  ),
+            )
+          ],
+        ),
+  );
+
+  Widget _buildAnswer() => ElevatedButton(
+
+    onPressed: (){},
+    child: Row(
+          children: [
+            Icon(Icons.comment, size: 20, color: Theme.of(context).iconTheme.color),
+            SizedBox(width: Dimens.padding_normal),
+            Text(
+              widget.item.user?.answer?.length.toString() ?? "0",
+              style: Theme.of(context).textTheme.caption?.copyWith(
+                    color: _themeStore.darkMode ? Colors.white : Colors.black,
+                  ),
+            )
+          ],
+        ),
+  );
 
   Widget _buildViews() => Row(
         children: [
           Icon(Icons.visibility, size: 20),
           SizedBox(width: Dimens.padding_normal),
-          //todo this into views after add in backend
           Text(
             widget.item.views!.toInt().toString(),
             style: Theme.of(context).textTheme.caption?.copyWith(

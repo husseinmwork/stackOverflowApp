@@ -1,22 +1,21 @@
+import 'dart:convert';
+
 import 'package:animations/animations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:material_tag_editor/tag_editor.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app/constants/dimens.dart';
-import 'package:todo_app/model/get_category/get_category.dart';
 import 'package:todo_app/model/get_question/get_question.dart';
 import 'package:todo_app/packages/anim_search_widget.dart';
-import 'package:todo_app/packages/textfield_tags.dart';
 import 'package:todo_app/store/home/home_store.dart';
 import 'package:todo_app/store/theme/theme_store.dart';
 import 'package:todo_app/ui/details_question/details_question.dart';
 import 'package:todo_app/ui/home/app_drawer.dart';
 import 'package:todo_app/ui/home/question_item.dart';
 import 'package:todo_app/utils/device/device_utils.dart';
-import 'package:todo_app/utils/routes/routes.dart';
 import 'package:todo_app/widgets/filter_dropdown.dart';
 import 'package:todo_app/widgets/stack_overflow_indecator.dart';
 import 'package:todo_app/widgets/todo_button.dart';
@@ -26,38 +25,13 @@ class HomeScreen extends StatefulWidget {
   _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
   late HomeStore _store;
   late ThemeStore _themeStore;
 
-  //filter section
-  String? _valueMinVotes;
-  String? _valueMaxVotes;
-  String? _valueMinViews;
-  String? _valueMaxViews;
 
-  final List<String> _minVotes = ['10', '20', '30', '40', '50'];
-  final List<String> _maxVotes = ['100', '110', '120', '130', '140'];
-  final List<String> _minViews = ['10', '20', '30', '40', '50'];
-  final List<String> _maxViews = ['100', '110', '120', '130', '140'];
 
-  //tags
-  bool selectedCategory = false;
-
-  List<String> tags = [];
-  List<String> options = [
-    'News',
-    'Entertainment',
-    'Politics',
-    'Automotive',
-    'Sports',
-    'Education',
-    'Fashion',
-    'Travel',
-    'Food',
-    'Tech',
-    'Science',
-  ];
 
   ContainerTransitionType _transitionType = ContainerTransitionType.fade;
 
@@ -68,11 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ));
   }
 
-  //end filter section
 
-  final PagingController<int, Question> _pagingController =
-      PagingController(firstPageKey: 0);
-  RangeValues _currentRangeValues = const RangeValues(0, 200);
   TextEditingController searchController = TextEditingController();
   bool _showNameApp = true;
   bool _showSearchColor = false;
@@ -85,24 +55,17 @@ class _HomeScreenState extends State<HomeScreen> {
       final isLastPage = newItems.isEmpty;
 
       if (isLastPage) {
-        _pagingController.appendLastPage(newItems);
+        _store.pagingController.appendLastPage(newItems);
       } else {
         final nextPageKey = pageKey + newItems.length;
-        _pagingController.appendPage(newItems, nextPageKey);
+        _store.pagingController.appendPage(newItems, nextPageKey);
       }
     } catch (error) {
-      _pagingController.error = error;
+      _store.pagingController.error = error;
       debugPrint("$error");
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _pagingController.addPageRequestListener((pageKey) async {
-      _fetchPage(pageKey);
-    });
-  }
 
   @override
   void didChangeDependencies() {
@@ -112,6 +75,11 @@ class _HomeScreenState extends State<HomeScreen> {
     _store.getPrefUser();
     _store.updateScrolling();
     _store.getCategory(0);
+
+    _store.pagingController.addPageRequestListener((pageKey) async {
+      _fetchPage(pageKey);
+    });
+
   }
 
   @override
@@ -159,7 +127,7 @@ class _HomeScreenState extends State<HomeScreen> {
               backgroundColor: Colors.red,
               onPressed: () {
                 _store.removeFilter();
-                _pagingController.refresh();
+                _store.pagingController.refresh();
                 DeviceUtils.hideKeyboard(context);
                 // Navigator.of(context).pushNamed(Routes.create_question);
               },
@@ -184,7 +152,7 @@ class _HomeScreenState extends State<HomeScreen> {
         onChange: (value) {
           print(value);
           _store.body = value;
-          _pagingController.refresh();
+          _store.pagingController.refresh();
         },
         onSuffixTap: () {
           setState(() {
@@ -198,7 +166,11 @@ class _HomeScreenState extends State<HomeScreen> {
         icon: Icon(Icons.filter_alt),
         onPressed: () {
           // SideSheet.right(body: _buildBodyFilter(), context: context);
-          _modalBottomSheetMenu();
+
+          showModalBottomSheet(
+            context: context,
+            builder: (_) => FilterBottomSheet()
+          );
         },
       );
 
@@ -224,13 +196,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildMainPaging() => RefreshIndicator(
         onRefresh: () async => await Future.sync(() {
-          _pagingController.refresh();
+          _store.pagingController.refresh();
         }),
         child: PagedListView(
-          pagingController: _pagingController,
+          pagingController: _store.pagingController,
           builderDelegate: PagedChildBuilderDelegate<Question>(
-            firstPageProgressIndicatorBuilder: (_) =>StackOverFlowIndecator(),
-
+            firstPageProgressIndicatorBuilder: (_) => StackOverFlowIndecator(),
             noItemsFoundIndicatorBuilder: (_) => Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -253,8 +224,9 @@ class _HomeScreenState extends State<HomeScreen> {
               id: item.id!,
               transitionType: _transitionType,
               onClosed: _showMarkedAsDoneSnackbar,
-              closedBuilder: (BuildContext _, VoidCallback openContainer)=> QuestionItem(
-                openContainer: (){
+              closedBuilder: (BuildContext _, VoidCallback openContainer) =>
+                  QuestionItem(
+                openContainer: () {
                   openContainer();
                 },
                 // currentLocation: LatLng(position.latitude, position.longitude),
@@ -266,236 +238,8 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       );
 
-  void _modalBottomSheetMenu() {
-    showModalBottomSheet(
-        context: context,
-        builder: (builder) {
-          return _buildContantSheetFilter();
-        });
-  }
 
-  Widget _buildContantSheetFilter() => Container(
-        height: MediaQuery.of(context).size.height * 0.60,
-        color: Colors.transparent,
-        padding: const EdgeInsets.symmetric(
-            vertical: Dimens.padding_normal, horizontal: Dimens.padding_xxl),
-        child: StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) => Container(
-            height: double.infinity,
-            width: double.infinity,
-            color: Theme.of(context).scaffoldBackgroundColor,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  children: [
 
-                    _buildTags(),
-                    SizedBox(height: Dimens.padding_large),
-                    _buildVotes(),
-                    SizedBox(height: Dimens.padding_normal),
-                    _buildViews(),
-                    SizedBox(height: Dimens.padding_large),
-
-                    _buildSelectCategory(),
-                  ],
-                ),
-                SizedBox(
-                  width: 250,
-                  height: 40,
-                  child: RoundedButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        // _store.getQuestion(skip);
-                        _pagingController.refresh();
-                      },
-                      title: Text('Show Result')),
-                )
-              ],
-            ),
-          ),
-        ),
-      );
-
-  Widget _buildVotes() => Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text("Min Votes", style: Theme.of(context).textTheme.subtitle2),
-              SizedBox(height: Dimens.padding_mini),
-              FilterDropDown(
-                items: [
-                  ..._minVotes.map((e) {
-                    return DropdownMenuItem(
-                      child: Text(e.toString()),
-                      value: e,
-                    );
-                  }).toList(),
-                ],
-                value: _valueMinVotes,
-                hint: "1",
-
-                onChanged: (value) {
-                  setState(() {
-                    _valueMinVotes = value;
-                  });
-                  _store.minVotes = int.parse(_valueMinVotes!);
-                },
-              ),
-            ],
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text("Max Votes", style: Theme.of(context).textTheme.subtitle2),
-              SizedBox(height: Dimens.padding_mini),
-              FilterDropDown(
-                items: [
-                  ..._maxVotes.map((e) {
-                    return DropdownMenuItem(
-                      child: Text(e.toString()),
-                      value: e,
-                    );
-                  }).toList(),
-                ],
-                value: _valueMaxVotes,
-                hint: "1",
-                onChanged: (value) {
-                  setState(() {
-                    _valueMaxVotes = value;
-                  });
-                  _store.maxVotes = int.parse(_valueMaxVotes!);
-                },
-              ),
-            ],
-          ),
-        ],
-      );
-
-  Widget _buildViews() => Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text("Min Views", style: Theme.of(context).textTheme.subtitle2),
-              SizedBox(height: Dimens.padding_mini),
-              FilterDropDown(
-                items: [
-                  ..._minViews.map((e) {
-                    return DropdownMenuItem(
-                      child: Text(e.toString()),
-                      value: e,
-                    );
-                  }).toList(),
-                ],
-                value: _valueMinViews,
-                hint: "1",
-
-                onChanged: (value) {
-                  setState(() {
-                    _valueMinViews = value;
-                  });
-                  _store.minViews = int.parse(_valueMinVotes!);
-                },
-              ),
-            ],
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text("Max Views", style: Theme.of(context).textTheme.subtitle2),
-              SizedBox(height: Dimens.padding_mini),
-              FilterDropDown(
-                items: [
-                  ..._maxViews.map((e) {
-                    return DropdownMenuItem(
-                      child: Text(e.toString()),
-                      value: e,
-                    );
-                  }).toList(),
-                ],
-                value: _valueMaxViews,
-                hint: "1",
-
-                onChanged: (value) {
-                  setState(() {
-                    _valueMaxViews = value;
-                  });
-                  _store.maxViews = int.parse(_valueMaxViews!);
-                },
-              ),
-            ],
-          ),
-        ],
-      );
-
-  Widget _buildTags() => TextFieldTags(
-      tagsStyler: TagsStyler(
-          tagTextStyle: TextStyle(fontWeight: FontWeight.normal),
-          tagDecoration: BoxDecoration(
-            color: Colors.blue[300],
-            borderRadius: BorderRadius.circular(0.0),
-          ),
-          tagCancelIcon:
-              Icon(Icons.cancel, size: 18.0, color: Colors.blue[900]),
-          tagPadding: const EdgeInsets.all(6.0)),
-      textFieldStyler: TextFieldStyler(
-        helperText: "",
-        hintStyle: TextStyle(color: Colors.white),
-      ),
-      onTag: (tag) {},
-      onDelete: (tag) {
-        _store.tags!.removeWhere((element) => element == tag);
-        print(_store.tags);
-      },
-      validator: (tag) {
-        _store.tags!.add(tag!);
-        print(_store.tags);
-        if (tag.length > 15) {
-          return "hey that's too long";
-        }
-        return null;
-      });
-
-  Widget _buildSelectCategory() => Visibility(
-        visible: _store.category.isNotEmpty,
-        child:  Observer(
-          builder:(_)=> Container(
-            padding: EdgeInsets.symmetric(horizontal: Dimens.padding_small),
-            width: double.infinity,
-            height: 37,
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey),
-              borderRadius: BorderRadius.circular(Dimens.border_small),
-            ),
-            child: DropdownButton(
-              value: _store.categoryId,
-              icon: Icon(
-                Icons.keyboard_arrow_down,
-              ),
-              underline: Text(""),
-              isExpanded: true,
-              hint: Text(  "Select Category", style: Theme.of(context).textTheme.bodyText1),
-              style: Theme.of(context).textTheme.bodyText1,
-              items: [
-                ..._store.category.map((e) {
-                  return DropdownMenuItem<String>(
-                    child: Text(e.name.toString()),
-                    value: e.id,
-                  );
-                }).toList(),
-              ],
-              onChanged: (String? value)  {
-              _store.categoryId = value;
-              },
-            ),
-          )
-        ),
-      );
 }
 
 class _OpenContainerWrapper extends StatelessWidget {
@@ -505,6 +249,7 @@ class _OpenContainerWrapper extends StatelessWidget {
     required this.onClosed,
     required this.id,
   });
+
   final String id;
   final CloseContainerBuilder closedBuilder;
   final ContainerTransitionType transitionType;
@@ -513,21 +258,310 @@ class _OpenContainerWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return OpenContainer<bool>(
-      transitionType: transitionType,
-      openBuilder: (BuildContext context, VoidCallback _) {
-        return  DetailsQuestion(id: id);
-      },
-
-      onClosed: onClosed,
+        transitionType: transitionType,
+        openBuilder: (BuildContext context, VoidCallback _) {
+          return DetailsQuestion(id: id);
+        },
+        onClosed: onClosed,
         transitionDuration: Duration(milliseconds: 500),
-      tappable: false,
-      closedBuilder: closedBuilder,
-      openColor: Theme.of(context).accentColor,
-      closedColor: Theme.of(context).scaffoldBackgroundColor  );
+        tappable: false,
+        closedBuilder: closedBuilder,
+        openColor: Theme.of(context).accentColor,
+        closedColor: Theme.of(context).scaffoldBackgroundColor);
+  }
+}
+
+class _Chip extends StatelessWidget {
+  const _Chip({
+    required this.label,
+    required this.onDeleted,
+    required this.index,
+  });
+
+  final String label;
+  final ValueChanged<int> onDeleted;
+  final int index;
+
+  @override
+  Widget build(BuildContext context) {
+    return Chip(
+      labelPadding: const EdgeInsets.only(left: 8.0),
+      label: Text(label),
+      deleteIcon: const Icon(
+        Icons.close,
+        size: 18,
+      ),
+      onDeleted: () {
+        onDeleted(index);
+      },
+    );
   }
 }
 
 
 
+class FilterBottomSheet extends StatefulWidget {
+  @override
+  _FilterBottomSheetState createState() => _FilterBottomSheetState();
+}
 
+class _FilterBottomSheetState extends State<FilterBottomSheet> {
+
+  //filter section
+  String? _valueMinVotes;
+  String? _valueMaxVotes;
+  String? _valueMinViews;
+  String? _valueMaxViews;
+
+  final List<String> _minVotes = ['10', '20', '30', '40', '50'];
+  final List<String> _maxVotes = ['100', '110', '120', '130', '140'];
+  final List<String> _minViews = ['10', '20', '30', '40', '50'];
+  final List<String> _maxViews = ['100', '110', '120', '130', '140'];
+
+  ///tags
+  List<String> _values = [];
+  final FocusNode _focusNode = FocusNode();
+  final TextEditingController _textEditingController = TextEditingController();
+  late PersistentBottomSheetController _controller;
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  ///end tag
+
+  late HomeStore _store;
+
+
+  @override
+  void didChangeDependencies() {
+        super.didChangeDependencies();
+        _store = Provider.of<HomeStore>(context);
+
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Center(
+        child: Container(
+
+          padding: const EdgeInsets.symmetric(
+              vertical: Dimens.padding_normal, horizontal: Dimens.padding_xxl),
+          color: Theme.of(context).scaffoldBackgroundColor,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Column(
+                children: [
+                  _buildTags(),
+                  SizedBox(height: Dimens.padding_large),
+                  _buildVotes(),
+                  SizedBox(height: Dimens.padding_normal),
+                  _buildViews(),
+                  SizedBox(height:50),
+                  _buildSelectCategory(),
+                  SizedBox(height:50),
+
+                ],
+              ),
+              RoundedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    // _store.getQuestion(skip);
+                    _store.pagingController.refresh();
+                  },
+                  title: Text('Show Result'))
+            ],
+          ),
+        ),
+      ),
+    );
+
+  }
+
+  Widget _buildVotes() => Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text("Min Votes", style: Theme.of(context).textTheme.subtitle2),
+          SizedBox(height: Dimens.padding_mini),
+          FilterDropDown(
+            items: [
+              ..._minVotes.map((e) {
+                return DropdownMenuItem(
+                  child: Text(e.toString()),
+                  value: e,
+                );
+              }).toList(),
+            ],
+            value: _valueMinVotes,
+            hint: "1",
+            onChanged: (value) {
+              setState(() {
+                _valueMinVotes = value;
+              });
+              _store.minVotes = int.parse(_valueMinVotes!);
+            },
+          ),
+        ],
+      ),
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text("Max Votes", style: Theme.of(context).textTheme.subtitle2),
+          SizedBox(height: Dimens.padding_mini),
+          FilterDropDown(
+            items: [
+              ..._maxVotes.map((e) {
+                return DropdownMenuItem(
+                  child: Text(e.toString()),
+                  value: e,
+                );
+              }).toList(),
+            ],
+            value: _valueMaxVotes,
+            hint: "1",
+            onChanged: (value) {
+              setState(() {
+                _valueMaxVotes = value;
+              });
+              _store.maxVotes = int.parse(_valueMaxVotes!);
+            },
+          ),
+        ],
+      ),
+    ],
+  );
+
+  Widget _buildViews() => Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text("Min Views", style: Theme.of(context).textTheme.subtitle2),
+          SizedBox(height: Dimens.padding_mini),
+          FilterDropDown(
+            items: [
+              ..._minViews.map((e) {
+                return DropdownMenuItem(
+                  child: Text(e.toString()),
+                  value: e,
+                );
+              }).toList(),
+            ],
+            value: _valueMinViews,
+            hint: "1",
+            onChanged: (value) {
+              setState(() {
+                _valueMinViews = value;
+              });
+              _store.minViews = int.parse(_valueMinVotes!);
+            },
+          ),
+        ],
+      ),
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text("Max Views", style: Theme.of(context).textTheme.subtitle2),
+          SizedBox(height: Dimens.padding_mini),
+          FilterDropDown(
+            items: [
+              ..._maxViews.map((e) {
+                return DropdownMenuItem(
+                  child: Text(e.toString()),
+                  value: e,
+                );
+              }).toList(),
+            ],
+            value: _valueMaxViews,
+            hint: "1",
+            onChanged: (value) {
+              setState(() {
+                _valueMaxViews = value;
+              });
+              _store.maxViews = int.parse(_valueMaxViews!);
+            },
+          ),
+        ],
+      ),
+    ],
+  );
+
+  Widget _buildTags() => TagEditor(
+      length: _values.length,
+      controller: _textEditingController,
+      focusNode: _focusNode,
+      delimiters: [',', ' '],
+      hasAddButton: true,
+      resetTextOnSubmitted: true,
+      // This is set to grey just to illustrate the `textStyle` prop
+      textStyle: const TextStyle(color: Colors.grey),
+      onSubmitted: (outstandingValue) {
+        setState(() {
+          _values.add(outstandingValue);
+        });
+      },
+      inputDecoration: const InputDecoration(
+        border: InputBorder.none,
+        hintText: 'Hint Text...',
+      ),
+      onTagChanged: (newValue) {
+        setState(() {
+          _values.add(newValue);
+        });
+      },
+      tagBuilder: (context, index) => Chip(
+        labelPadding: const EdgeInsets.only(left: 8.0),
+        label: Text(_values[index]),
+        deleteIcon: const Icon(
+          Icons.close,
+          size: 18,
+        ),
+        onDeleted: () {
+          setState(() {
+            _values.removeAt(index);
+          });
+        },
+      ));
+
+  Widget _buildSelectCategory() => Visibility(
+    visible: _store.category.isNotEmpty,
+    child: Observer(
+        builder: (_) => Container(
+          padding:
+          EdgeInsets.symmetric(horizontal: Dimens.padding_small),
+          width: double.infinity,
+          height: 37,
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey),
+            borderRadius: BorderRadius.circular(Dimens.border_small),
+          ),
+          child: DropdownButton(
+            value: _store.categoryId,
+            icon: Icon(
+              Icons.keyboard_arrow_down,
+            ),
+            underline: Text(""),
+            isExpanded: true,
+            hint: Text("Select Category",
+                style: Theme.of(context).textTheme.bodyText1),
+            style: Theme.of(context).textTheme.bodyText1,
+            items: [
+              ..._store.category.map((e) {
+                return DropdownMenuItem<String>(
+                  child: Text(e.name.toString()),
+                  value: e.id,
+                );
+              }).toList(),
+            ],
+            onChanged: (String? value) {
+              _store.categoryId = value;
+            },
+          ),
+        )),
+  );
+}
 
