@@ -215,13 +215,13 @@ mixin _$HomeStore on _HomeStore, Store {
   final _$tagsAtom = Atom(name: '_HomeStore.tags');
 
   @override
-  List<String>? get tags {
+  List<String> get tags {
     _$tagsAtom.reportRead();
     return super.tags;
   }
 
   @override
-  set tags(List<String>? value) {
+  set tags(List<String> value) {
     _$tagsAtom.reportWrite(value, super.tags, () {
       super.tags = value;
     });
@@ -254,6 +254,21 @@ mixin _$HomeStore on _HomeStore, Store {
   set category(List<Category> value) {
     _$categoryAtom.reportWrite(value, super.category, () {
       super.category = value;
+    });
+  }
+
+  final _$pagingControllerAtom = Atom(name: '_HomeStore.pagingController');
+
+  @override
+  PagingController<int, Question> get pagingController {
+    _$pagingControllerAtom.reportRead();
+    return super.pagingController;
+  }
+
+  @override
+  set pagingController(PagingController<int, Question> value) {
+    _$pagingControllerAtom.reportWrite(value, super.pagingController, () {
+      super.pagingController = value;
     });
   }
 
@@ -356,6 +371,7 @@ userId: ${userId},
 tags: ${tags},
 question: ${question},
 category: ${category},
+pagingController: ${pagingController},
 categoryId: ${categoryId},
 showIconFilter: ${showIconFilter}
     ''';

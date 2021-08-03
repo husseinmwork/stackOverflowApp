@@ -1,393 +1,458 @@
+
+import 'dart:math';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
-//  textfield_tags: ^1.4.0 this package
-typedef String? Validator(String? tag);
-
-class TextFieldTags extends StatefulWidget {
-  ///[tagsStyler] must not be [null]
-  final TagsStyler tagsStyler;
-
-  ///[textFieldStyler] must not be [null]
-  final TextFieldStyler textFieldStyler;
-
-  ///[onTag] must not be [null] and should be implemented
-  final void Function(String tag) onTag;
-
-  ///[onDelete] must not be [null]
-  final void Function(String tag) onDelete;
-
-  ///[validator] allows you to validate the tag that has been entered
-  final Validator? validator;
-
-  ///[initialTags] are optional initial tags you can enter
-  final List<String>? initialTags;
-
-  ///Padding for the scrollable
-  final EdgeInsets scrollableTagsPadding;
-
-  ///Margin for the scrollable
-  final EdgeInsets? scrollableTagsMargin;
-
-  ///[tagsDistanceFromBorder] sets the distance of the tags from the border
-  final double tagsDistanceFromBorderEnd;
-
-  const TextFieldTags({
+//////////////tag_editor.dart
+/// A [Widget] for editing tag similar to Google's Gmail
+/// email address input widget in the iOS app.
+class TagEditor extends StatefulWidget {
+  const TagEditor({
+    required this.length,
+    this.minTextFieldWidth = 160.0,
+    this.tagSpacing = 4.0,
+    required this.tagBuilder,
+    required this.onTagChanged,
     Key? key,
-    this.tagsDistanceFromBorderEnd = 0.725,
-    this.scrollableTagsPadding = const EdgeInsets.symmetric(horizontal: 4.0),
-    this.scrollableTagsMargin,
-    this.validator,
-    this.initialTags,
-    required this.tagsStyler,
-    required this.textFieldStyler,
-    required this.onTag,
-    required this.onDelete,
+    this.focusNode,
+    this.hasAddButton = true,
+    this.delimiters = const [],
+    this.icon,
+    this.enabled = true,
+    this.maxLength = 30,
+    // TextField's properties
+    this.controller,
+    this.textStyle,
+    this.inputDecoration = const InputDecoration(),
+    this.keyboardType,
+    this.textInputAction,
+    this.textCapitalization = TextCapitalization.none,
+    this.textAlign = TextAlign.start,
+    this.textDirection,
+    this.readOnly = false,
+    this.autofocus = false,
+    this.autocorrect = false,
+    this.enableSuggestions = true,
+    this.maxLines = 1,
+    this.resetTextOnSubmitted = false,
+    this.onSubmitted,
+    this.keyboardAppearance,
   }) : super(key: key);
 
+  /// The number of tags currently shown.
+  final int length;
+
+  /// The minimum width that the `TextField` should take
+  final double minTextFieldWidth;
+
+  /// The spacing between each tag
+  final double tagSpacing;
+
+  /// Builder for building the tags, this usually use Flutter's Material `Chip`.
+  final Widget Function(BuildContext, int) tagBuilder;
+
+  /// Show the add button to the right.
+  final bool hasAddButton;
+
+  /// The icon for the add button enabled with `hasAddButton`.
+  final IconData? icon;
+
+  /// Callback for when the tag changed. Use this to get the new tag and add
+  /// it to the state.
+  final ValueChanged<String> onTagChanged;
+
+  /// When the string value in this `delimiters` is found, a new tag will be
+  /// created and `onTagChanged` is called.
+  final List<String> delimiters;
+
+  /// Reset the TextField when `onSubmitted` is called
+  /// this is default to `false` because when the form is submitted
+  /// usually the outstanding value is just used, but this option is here
+  /// in case you want to reset it for any reasons (like converting the
+  /// outstanding value to tag).
+  final bool resetTextOnSubmitted;
+
+  /// Called when the user are done editing the text in the [TextField]
+  /// Use this to get the outstanding text that aren't converted to tag yet
+  /// If no text is entered when this is called an empty string will be passed.
+  final ValueChanged<String>? onSubmitted;
+
+  /// Focus node for checking if the [TextField] is focused.
+  final FocusNode? focusNode;
+
+  /// [TextField]'s properties.
+  ///
+  /// Please refer to [TextField] documentation.
+  final TextEditingController? controller;
+  final bool enabled;
+  final TextStyle? textStyle;
+  final InputDecoration inputDecoration;
+  final TextInputType? keyboardType;
+  final TextInputAction? textInputAction;
+  final TextCapitalization textCapitalization;
+  final TextAlign textAlign;
+  final TextDirection? textDirection;
+  final bool autofocus;
+  final bool autocorrect;
+  final bool enableSuggestions;
+  final int maxLines;
+  final int maxLength;
+  final bool readOnly;
+  final Brightness? keyboardAppearance;
+
   @override
-  _TextFieldTagsState createState() => _TextFieldTagsState();
+  _TagsEditorState createState() => _TagsEditorState();
 }
 
-class _TextFieldTagsState extends State<TextFieldTags> {
-  List<String>? _tagsStringContents;
-  TextEditingController? _textEditingController;
-  ScrollController? _scrollController;
-  late bool _showPrefixIcon;
-  late double _deviceWidth;
-  late bool _showValidator;
-  late String _validatorMessage;
+class _TagsEditorState extends State<TagEditor> {
+  /// A controller to keep value of the [TextField].
+  late TextEditingController _textFieldController;
+
+  /// A state variable for checking if new text is enter.
+  var _previousText = '';
+
+  /// A state for checking if the [TextFiled] has focus.
+  var _isFocused = false;
+
+  /// Focus node for checking if the [TextField] is focused.
+  late FocusNode _focusNode;
 
   @override
   void initState() {
     super.initState();
-    _showValidator = false;
-    _showPrefixIcon = false;
-    _tagsStringContents = [];
-
-    _textEditingController = TextEditingController();
-    _scrollController = ScrollController();
-    if (widget.initialTags != null && widget.initialTags!.isNotEmpty) {
-      _showPrefixIcon = true;
-      _tagsStringContents = widget.initialTags;
-    }
+    _textFieldController = (widget.controller ?? TextEditingController());
+    _focusNode = (widget.focusNode ?? FocusNode())
+      ..addListener(_onFocusChanged);
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _deviceWidth = MediaQuery.of(context).size.width;
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _textEditingController!.dispose();
-    _scrollController!.dispose();
-    _tagsStringContents = null;
-    _textEditingController = null;
-    _scrollController = null;
-  }
-
-  List<Widget> get _getTags {
-    List<Widget> _tags = [];
-    for (var i = 0; i < _tagsStringContents!.length; i++) {
-      final String stringContent = _tagsStringContents![i];
-      final String stringContentWithHash =
-      widget.tagsStyler.showHashtag ? "#$stringContent" : stringContent;
-      final Container tag = Container(
-        padding: widget.tagsStyler.tagPadding,
-        decoration: widget.tagsStyler.tagDecoration,
-        margin: widget.tagsStyler.tagMargin,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Padding(
-              padding: widget.tagsStyler.tagTextPadding,
-              child: Text(
-                stringContentWithHash,
-                style: widget.tagsStyler.tagTextStyle,
-              ),
-            ),
-            Padding(
-              padding: widget.tagsStyler.tagCancelIconPadding,
-              child: GestureDetector(
-                onTap: () {
-                  widget.onDelete(stringContent);
-                  if (_tagsStringContents!.length == 1 && _showPrefixIcon) {
-                    setState(() {
-                      _tagsStringContents!.remove(stringContent);
-                      _showPrefixIcon = false;
-                      _showValidator = false;
-                    });
-                  } else {
-                    setState(() {
-                      _tagsStringContents!.remove(stringContent);
-                      _showValidator = false;
-                    });
-                  }
-                },
-                child: widget.tagsStyler.tagCancelIcon,
-              ),
-            ),
-          ],
-        ),
-      );
-      _tags.add(tag);
-    }
-    return _tags;
-  }
-
-  void _animateTransition() {
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
-      if (_scrollController!.hasClients) {
-        _scrollController!.animateTo(
-          _scrollController!.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.linear,
-        );
-      }
+  void _onFocusChanged() {
+    setState(() {
+      _isFocused = _focusNode.hasFocus;
     });
+  }
+
+  void _onTagChanged(String string) {
+    if (string.isNotEmpty) {
+      widget.onTagChanged(string);
+      _resetTextField();
+    }
+  }
+
+  /// This function is still ugly, have to fix this later
+  void _onTextFieldChange(String string) {
+    final previousText = _previousText;
+    _previousText = string;
+
+    if (string.isEmpty || widget.delimiters.isEmpty) {
+      return;
+    }
+
+    // Do not allow the entry of the delimters, this does not account for when
+    // the text is set with `TextEditingController` the behaviour of TextEditingContoller
+    // should be controller by the developer themselves
+    if (string.length == 1 && widget.delimiters.contains(string)) {
+      _resetTextField();
+      return;
+    }
+
+    if (string.length > previousText.length) {
+      // Add case
+      final newChar = string[string.length - 1];
+      if (widget.delimiters.contains(newChar)) {
+        final targetString = string.substring(0, string.length - 1);
+        if (targetString.isNotEmpty) {
+          _onTagChanged(targetString);
+        }
+      }
+    }
+  }
+
+  void _onSubmitted(String string) {
+    widget.onSubmitted?.call(string);
+    if (widget.resetTextOnSubmitted) {
+      _resetTextField();
+    }
+  }
+
+  void _resetTextField() {
+    _textFieldController.text = '';
+    _previousText = '';
+  }
+
+  /// Shamelessly copied from [InputDecorator]
+  Color _getDefaultIconColor(ThemeData themeData) {
+    if (!widget.enabled) {
+      return themeData.disabledColor;
+    }
+
+    switch (themeData.brightness) {
+      case Brightness.dark:
+        return Colors.white70;
+      case Brightness.light:
+        return Colors.black45;
+    }
+  }
+
+  /// Shamelessly copied from [InputDecorator]
+  Color _getActiveColor(ThemeData themeData) {
+    if (_focusNode.hasFocus) {
+      switch (themeData.brightness) {
+        case Brightness.dark:
+          return themeData.accentColor;
+        case Brightness.light:
+          return themeData.primaryColor;
+      }
+    }
+    return themeData.hintColor;
+  }
+
+  Color _getIconColor(ThemeData themeData) {
+    final themeData = Theme.of(context);
+    final activeColor = _getActiveColor(themeData);
+    return _isFocused ? activeColor : _getDefaultIconColor(themeData);
   }
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
-      controller: _textEditingController,
-      autocorrect: false,
-      cursorColor: widget.textFieldStyler.cursorColor,
-      style: widget.textFieldStyler.textStyle,
-      decoration: InputDecoration(
-        icon: widget.textFieldStyler.icon,
-        contentPadding: widget.textFieldStyler.contentPadding,
-        isDense: widget.textFieldStyler.isDense,
-        helperText: _showValidator
-            ? _validatorMessage
-            : widget.textFieldStyler.helperText,
-        helperStyle: _showValidator
-            ? const TextStyle(color: Colors.red)
-            : widget.textFieldStyler.helperStyle,
-        hintText: !_showPrefixIcon ? widget.textFieldStyler.hintText : null,
-        hintStyle: !_showPrefixIcon ? widget.textFieldStyler.hintStyle : null,
-        filled: widget.textFieldStyler.textFieldFilled,
-        fillColor: widget.textFieldStyler.textFieldFilledColor,
-        enabled: widget.textFieldStyler.textFieldEnabled,
-        border: widget.textFieldStyler.textFieldBorder,
-        focusedBorder: widget.textFieldStyler.textFieldFocusedBorder,
-        disabledBorder: widget.textFieldStyler.textFieldDisabledBorder,
-        enabledBorder: widget.textFieldStyler.textFieldEnabledBorder,
-        prefixIcon: _showPrefixIcon
-            ? ConstrainedBox(
-          constraints: BoxConstraints(
-              maxWidth: _deviceWidth * widget.tagsDistanceFromBorderEnd),
-          child: Container(
-            margin: widget.scrollableTagsMargin,
-            padding: widget.scrollableTagsPadding,
-            child: SingleChildScrollView(
-              controller: _scrollController,
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: _getTags,
+    final decoration = widget.hasAddButton
+        ? widget.inputDecoration.copyWith(
+        suffixIcon: CupertinoButton(
+          padding: EdgeInsets.zero,
+          onPressed: () {
+            _onTagChanged(_textFieldController.text);
+          },
+          child: const Icon(Icons.add),
+        ))
+        : widget.inputDecoration;
+
+    final tagEditorArea = Container(
+      child: TagLayout(
+        delegate: TagEditorLayoutDelegate(
+          length: widget.length,
+          minTextFieldWidth: widget.minTextFieldWidth,
+          spacing: widget.tagSpacing,
+        ),
+        children: List<Widget>.generate(
+          widget.length,
+              (index) => LayoutId(
+            id: TagEditorLayoutDelegate.getTagId(index),
+            child: widget.tagBuilder(context, index),
+          ),
+        ) +
+            <Widget>[
+              LayoutId(
+                id: TagEditorLayoutDelegate.textFieldId,
+                child: TextField(
+                  style: widget.textStyle,
+                  focusNode: _focusNode,
+                  enabled: widget.enabled,
+                  controller: _textFieldController,
+                  keyboardType: widget.keyboardType,
+                  keyboardAppearance: widget.keyboardAppearance,
+                  textCapitalization: widget.textCapitalization,
+                  textInputAction: widget.textInputAction,
+                  autocorrect: widget.autocorrect,
+                  textAlign: widget.textAlign,
+                  textDirection: widget.textDirection,
+                  readOnly: widget.readOnly,
+                  autofocus: widget.autofocus,
+                  enableSuggestions: widget.enableSuggestions,
+                  maxLines: widget.maxLines,
+                  decoration: decoration,
+                  onChanged: _onTextFieldChange,
+                  onSubmitted: _onSubmitted,
+                  maxLength: widget.maxLength,
+                ),
+              )
+            ],
+      ),
+    );
+
+    return widget.icon == null
+        ? tagEditorArea
+        : Container(
+      child: Row(
+        children: <Widget>[
+          Container(
+            width: 40,
+            alignment: Alignment.centerLeft,
+            padding: EdgeInsets.zero,
+            child: IconTheme.merge(
+              data: IconThemeData(
+                color: _getIconColor(Theme.of(context)),
+                size: 18.0,
               ),
+              child: Icon(widget.icon),
             ),
           ),
-        )
-            : null,
+          Expanded(child: tagEditorArea),
+        ],
       ),
-      onSubmitted: (value) {
-        if (_showValidator == false) {
-          final String val = value.trim().toLowerCase();
-          if (value.length > 0) {
-            _textEditingController!.clear();
-            if (!_tagsStringContents!.contains(val)) {
-              if (widget.validator == null || widget.validator!(val) == null) {
-                widget.onTag(val);
-                if (!_showPrefixIcon) {
-                  setState(() {
-                    _tagsStringContents!.add(val);
-                    _showPrefixIcon = true;
-                  });
-                } else {
-                  setState(() {
-                    _tagsStringContents!.add(val);
-                  });
-                }
-                this._animateTransition();
-              } else {
-                setState(() {
-                  _showValidator = true;
-                  _validatorMessage = widget.validator!(val)!;
-                });
-              }
-            }
-          }
-        } else {
-          setState(() {
-            _showValidator = false;
-          });
-        }
-      },
-      onChanged: (value) {
-        if (_showValidator == false) {
-          if (value.contains(" ") || value.contains(",")) {
-            final List<String> splitedTagsList = value.multiSplit([",", " "]);
-            final int indexer = splitedTagsList.length > 1
-                ? splitedTagsList.length - 2
-                : splitedTagsList.length - 1;
-            final String lastLastTag =
-            splitedTagsList[indexer].trim().toLowerCase();
-            if (lastLastTag.length > 0) {
-              _textEditingController!.clear();
-              if (!_tagsStringContents!.contains(lastLastTag)) {
-                if (widget.validator == null ||
-                    widget.validator!(lastLastTag) == null) {
-                  widget.onTag(lastLastTag);
-                  if (!_showPrefixIcon) {
-                    setState(() {
-                      _tagsStringContents!.add(lastLastTag);
-                      _showPrefixIcon = true;
-                    });
-                  } else {
-                    setState(() {
-                      _tagsStringContents!.add(lastLastTag);
-                    });
-                  }
-                  this._animateTransition();
-                } else {
-                  setState(() {
-                    _showValidator = true;
-                    _validatorMessage = widget.validator!(lastLastTag)!;
-                  });
-                }
-              }
-            }
-          }
-        } else {
-          setState(() {
-            _showValidator = false;
-          });
-        }
-      },
     );
   }
 }
 
-//todo this add into util
-extension _Extension on String {
-  List<String> multiSplit(List<String> delimenters) {
-    return delimenters.isEmpty
-        ? [this]
-        : this.split(RegExp(delimenters.map(RegExp.escape).join('|')));
+/////////////tag_editor_layout_delegate.dart
+
+class TagEditorLayoutDelegate extends MultiChildLayoutDelegate {
+  TagEditorLayoutDelegate({
+    required this.length,
+    required this.minTextFieldWidth,
+    required this.spacing,
+  });
+
+  static const tagId = 'tag_';
+  static const textFieldId = 'text_field';
+
+  final int length;
+  final double minTextFieldWidth;
+  final double spacing;
+
+  /// This is used for
+  Size parentSize = Size.zero;
+
+  static String getTagId(int id) {
+    return '$tagId$id';
+  }
+
+  static bool _isOverflow({
+    required double childWidth,
+    required double parentWidth,
+    required List<Size> tagSizes,
+    required double spacing,
+  }) {
+    final tagsWidth = tagSizes.fold<double>(0, (result, tag) {
+      return result + tag.width;
+    });
+    final spacingWidth = spacing * max(tagSizes.length - 1, 0);
+
+    return childWidth + tagsWidth + spacingWidth > parentWidth;
+  }
+
+  @override
+  Size getSize(BoxConstraints constraints) {
+    // * Just putting in 0 to avoid the assert error
+    return Size(constraints.maxWidth, 0);
+  }
+
+  @override
+  void performLayout(Size size) {
+    var cursor = Offset.zero;
+    var tagSizes = <Size>[];
+    //* Layout all the tags here
+    for (final index in Iterable<int>.generate(length).toList()) {
+      final tagId = getTagId(index);
+      if (hasChild(getTagId(index))) {
+        final childSize = layoutChild(
+          tagId,
+          BoxConstraints.loose(
+            //* Let child specify it's own heigh so use infinity here
+            Size(size.width, double.infinity),
+          ),
+        );
+
+        //* Check if overflowing
+        if (_isOverflow(
+          childWidth: childSize.width,
+          parentWidth: size.width,
+          tagSizes: tagSizes,
+          spacing: spacing,
+        )) {
+          //* Push the cursor down and back to the left
+          cursor = Offset(0, cursor.dy + childSize.height);
+
+          //* Reset the tagSizes for this roll
+          tagSizes = <Size>[];
+        }
+
+        positionChild(tagId, cursor);
+        // * Update cursor to the next position
+        cursor = Offset(cursor.dx + childSize.width + spacing, cursor.dy);
+        // * Push the size to tagSizes
+        tagSizes.add(childSize);
+      }
+    }
+
+    var textFieldSize = Size.zero;
+
+    //* Layout the textbox
+    if (hasChild(textFieldId)) {
+      final currentRowWidth = tagSizes.fold<double>(0, (result, tag) {
+        return result + tag.width;
+      });
+      final spacingWidth = spacing * max(tagSizes.length - 1, 0);
+      final leftOverWidth = size.width - currentRowWidth - spacingWidth;
+      final textWidth = max(leftOverWidth, minTextFieldWidth);
+      //* Check if Textbox is overflowing
+      //* Check if overflowing
+      if (_isOverflow(
+        childWidth: textWidth,
+        parentWidth: size.width,
+        tagSizes: tagSizes,
+        spacing: spacing,
+      )) {
+        textFieldSize = layoutChild(
+          textFieldId,
+          BoxConstraints.loose(Size.fromWidth(size.width)),
+        );
+        //* Push the cursor down and back to the left
+        cursor = Offset(0, cursor.dy + textFieldSize.height);
+
+        //* Reset the tagSizes for this roll
+        tagSizes = <Size>[];
+      } else {
+        textFieldSize = layoutChild(
+          textFieldId,
+          BoxConstraints.loose(Size.fromWidth(textWidth)),
+        );
+      }
+      positionChild(textFieldId, cursor);
+    }
+
+    //* Set parent height so that [TagsRenderLayoutBox] can use it to set the parentHeight
+    parentSize = Size(size.width, cursor.dy + textFieldSize.height);
+  }
+
+  @override
+  bool shouldRelayout(MultiChildLayoutDelegate oldDelegate) {
+    return false;
   }
 }
 
-////////////////////////////////////////
 
-//todo
-//Models
-///[TagsStyler] allows you to design the exact style you want for your tag by using its properties. It must not be [null]
-class TagsStyler {
-  ///[tagPadding] allows you to apply padding inside tag
-  final EdgeInsets tagPadding;
+////////////////tag_layout.dart
 
-  ///[tagMargin] allows you to apply margin inside tag
-  final EdgeInsets tagMargin;
+/// This is just a normal [CustomMultiChildLayout] with
+/// overrided [createRenderObject] to use custom [RenderCustomMultiChildLayoutBox]
+class TagLayout extends CustomMultiChildLayout {
+  TagLayout({
+    Key? key,
+    required TagEditorLayoutDelegate delegate,
+    List<Widget> children = const <Widget>[],
+  }) : super(key: key, children: children, delegate: delegate);
 
-  ///[tagMargin] apply decoration to the container containing the tag. Should specify the color to set tag color, otherwise its white by default
-  final BoxDecoration tagDecoration;
-
-  ///[tagTextStyle] style the text inside tag
-  final TextStyle? tagTextStyle;
-
-  /// Styles the padding of the tag text
-  final EdgeInsets tagTextPadding;
-
-  /// Styles the padding of the tag cancel icon
-  final EdgeInsets tagCancelIconPadding;
-
-  ///[tagCancelIcon] apply your own icon, if you want, to delete the icon
-  final Widget tagCancelIcon;
-
-  ///Enable or disable the # prefix icon
-  final bool showHashtag;
-
-  TagsStyler({
-    this.tagTextPadding = const EdgeInsets.all(0.0),
-    this.tagCancelIconPadding = const EdgeInsets.only(left: 1.0),
-    this.tagPadding = const EdgeInsets.all(4.0),
-    this.tagMargin = const EdgeInsets.symmetric(horizontal: 4.0),
-    this.tagDecoration =
-    const BoxDecoration(color: Color.fromARGB(255, 74, 137, 92)),
-    this.tagTextStyle,
-    this.showHashtag = false,
-    this.tagCancelIcon = const Icon(
-      Icons.cancel,
-      size: 18.0,
-      color: Colors.green,
-    ),
-  });
+  @override
+  TagRenderLayoutBox createRenderObject(BuildContext context) {
+    return TagRenderLayoutBox(delegate: delegate as TagEditorLayoutDelegate);
+  }
 }
+///////////tag_render_layout_box.dart
 
-///[TextFieldStyler] allows you to design the exact style you want for your textfield by using its properties. It must not be [null]
-class TextFieldStyler {
-  /// The color of the decoration inside the textfield
-  final Color? textFieldFilledColor;
+/// Got inspiration from below, but did not want to override a bunch of things
+/// https://gist.github.com/slightfoot/0ddf14dd0f77e5be4c6b8904d3a2df67
+class TagRenderLayoutBox extends RenderCustomMultiChildLayoutBox {
+  TagRenderLayoutBox({
+    List<RenderBox>? children,
+    required TagEditorLayoutDelegate delegate,
+  }) : super(children: children, delegate: delegate);
 
-  ///[textFieldFilled] If true the decoration's container is filled with [textFieldFilledColor].
-  final bool textFieldFilled;
+  @override
+  void performLayout() {
+    super.performLayout();
 
-  ///The padding for the input decoration's container. Adjust this to using EdgeInsets if you make textFieldBorder [null] or borderless to have the right customized style
-  final EdgeInsets? contentPadding;
-
-  /// The text style of the text input
-  final TextStyle? textStyle;
-
-  ///The color of the cursor blinking
-  final Color? cursorColor;
-
-  ///Whether the input [child] is part of a dense form (i.e., uses less vertical space).
-  final bool isDense;
-
-  ///Text that provides context about the input [child]'s value, such as how the value will be used.
-  final String helperText;
-
-  ///Style helperText
-  final TextStyle? helperStyle;
-
-  ///Text that suggests what sort of input the field accepts.
-  final String hintText;
-
-  ///Styles hint text
-  final TextStyle? hintStyle;
-
-  ///Enable or disable the textfield
-  final bool textFieldEnabled;
-
-  /// The icon that displays side of the text field
-  final Icon? icon;
-
-  final InputBorder? textFieldBorder;
-  final InputBorder? textFieldFocusedBorder;
-  final InputBorder? textFieldDisabledBorder;
-  final InputBorder? textFieldEnabledBorder;
-
-  TextFieldStyler({
-    this.textFieldFilled = false,
-    this.helperText = 'Enter tags',
-    this.helperStyle,
-    this.textStyle,
-    this.cursorColor,
-    this.hintText = 'Got tags?',
-    this.hintStyle,
-    this.contentPadding,
-    this.textFieldFilledColor,
-    this.isDense = true,
-    this.textFieldEnabled = true,
-    this.icon,
-    this.textFieldBorder = const OutlineInputBorder(),
-    this.textFieldFocusedBorder,
-    this.textFieldDisabledBorder,
-    this.textFieldEnabledBorder,
-  });
+    //* Set the parent size here
+    size = (delegate as TagEditorLayoutDelegate).parentSize;
+  }
 }

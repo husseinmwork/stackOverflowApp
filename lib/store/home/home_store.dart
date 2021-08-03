@@ -74,13 +74,15 @@ abstract class _HomeStore with Store {
 
 
   @observable
-  List<String>? tags = [];
+  List<String> tags = [];
 
   @observable
   List<Question> question = ObservableList<Question>();
 
   @observable
   List<Category> category = ObservableList<Category>();
+
+
   @observable
   PagingController<int, Question> pagingController =
   PagingController(firstPageKey: 0);
