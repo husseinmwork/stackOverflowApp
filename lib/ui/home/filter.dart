@@ -101,7 +101,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                   setState(() {
                     _valueMinVotes = value;
                   });
-                  _store.minVotes = int.parse(_valueMinVotes!);
+                  _store.minVotes = int.parse("$_valueMinVotes");
                 },
               ),
             ],
@@ -126,7 +126,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                   setState(() {
                     _valueMaxVotes = value;
                   });
-                  _store.maxVotes = int.parse(_valueMaxVotes!);
+                  _store.maxVotes = int.parse("$_valueMaxVotes");
                 },
               ),
             ],
@@ -157,7 +157,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                   setState(() {
                     _valueMinViews = value;
                   });
-                  _store.minViews = int.parse(_valueMinVotes!);
+                  _store.minViews = int.parse("$_valueMinViews");
                 },
               ),
             ],
@@ -182,7 +182,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                   setState(() {
                     _valueMaxViews = value;
                   });
-                  _store.maxViews = int.parse(_valueMaxViews!);
+                  _store.maxViews = int.parse("$_valueMaxViews");
                 },
               ),
             ],

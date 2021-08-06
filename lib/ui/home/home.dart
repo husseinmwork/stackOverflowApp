@@ -244,7 +244,7 @@ class _OpenContainerWrapper extends StatelessWidget {
     return OpenContainer<bool>(
         transitionType: transitionType,
         openBuilder: (BuildContext context, VoidCallback _) {
-          return DetailsQuestion(id: id);
+          return DetailsQuestionScreen(id: id);
         },
         onClosed: onClosed,
         transitionDuration: Duration(milliseconds: 500),

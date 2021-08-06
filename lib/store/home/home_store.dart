@@ -47,7 +47,6 @@ abstract class _HomeStore with Store {
   @observable
   bool fabIsVisible = false;
 
-
   @observable
   QuestionFilter? filter;
 
@@ -72,7 +71,6 @@ abstract class _HomeStore with Store {
   @observable
   String? userId;
 
-
   @observable
   List<String> tags = [];
 
@@ -82,12 +80,9 @@ abstract class _HomeStore with Store {
   @observable
   List<Category> category = ObservableList<Category>();
 
-
   @observable
   PagingController<int, Question> pagingController =
-  PagingController(firstPageKey: 0);
-
-
+      PagingController(firstPageKey: 0);
 
   @observable
   String? categoryId;
@@ -98,6 +93,11 @@ abstract class _HomeStore with Store {
       maxVotes == null &&
       body == null &&
       id == null &&
+      categoryId == null &&
+      minViews == null &&
+      maxViews == null &&
+          //this problems
+      tags.isEmpty &&
       userId == null;
 
   // actions:-------------------------------------------------------------------
@@ -121,6 +121,10 @@ abstract class _HomeStore with Store {
     id = null;
     minVotes = null;
     maxVotes = null;
+    categoryId = null;
+    minViews = null;
+    maxViews = null;
+    tags = [] ;
   }
 
   ///this method work logout and remove (user , authToken , IsLoggedIn) shared preferences
@@ -140,19 +144,21 @@ abstract class _HomeStore with Store {
     user = await _repository.user;
   }
 
-
   ///get question with paging
   @action
   Future getQuestion(int skip, {int? limit}) async {
     await _repository
         .getQuestion(skip,
             filter: QuestionFilter(
-              body: body,
-              maxVotes: maxVotes,
-              minVotes: minVotes,
-              id: id,
-              userId: userId,
-              fieldId:categoryId
+                body: body,
+                maxVotes: maxVotes,
+                minVotes: minVotes,
+                id: id,
+                userId: userId,
+                fieldId: categoryId,
+                minViews: minViews,
+                maxViews: maxViews,
+                tags:tags
             ))
         .then((value) {
       return question = value.results;
@@ -166,7 +172,6 @@ abstract class _HomeStore with Store {
   Future getCategory(int skip, {int? limit}) async {
     await _repository.getCategory(skip).then((value) {
       return category = value.results;
-    }).catchError((e) {
-    });
+    }).catchError((e) {});
   }
 }

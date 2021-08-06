@@ -6,18 +6,18 @@ import 'package:todo_app/store/details_question/details_question_store.dart';
 import 'package:todo_app/widgets/arrow_back_icon.dart';
 import 'package:todo_app/widgets/stack_overflow_indecator.dart';
 
-class DetailsQuestion extends StatefulWidget {
-  const DetailsQuestion(
+class DetailsQuestionScreen extends StatefulWidget {
+  const DetailsQuestionScreen(
       {required this.id, this.includeMarkAsDoneButton = true});
 
   final String id;
   final bool includeMarkAsDoneButton;
 
   @override
-  _DetailsQuestionState createState() => _DetailsQuestionState();
+  _DetailsQuestionScreenState createState() => _DetailsQuestionScreenState();
 }
 
-class _DetailsQuestionState extends State<DetailsQuestion> {
+class _DetailsQuestionScreenState extends State<DetailsQuestionScreen> {
   late DetailsQuestionStore _store;
 
   @override

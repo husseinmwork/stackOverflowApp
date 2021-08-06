@@ -14,8 +14,14 @@ class QuestionFilter {
   final int? minVotes;
   @JsonKey(name: 'maxVotes')
   final int? maxVotes;
+  @JsonKey(name: 'minViews')
+  final int? minViews;
+  @JsonKey(name: 'maxViews')
+  final int? maxViews;
   @JsonKey(name: 'body')
   final String? body;
+  @JsonKey(name: 'tags')
+  final List<String>? tags;
 
   QuestionFilter({
     this.id,
@@ -23,7 +29,10 @@ class QuestionFilter {
     this.minVotes,
     this.maxVotes,
     this.body,
-    this.fieldId
+    this.fieldId,
+    this.minViews,
+    this.maxViews,
+    this.tags
   });
 
   factory QuestionFilter.fromJson(Map<String, dynamic> json) =>
