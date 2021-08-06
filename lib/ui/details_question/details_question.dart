@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app/constants/assets.dart';
@@ -6,8 +7,10 @@ import 'package:todo_app/constants/dimens.dart';
 import 'package:todo_app/model/get_answer/get_answer.dart';
 import 'package:todo_app/store/details_question/details_question_store.dart';
 import 'package:todo_app/store/theme/theme_store.dart';
+import 'package:todo_app/utils/device/device_utils.dart';
 import 'package:todo_app/widgets/arrow_back_icon.dart';
 import 'package:todo_app/widgets/stack_overflow_indecator.dart';
+import 'package:todo_app/widgets/user_image_avatar.dart';
 
 class DetailsQuestionScreen extends StatefulWidget {
   const DetailsQuestionScreen(
@@ -26,6 +29,8 @@ class DetailsQuestionScreen extends StatefulWidget {
 class _DetailsQuestionScreenState extends State<DetailsQuestionScreen> {
   late DetailsQuestionStore _store;
 
+  TextEditingController _answerController = TextEditingController();
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -39,6 +44,8 @@ class _DetailsQuestionScreenState extends State<DetailsQuestionScreen> {
   void dispose() {
     super.dispose();
     _store.success = false;
+    _store.successGetAnswers = false;
+    _store.successGetQuestion = false;
   }
 
   @override
@@ -57,31 +64,33 @@ class _DetailsQuestionScreenState extends State<DetailsQuestionScreen> {
       );
 
   Widget _buildBody() => Observer(
-        builder: (_) => _store.success == true
-            ? Column(
-                children: [
-                  Expanded(
-                    child: ListView(
-                      padding: EdgeInsets.all(Dimens.padding_large),
-                      children: [
-                        _buildTitle(),
-                        SizedBox(height: Dimens.padding_normal),
-                        _buildQuestionBody(),
-                        SizedBox(height: Dimens.padding_normal),
-                        _buildTags(),
-                        SizedBox(height: Dimens.padding_large),
-                        _buildAnswer(),
-                      ],
-                    ),
-                  ),
-                  _buildYourAnswer(),
-                ],
-              )
-            : StackOverFlowIndecator(),
+        builder: (_) => Visibility(
+          visible: (_store.successGetQuestion && _store.successGetAnswers),
+          child: Column(
+            children: [
+              Expanded(
+                child: ListView(
+                  padding: EdgeInsets.all(Dimens.padding_large),
+                  children: [
+                    _buildTitle(),
+                    SizedBox(height: Dimens.padding_normal),
+                    _buildQuestionBody(),
+                    SizedBox(height: Dimens.padding_normal),
+                    _buildTags(),
+                    SizedBox(height: Dimens.padding_large),
+                    _buildAnswer(),
+                  ],
+                ),
+              ),
+              _buildYourAnswer(),
+            ],
+          ),
+          replacement: StackOverFlowIndecator(),
+        ),
       );
 
   Widget _buildTitle() => Text(
-        _store.question!.title!,
+        _store.question?.title ?? "",
         style: Theme.of(context)
             .textTheme
             .headline6
@@ -89,47 +98,50 @@ class _DetailsQuestionScreenState extends State<DetailsQuestionScreen> {
       );
 
   Widget _buildQuestionBody() => Text(
-        _store.question!.body!,
+        _store.question?.body ?? "",
         style: Theme.of(context).textTheme.subtitle2,
       );
 
   Widget _buildTags() => Wrap(
         children: [
-          ..._store.question!.tags!
-              .map((e) => Container(
-                    color: Theme.of(context).appBarTheme.color,
-                    padding: EdgeInsets.all(Dimens.padding_normal),
-                    margin: EdgeInsets.only(right: Dimens.padding_normal),
-                    child: Text(e,
-                        style: Theme.of(context)
-                            .textTheme
-                            .subtitle2
-                            ?.copyWith(color: Colors.white)),
-                  ))
-              .toList()
+          if (_store.question?.tags != null)
+            ..._store.question!.tags!
+                .map((e) => Container(
+                      color: Theme.of(context).appBarTheme.color,
+                      padding: EdgeInsets.all(Dimens.padding_normal),
+                      margin: EdgeInsets.only(right: Dimens.padding_normal),
+                      child: Text(e,
+                          style: Theme.of(context)
+                              .textTheme
+                              .subtitle2
+                              ?.copyWith(color: Colors.white)),
+                    ))
+                .toList()
         ],
       );
 
-  Widget _buildAnswer() => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Text("Answer", style: Theme.of(context).textTheme.subtitle1),
-              SizedBox(width: Dimens.padding_mini),
-              Text(_store.answers.length.toString(),
-                  style: Theme.of(context).textTheme.subtitle2),
-            ],
-          ),
-          ..._store.answers.isEmpty
-              ? []
-              : _store.answers
-                  .map((item) => AnswerItem(
-                        item: item,
-                        onTap: () {},
-                      ))
-                  .toList(),
-        ],
+  Widget _buildAnswer() => Observer(
+        builder: (_) => Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Text("Answer", style: Theme.of(context).textTheme.subtitle1),
+                SizedBox(width: Dimens.padding_mini),
+                Text(_store.answers.length.toString(),
+                    style: Theme.of(context).textTheme.subtitle2),
+              ],
+            ),
+            ..._store.answers.isEmpty
+                ? []
+                : _store.answers
+                    .map((item) => AnswerItem(
+                          item: item,
+                          onTap: () {},
+                        ))
+                    .toList(),
+          ],
+        ),
       );
 
   Widget _buildYourAnswer() => Card(
@@ -139,39 +151,49 @@ class _DetailsQuestionScreenState extends State<DetailsQuestionScreen> {
           padding: EdgeInsets.symmetric(
               horizontal: Dimens.padding_mid, vertical: Dimens.padding_mid),
           child: Row(
+
             children: [
-              CircleAvatar(
-                radius: Dimens.cardQuestionImage,
-                child: ClipOval(
-                  child: FadeInImage.assetNetwork(
-                    fit: BoxFit.cover,
-                    placeholder: Assets.placeHolder,
-                    height: double.infinity,
-                    width: double.infinity,
-                    //todo my image
-                    image: widget.myImage,
-                    imageErrorBuilder: (_, __, ___) {
-                      return Image.asset(Assets.placeHolder, fit: BoxFit.cover);
-                    },
-                  ),
-                ),
-              ),
-              Expanded(
-                child: TextFormField(
-                  onChanged: (answer) {
-                    _store.bodyAnswer = answer;
-                  },
-                ),
-              ),
+          UserImageAvatar(image: widget.myImage ,onTap: (){}),
+              SizedBox(width: Dimens.padding_normal),
+              _buildCreateAnswer(),
               IconButton(
-                  icon: Icon(Icons.send, color: Colors.white),
-                  onPressed: () {
-                    _store.createAnswer();
+                  icon: Icon(Icons.send_outlined, color: Colors.white),
+                  onPressed: () async {
+                    if (_answerController.text.isNotEmpty) {
+                      _answerController.text = '';
+                      DeviceUtils.hideKeyboard(context);
+                      await _store.createAnswer();
+                      _store.getAnswers(0);
+                    }
                   })
             ],
           ),
         ),
       );
+
+  Widget _buildCreateAnswer()=> Expanded(
+    child: TextFormField(
+      maxLines: 4,
+      minLines: 1,
+      decoration: InputDecoration(
+        hintText: "Write a answer...",
+        labelText:"Write a answer...",
+      ),
+      controller: _answerController,
+      onFieldSubmitted: (value) async {
+        /*    if (_answerController.text.isNotEmpty) {
+                      _answerController.text = '';
+                      DeviceUtils.hideKeyboard(context);
+
+                      await _store.createAnswer();
+                      _store.getAnswers(0);
+                    }*/
+      },
+      onChanged: (answer) {
+        _store.bodyAnswer = answer;
+      },
+    ),
+  );
 }
 
 class AnswerItem extends StatefulWidget {
@@ -196,52 +218,81 @@ class _AnswerItemState extends State<AnswerItem> {
   @override
   Widget build(BuildContext context) {
     return Card(
+
       margin: EdgeInsets.symmetric(vertical: Dimens.padding_mini),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
       child: InkWell(
         onTap: () {
           widget.onTap();
         },
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-              horizontal: Dimens.padding_mid, vertical: Dimens.padding_mid),
-          child: Column(
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                 horizontal: Dimens.padding_mid, vertical: Dimens.padding_mid),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildImage(),
+                        SizedBox(width: Dimens.padding_mini),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [Row(
+                            children: [
+                              _buildUserName(),
+                              SizedBox(width: Dimens.padding_mini),
+                              _buildUserScore()
+                            ],
+                          ), _buildAnswerDate()],
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: Dimens.padding_mid),
+                    _buildAnswerBody()
+                  ],
+                ),
+              ),
+            ),
+            //fixme
+            Container(
+              child:Column(
+                mainAxisSize: MainAxisSize.max,
+
                 children: [
-                  _buildImage(),
-                  SizedBox(width: Dimens.padding_mini),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [_buildUserName(), _buildAnswerDate()],
-                  ),
+                  ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          onPrimary: Colors.white,
+                          minimumSize: Size(40,40)
+                      ),
+                      child: Icon(Icons.thumb_up_alt_outlined , color: Colors.white), onPressed: (){}),
+                  Text("2"),
+                  ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          onPrimary: Colors.white,
+                          minimumSize: Size(40,40)
+                      ),
+                      child: Icon(Icons.thumb_down_alt_outlined , color: Colors.white), onPressed: (){}),
+
                 ],
               ),
-              SizedBox(height: Dimens.padding_mid),
-              _buildAnswerBody()
-            ],
-          ),
+            ),
+
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildImage() => CircleAvatar(
-        radius: Dimens.cardQuestionImage,
-        child: ClipOval(
-          child: FadeInImage.assetNetwork(
-            fit: BoxFit.cover,
-            placeholder: Assets.placeHolder,
-            height: double.infinity,
-            width: double.infinity,
-            image: widget.item.user!.image ?? "null",
-            imageErrorBuilder: (_, __, ___) {
-              return Image.asset(Assets.placeHolder, fit: BoxFit.cover);
-            },
-          ),
-        ),
-      );
+  Widget _buildImage() =>UserImageAvatar(image: widget.item.user?.image ?? "null" , onTap: (){});
 
   Widget _buildUserName() => Text(
         widget.item.user!.cardUserName,
@@ -249,6 +300,12 @@ class _AnswerItemState extends State<AnswerItem> {
               color: _themeStore.darkMode ? Colors.white : Colors.black,
             ),
       );
+  Widget _buildUserScore() => Text(
+    widget.item.user!.score.toString(),
+    style: Theme.of(context).textTheme.subtitle2?.copyWith(
+      color: _themeStore.darkMode ? Colors.white : Colors.black,
+    ),
+  );
 
   Widget _buildAnswerDate() => Text(
         //todo this after add created at from backend

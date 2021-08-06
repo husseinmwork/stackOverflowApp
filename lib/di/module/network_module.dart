@@ -33,7 +33,7 @@ abstract class NetworkModule {
                 RequestInterceptorHandler handler) async {
           // getting token
           var token = await sharedPrefHelper.authToken;
-          debugPrint('network token: $token');
+          // debugPrint('network token: $token');
           if (token != null) {
             options.headers["Authorization"] = "Bearer " + token['accessToken'];
           }

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:todo_app/constants/assets.dart';
 import 'package:todo_app/constants/dimens.dart';
 import 'package:todo_app/model/get_question/get_question.dart';
 import 'package:todo_app/store/theme/theme_store.dart';
+import 'package:todo_app/widgets/user_image_avatar.dart';
 
 class QuestionItem extends StatefulWidget {
   final Question item;
@@ -80,21 +80,8 @@ class _QuestionItemState extends State<QuestionItem> {
     );
   }
 
-  Widget _buildImage() => CircleAvatar(
-        radius: Dimens.cardQuestionImage,
-        child: ClipOval(
-          child: FadeInImage.assetNetwork(
-            fit: BoxFit.cover,
-            placeholder: Assets.placeHolder,
-            height: double.infinity,
-            width: double.infinity,
-            image: widget.item.user!.image ?? "null",
-            imageErrorBuilder: (_, __, ___) {
-              return Image.asset(Assets.placeHolder, fit: BoxFit.cover);
-            },
-          ),
-        ),
-      );
+  Widget _buildImage() => UserImageAvatar(image: widget.item.user?.image ?? "null" , onTap: (){});
+
 
   Widget _buildUserName() => Text(
         widget.item.user!.cardUserName,

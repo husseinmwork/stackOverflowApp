@@ -28,7 +28,6 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
   final FocusNode _focusNode = FocusNode();
   final TextEditingController _textEditingController = TextEditingController();
   late PersistentBottomSheetController _controller;
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   ///end tag
 
@@ -191,90 +190,91 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
       );
 
   Widget _buildTags() => Observer(
-    builder:(_)=> TagEditor(
-        length: _store.tags.length,
-        controller: _textEditingController,
-        focusNode: _focusNode,
-        delimiters: [',', ' '],
-        hasAddButton: true,
-        resetTextOnSubmitted: true,
-        // This is set to grey just to illustrate the `textStyle` prop
-        textStyle: const TextStyle(color: Colors.grey),
-        onSubmitted: (outstandingValue) {
-          if (_store.tags.length < 5) {
-            setState(() {
-              _store.tags.add(outstandingValue);
-            });
-          }
-        },
-        maxLength: 20,
-        inputDecoration: const InputDecoration(
-          border: InputBorder.none,
-          contentPadding: EdgeInsets.zero,
-          hintText: 'Hint Text...',
-          labelText: "Enter 5 tags or less",
-          // errorText: "Please enter 5 tags or less"
+        builder: (_) => TagEditor(
+          length: _store.tags.length,
+          controller: _textEditingController,
+          focusNode: _focusNode,
+          delimiters: [',', ' '],
+          hasAddButton: true,
+          resetTextOnSubmitted: true,
+          // This is set to grey just to illustrate the `textStyle` prop
+          textStyle: const TextStyle(color: Colors.grey),
+          onSubmitted: (outstandingValue) {
+            if (_store.tags.length < 5) {
+              setState(() {
+                _store.tags.add(outstandingValue);
+              });
+            }
+          },
+          maxLength: 20,
+          inputDecoration: const InputDecoration(
+            border: InputBorder.none,
+            contentPadding: EdgeInsets.zero,
+            hintText: 'Hint Text...',
+            labelText: "Enter 5 tags or less",
+            // errorText: "Please enter 5 tags or less"
+          ),
+          onTagChanged: (String newValue) {
+            //  print("hhhhhhhhhhhhhh${newValue}");
+            // if(_values.length < 5){
+            //              setState(() {
+            //                _values.add(newValue);
+            //              });
+            //
+            // }
+          },
+          tagBuilder: (context, index) => Chip(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
+            labelPadding: EdgeInsets.zero,
+            label: Text(_store.tags[index]),
+            deleteIcon: const Icon(
+              Icons.close,
+              size: 18,
+            ),
+            onDeleted: () {
+              setState(() {
+                _store.tags.removeAt(index);
+              });
+            },
+          ),
         ),
-        onTagChanged: (String newValue) {
-          //  print("hhhhhhhhhhhhhh${newValue}");
-          // if(_values.length < 5){
-          //              setState(() {
-          //                _values.add(newValue);
-          //              });
-          //
-          // }
-        },
-        tagBuilder: (context, index) => Chip(
-              shape:
-                  RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
-              labelPadding:  EdgeInsets.zero,
-              label: Text(_store.tags[index]),
-              deleteIcon: const Icon(
-                Icons.close,
-                size: 18,
-              ),
-              onDeleted: () {
-                setState(() {
-                  _store.tags.removeAt(index);
-                });
-              },
-            )),
-  );
+      );
 
   Widget _buildSelectCategory() => Visibility(
         visible: _store.category.isNotEmpty,
         child: Observer(
-            builder: (_) => Container(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: Dimens.padding_small),
-                  width: double.infinity,
-                  height: 37,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(Dimens.border_small),
-                  ),
-                  child: DropdownButton(
-                    value: _store.categoryId,
-                    icon: Icon(
-                      Icons.keyboard_arrow_down,
-                    ),
-                    underline: Text(""),
-                    isExpanded: true,
-                    hint: Text("Select Category",
-                        style: Theme.of(context).textTheme.bodyText1),
-                    style: Theme.of(context).textTheme.bodyText1,
-                    items: [
-                      ..._store.category.map((e) {
-                        return DropdownMenuItem<String>(
-                          child: Text(e.name.toString()),
-                          value: e.id,
-                        );
-                      }).toList(),
-                    ],
-                    onChanged: (String? value) {
-                      _store.categoryId = value;
-                    },
-                  ),
-                )),
+          builder: (_) => Container(
+            padding: EdgeInsets.symmetric(horizontal: Dimens.padding_small),
+            width: double.infinity,
+            height: 37,
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey),
+              borderRadius: BorderRadius.circular(Dimens.border_small),
+            ),
+            child: DropdownButton(
+              value: _store.categoryId,
+              icon: Icon(
+                Icons.keyboard_arrow_down,
+              ),
+              underline: Text(""),
+              isExpanded: true,
+              hint: Text("Select Category",
+                  style: Theme.of(context).textTheme.bodyText1),
+              style: Theme.of(context).textTheme.bodyText1,
+              items: [
+                ..._store.category.map((e) {
+                  return DropdownMenuItem<String>(
+                    child: Text(e.name.toString()),
+                    value: e.id,
+                  );
+                }).toList(),
+              ],
+              onChanged: (String? value) {
+                _store.categoryId = value;
+              },
+            ),
+          ),
+        ),
       );
 }

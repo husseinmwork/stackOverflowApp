@@ -45,31 +45,51 @@ abstract class _DetailsQuestionStore with Store {
   String? bodyAnswer;
 
   @observable
+  bool successGetQuestion = false;
+  @observable
+  bool successGetAnswers = false;
+
+  @observable
   List<Answer> answers = ObservableList<Answer>();
 
   ///get question details
   @action
   Future getQuestion() async {
+  if(questionId != null){
     loading = true;
     return await _repository.getDetailsQuestion(questionId!).then((value) {
+
+
       question = value;
       success = true;
+      successGetQuestion = true;
     }).catchError((error) {
       loading = false;
+      successGetQuestion = false;
       success = false;
       DioErrorUtil.handleError(error);
       errorStore.errorMessage = DioErrorUtil.handleError(error);
     });
   }
+  }
 
   ///get Answer with paging
   @action
   Future getAnswers(int skip) async {
-    await _repository
-        .getAnswers(skip: skip, questionId: questionId!)
-        .then((value) {
-      return answers = value.results;
-    }).catchError((e) {});
+    if(questionId != null){
+      loading = true;
+      await _repository
+          .getAnswers(skip: skip, questionId: questionId!)
+          .then((value) {
+            answers = value.results;
+        success = true;
+        successGetAnswers = true;
+      }).catchError((e) {
+        loading = false;
+        successGetAnswers = false;
+        success = false;
+      });
+    }
   }
 
   @action

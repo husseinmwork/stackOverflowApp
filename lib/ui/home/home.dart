@@ -66,7 +66,6 @@ class _HomeScreenState extends State<HomeScreen>
     _themeStore = Provider.of<ThemeStore>(context);
     _store.getPrefUser();
     _store.updateScrolling();
-    _store.getCategory(0);
     _store.pagingController.addPageRequestListener((pageKey) async {
       _fetchPage(pageKey);
     });
@@ -261,10 +260,10 @@ class _HomeScreenState extends State<HomeScreen>
 
   Widget _buildFilterIcon() => IconButton(
         icon: Icon(Icons.filter_alt),
-        onPressed: () {
-          // SideSheet.right(body: _buildBodyFilter(), context: context);
-
+        onPressed: ()async {
+          await _store.getCategory(0);
           showModalBottomSheet(
+              isScrollControlled: true,
               context: context, builder: (_) => FilterBottomSheet());
         },
       );

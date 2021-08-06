@@ -22,7 +22,6 @@ class SharedPreferenceHelper {
     String? auth = _sharedPreference.getString(Preferences.auth_token);
     if(auth !=null){
       Map<String, dynamic> authTokenDecode = jsonDecode(auth);
-      debugPrint("this $authTokenDecode");
       return authTokenDecode;
     }
 
