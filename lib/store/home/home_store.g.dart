@@ -294,13 +294,6 @@ mixin _$HomeStore on _HomeStore, Store {
     return _$logoutAsyncAction.run(() => super.logout());
   }
 
-  final _$getPrefUserAsyncAction = AsyncAction('_HomeStore.getPrefUser');
-
-  @override
-  Future getPrefUser() {
-    return _$getPrefUserAsyncAction.run(() => super.getPrefUser());
-  }
-
   final _$getQuestionAsyncAction = AsyncAction('_HomeStore.getQuestion');
 
   @override
@@ -318,6 +311,17 @@ mixin _$HomeStore on _HomeStore, Store {
   }
 
   final _$_HomeStoreActionController = ActionController(name: '_HomeStore');
+
+  @override
+  void getPrefUser() {
+    final _$actionInfo = _$_HomeStoreActionController.startAction(
+        name: '_HomeStore.getPrefUser');
+    try {
+      return super.getPrefUser();
+    } finally {
+      _$_HomeStoreActionController.endAction(_$actionInfo);
+    }
+  }
 
   @override
   void updateScrolling() {

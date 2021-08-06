@@ -7,6 +7,7 @@ import 'package:todo_app/data/network/dio_client.dart';
 import 'package:todo_app/data/network/rest_client.dart';
 import 'package:todo_app/model/create_question/create_question.dart';
 import 'package:todo_app/model/filter/filter.dart';
+import 'package:todo_app/model/get_answer/get_answer.dart';
 import 'package:todo_app/model/get_category/get_category.dart';
 import 'package:todo_app/model/get_question/get_question.dart';
 import 'package:todo_app/model/helper/paging.dart';
@@ -112,8 +113,28 @@ class Services {
   Future<Question> getDetailsQuestion(String id) async {
     try {
       var response = await _dioClient.get(Endpoints.question,
-          queryParameters: {"id":id});
+          queryParameters: {Endpoints.id:id});
       return Question.fromJson(response['results'][0]);
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  ///get question with paging
+  Future<Paging<Answer>> getAnswers(
+      {int skip = 0, int? take = 1000, required String questionId}) async {
+    try {
+      Map<String, dynamic?> queries = {
+        Endpoints.querySkip: skip,
+        Endpoints.queryLimit: take,
+        Endpoints.questionId:questionId
+      };
+
+      var response = await _dioClient.get(Endpoints.answer,
+          queryParameters: queries.removeNull());
+      var pagination =
+      Paging<Answer>.fromJson(response, Answer.fromJsonModel);
+      return pagination;
     } catch (e) {
       throw e;
     }

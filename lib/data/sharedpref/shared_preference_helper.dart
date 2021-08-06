@@ -52,7 +52,7 @@ class SharedPreferenceHelper {
   }
 
   //save user after login ------------------------------------------------------
-  Future<Account?> get user async {
+  Account? get user  {
     var userString = _sharedPreference.getString(Preferences.user);
     if (userString != null) {
       /// string -> json -> map

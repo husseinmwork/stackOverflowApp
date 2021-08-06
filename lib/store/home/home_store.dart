@@ -102,6 +102,9 @@ abstract class _HomeStore with Store {
 
   // actions:-------------------------------------------------------------------
   @action
+  void getPrefUser() => user = _repository.user;
+
+  @action
   void updateScrolling() {
     controller.addListener(() {
       this.fabIsVisible =
@@ -139,10 +142,6 @@ abstract class _HomeStore with Store {
     // debugPrint(user.toString());
   }
 
-  @action
-  getPrefUser() async {
-    user = await _repository.user;
-  }
 
   ///get question with paging
   @action

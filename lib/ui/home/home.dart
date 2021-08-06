@@ -4,16 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:provider/provider.dart';
+import 'package:todo_app/constants/assets.dart';
 import 'package:todo_app/constants/dimens.dart';
 import 'package:todo_app/model/get_question/get_question.dart';
 import 'package:todo_app/packages/anim_search_widget.dart';
 import 'package:todo_app/store/home/home_store.dart';
 import 'package:todo_app/store/theme/theme_store.dart';
 import 'package:todo_app/ui/details_question/details_question.dart';
-import 'package:todo_app/ui/home/app_drawer.dart';
 import 'package:todo_app/ui/home/filter.dart';
 import 'package:todo_app/ui/home/question_item.dart';
 import 'package:todo_app/utils/device/device_utils.dart';
+import 'package:todo_app/utils/routes/routes.dart';
 import 'package:todo_app/widgets/stack_overflow_indecator.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -74,12 +75,119 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: AppDrawer(),
+      drawer: _buildDrawer(),
       appBar: _buildAppBar(),
       floatingActionButton: _buildFAB(),
       body: _buildBody(),
     );
   }
+
+  ///drawer
+  Widget _buildDrawer()=>Drawer(
+    child: ListView(
+      padding: EdgeInsets.zero,
+      children: <Widget>[
+        _createHeader(),
+
+        // _createDrawerItem(
+        //     icon: Icons.contacts,
+        //     text: 'My Question',
+        //     onTap: () {
+        //       // Navigator.of(context).pushNamed(Routes.my_question);
+        //     }),
+        // _createDrawerItem(icon: Icons.event, text: 'Events', onTap: () {}),
+        // _createDrawerItem(icon: Icons.note, text: 'Notes', onTap: () {}),
+        // Divider(),
+        // _createDrawerItem(
+        //     icon: Icons.collections_bookmark, text: 'Steps', onTap: () {}),
+        // _createDrawerItem(icon: Icons.face, text: 'Authors', onTap: () {}),
+        // _createDrawerItem(
+        //     icon: Icons.account_box,
+        //     text: 'Flutter Documentation',
+        //     onTap: () {}),
+        _createDrawerItem(
+            icon: Icons.logout,
+            text: 'Logout',
+            onTap: () {
+              Navigator.of(context).pop();
+              _store.logout();
+              Navigator.of(context).pushReplacementNamed(Routes.login);
+            }),
+        _createDrawerItem(
+            icon: Icons.settings,
+            text: 'Settings',
+            onTap: () {
+              Navigator.of(context).pop();
+            }),
+      ],
+    ),
+  );
+  Widget _createHeader() {
+    // onTap: () {
+    //   Navigator.of(context).pop();
+    //   Navigator.of(context).pushNamed(Routes.profile_screen);
+    // },
+    return UserAccountsDrawerHeader(
+      accountName:  Text(_store.user?.username ?? "null" ,
+          style: Theme.of(context).textTheme.bodyText1),
+      accountEmail: Text(_store.user?.email ?? "null",
+          style: Theme.of(context).textTheme.subtitle1),
+      decoration: BoxDecoration(
+        color:  Theme.of(context).primaryColor,
+      ),
+      otherAccountsPictures: [ _buildThemeButton(),],
+      currentAccountPicture: CircleAvatar(
+        radius: Dimens.imageDrawer,
+        child: ClipOval(
+          child: FadeInImage.assetNetwork(
+            fit: BoxFit.cover,
+            placeholder: Assets.placeHolder,
+            height: double.infinity,
+            width: double.infinity,
+            image: _store.user?.image ?? "null",
+            imageErrorBuilder: (_, __, ___) {
+              return Image.asset(Assets.placeHolder, fit: BoxFit.cover);
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildThemeButton() => Observer(
+    builder: (context) {
+      return IconButton(
+        onPressed: () {
+          _themeStore.changeBrightnessToDark(!_themeStore.darkMode);
+        },
+        icon: Icon(
+          _themeStore.darkMode ? Icons.brightness_5 : Icons.brightness_3,
+        ),
+      );
+    },
+  );
+  Widget _createDrawerItem(
+      {required IconData icon,
+        required String text,
+        required GestureTapCallback onTap}) {
+    return ListTile(
+      title: Row(
+        children: <Widget>[
+          Icon(icon, color: _themeStore.darkMode ? Colors.white : Colors.black),
+          Padding(
+            padding: EdgeInsets.only(left: 8.0),
+            child: Text(
+              text,
+              style: Theme.of(context).textTheme.bodyText1?.copyWith(
+                  color: _themeStore.darkMode ? Colors.white : Colors.black),
+            ),
+          )
+        ],
+      ),
+      onTap: onTap,
+    );
+  }
+  ///End drawer
 
   AppBar _buildAppBar() => AppBar(
         title: Row(
@@ -207,20 +315,26 @@ class _HomeScreenState extends State<HomeScreen>
                 ),
               ],
             ),
-            itemBuilder: (context, item, index) => _OpenContainerWrapper(
-              id: item.id!,
-              transitionType: _transitionType,
-              onClosed: _showMarkedAsDoneSnackbar,
-              closedBuilder: (BuildContext _, VoidCallback openContainer) =>
-                  QuestionItem(
-                openContainer: () {
-                  openContainer();
-                },
-                // currentLocation: LatLng(position.latitude, position.longitude),
-                // onLike: (bool isLiked) => onLikeButtonTapped(item.id, isLiked),
-                item: item,
-              ),
-            ),
+            itemBuilder: (context, item, index) => QuestionItem(
+                item: item, openContainer: (){
+              Navigator.of(context).
+              push(MaterialPageRoute(builder: (_)=>DetailsQuestionScreen(id: item.id! , myImage: _store.user!.image.toString())));
+            })
+            ///todo run this animation in navigation
+            //     _OpenContainerWrapper(
+            //   id: item.id!,
+            //   transitionType: _transitionType,
+            //   onClosed: _showMarkedAsDoneSnackbar,
+            //   closedBuilder: (BuildContext _, VoidCallback openContainer) =>
+            //       QuestionItem(
+            //     openContainer: () {
+            //       openContainer();
+            //     },
+            //     // currentLocation: LatLng(position.latitude, position.longitude),
+            //     // onLike: (bool isLiked) => onLikeButtonTapped(item.id, isLiked),
+            //     item: item,
+            //   ),
+            // ),
           ),
         ),
       );
@@ -232,9 +346,11 @@ class _OpenContainerWrapper extends StatelessWidget {
     required this.transitionType,
     required this.onClosed,
     required this.id,
+    required this.myImage
   });
 
   final String id;
+  final String myImage;
   final CloseContainerBuilder closedBuilder;
   final ContainerTransitionType transitionType;
   final ClosedCallback<bool?> onClosed;
@@ -244,7 +360,7 @@ class _OpenContainerWrapper extends StatelessWidget {
     return OpenContainer<bool>(
         transitionType: transitionType,
         openBuilder: (BuildContext context, VoidCallback _) {
-          return DetailsQuestionScreen(id: id);
+          return DetailsQuestionScreen(id: id , myImage: myImage,);
         },
         onClosed: onClosed,
         transitionDuration: Duration(milliseconds: 500),

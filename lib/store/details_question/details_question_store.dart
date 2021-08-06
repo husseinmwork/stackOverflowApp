@@ -1,8 +1,7 @@
-import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:mobx/mobx.dart';
 import 'package:todo_app/data/repositry.dart';
-import 'package:todo_app/model/filter/filter.dart';
+import 'package:todo_app/model/get_answer/get_answer.dart';
 import 'package:todo_app/model/get_question/get_question.dart';
 import 'package:todo_app/store/error/error_store.dart';
 import 'package:todo_app/utils/dio/dio_error_util.dart';
@@ -35,27 +34,41 @@ abstract class _DetailsQuestionStore with Store {
   @observable
   bool loading = false;
 
-  @observable
-  bool errorLogin = false;
 
 
   @observable
   Question? question;
 
+  @observable
+  List<Answer> answers = ObservableList<Answer>();
+
   ///get question details
   @action
   Future getQuestion(String id) async {
     loading = true;
-     await _repository
+   return  await _repository
         .getDetailsQuestion(id)
         .then((value) {
-       question = value;
-      success = true;
+        question = value;
+        success = true;
     }).catchError((error) {
       loading = false;
       success = false;
       DioErrorUtil.handleError(error);
       errorStore.errorMessage = DioErrorUtil.handleError(error);
+    });
+  }
+
+
+///get Answer with paging
+  @action
+  Future getAnswers(int skip, String questionId) async {
+    await _repository
+        .getAnswers(skip:skip , questionId: questionId)
+        .then((value) {
+      return answers = value.results;
+    }).catchError((e) {
+
     });
   }
 

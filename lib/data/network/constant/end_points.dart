@@ -21,15 +21,20 @@ class Endpoints {
 
   ///end: end point of Registration
 
-  // question
-  static const String question = baseUrl + "/questions";
   static const String querySkip = 'skip';
   static const String queryLimit = 'take';
+  static const String id = 'id';
+  static const String questionId = 'questionId';
+
+  // question
+  static const String question = baseUrl + "/questions";
 
   ///profile
   static const String profile = baseUrl + "/accounts/profile";
   static const String updateProfile = baseUrl + "/accounts/profile";
 /// category
   static const String category = baseUrl + "/fields";
+  /// Answer
+  static const String answer = baseUrl + "/answers";
 
 }

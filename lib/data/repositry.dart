@@ -5,6 +5,7 @@ import 'package:todo_app/data/network/apis/services.dart';
 import 'package:todo_app/data/sharedpref/shared_preference_helper.dart';
 import 'package:todo_app/model/create_question/create_question.dart';
 import 'package:todo_app/model/filter/filter.dart';
+import 'package:todo_app/model/get_answer/get_answer.dart';
 import 'package:todo_app/model/get_category/get_category.dart';
 import 'package:todo_app/model/get_question/get_question.dart';
 import 'package:todo_app/model/helper/paging.dart';
@@ -41,7 +42,7 @@ class Repository {
   // user ---------------------------------------------------------------------
   Future<void> saveUser(Account value) => _sharedPrefsHelper.saveUser(value);
 
-  Future<Account?> get user => _sharedPrefsHelper.user;
+  Account? get user => _sharedPrefsHelper.user;
 
   Future<Future<bool>> removeUser() async => _sharedPrefsHelper.removeUser();
 
@@ -99,7 +100,12 @@ class Repository {
     return await _services.getDetailsQuestion(id).catchError((e) => throw e);
   }
 
-  ///get question with paging
+  ///get Answer with paging
+  Future<Paging<Answer>> getAnswers({required int skip,required String questionId}) async {
+    return await _services.getAnswers( questionId: questionId , skip: skip).catchError((e) => throw e);
+  }
+
+  ///create question
   Future<CreateQuestion> createQuestion(CreateQuestion createQuestion) async {
     return await _services.createQuestion(createQuestion).catchError((e) => throw e);
   }
