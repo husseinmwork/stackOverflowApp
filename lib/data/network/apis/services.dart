@@ -5,6 +5,7 @@ import 'package:injectable/injectable.dart';
 import 'package:todo_app/data/network/constant/end_points.dart';
 import 'package:todo_app/data/network/dio_client.dart';
 import 'package:todo_app/data/network/rest_client.dart';
+import 'package:todo_app/model/create_answer/create_answer.dart';
 import 'package:todo_app/model/create_question/create_question.dart';
 import 'package:todo_app/model/filter/filter.dart';
 import 'package:todo_app/model/get_answer/get_answer.dart';
@@ -146,6 +147,17 @@ class Services {
       var response = await _dioClient.post(Endpoints.question,
           data: createQuestion.toJson());
       return CreateQuestion.fromJson(response);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  ///create question
+  Future createAnswer(CreateAnswer createAnswer) async {
+    try {
+      var response = await _dioClient.post(Endpoints.answer,
+          data: createAnswer.toJson());
+      return CreateAnswer.fromJson(response);
     } catch (error) {
       throw error;
     }

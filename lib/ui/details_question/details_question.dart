@@ -11,7 +11,9 @@ import 'package:todo_app/widgets/stack_overflow_indecator.dart';
 
 class DetailsQuestionScreen extends StatefulWidget {
   const DetailsQuestionScreen(
-      {required this.id, this.includeMarkAsDoneButton = true , required this.myImage});
+      {required this.id,
+      this.includeMarkAsDoneButton = true,
+      required this.myImage});
 
   final String id;
   final bool includeMarkAsDoneButton;
@@ -28,8 +30,9 @@ class _DetailsQuestionScreenState extends State<DetailsQuestionScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _store = Provider.of<DetailsQuestionStore>(context);
-    _store.getQuestion(widget.id);
-    _store.getAnswers(0, widget.id);
+    _store.questionId = widget.id;
+    _store.getQuestion();
+    _store.getAnswers(0);
   }
 
   @override
@@ -56,9 +59,9 @@ class _DetailsQuestionScreenState extends State<DetailsQuestionScreen> {
   Widget _buildBody() => Observer(
         builder: (_) => _store.success == true
             ? Column(
-              children: [
-                Expanded(
-                  child: ListView(
+                children: [
+                  Expanded(
+                    child: ListView(
                       padding: EdgeInsets.all(Dimens.padding_large),
                       children: [
                         _buildTitle(),
@@ -70,10 +73,10 @@ class _DetailsQuestionScreenState extends State<DetailsQuestionScreen> {
                         _buildAnswer(),
                       ],
                     ),
-                ),
-                _buildYourAnswer(),
-              ],
-            )
+                  ),
+                  _buildYourAnswer(),
+                ],
+              )
             : StackOverFlowIndecator(),
       );
 
@@ -130,38 +133,45 @@ class _DetailsQuestionScreenState extends State<DetailsQuestionScreen> {
       );
 
   Widget _buildYourAnswer() => Card(
-    margin: EdgeInsets.symmetric(vertical: Dimens.padding_mini),
-    shape:
-        RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
-    child: Padding(
-      padding: EdgeInsets.symmetric(
-          horizontal: Dimens.padding_mid, vertical: Dimens.padding_mid),
-      child: Row(
-        children: [
-          CircleAvatar(
-            radius: Dimens.cardQuestionImage,
-            child: ClipOval(
-              child: FadeInImage.assetNetwork(
-                fit: BoxFit.cover,
-                placeholder: Assets.placeHolder,
-                height: double.infinity,
-                width: double.infinity,
-                //todo my image
-                image: widget.myImage ?? "null",
-                imageErrorBuilder: (_, __, ___) {
-                  return Image.asset(Assets.placeHolder,
-                      fit: BoxFit.cover);
-                },
+        margin: EdgeInsets.symmetric(vertical: Dimens.padding_mini),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+              horizontal: Dimens.padding_mid, vertical: Dimens.padding_mid),
+          child: Row(
+            children: [
+              CircleAvatar(
+                radius: Dimens.cardQuestionImage,
+                child: ClipOval(
+                  child: FadeInImage.assetNetwork(
+                    fit: BoxFit.cover,
+                    placeholder: Assets.placeHolder,
+                    height: double.infinity,
+                    width: double.infinity,
+                    //todo my image
+                    image: widget.myImage,
+                    imageErrorBuilder: (_, __, ___) {
+                      return Image.asset(Assets.placeHolder, fit: BoxFit.cover);
+                    },
+                  ),
+                ),
               ),
-            ),
+              Expanded(
+                child: TextFormField(
+                  onChanged: (answer) {
+                    _store.bodyAnswer = answer;
+                  },
+                ),
+              ),
+              IconButton(
+                  icon: Icon(Icons.send, color: Colors.white),
+                  onPressed: () {
+                    _store.createAnswer();
+                  })
+            ],
           ),
-          Expanded(child: TextFormField()),
-          IconButton(icon: Icon(Icons.send , color: Colors.white), onPressed: (){})
-        ],
-
-      ),
-    ),
-  );
+        ),
+      );
 }
 
 class AnswerItem extends StatefulWidget {

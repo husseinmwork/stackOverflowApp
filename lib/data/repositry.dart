@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:todo_app/data/local/datasources/post/post_datasource.dart';
 import 'package:todo_app/data/network/apis/services.dart';
 import 'package:todo_app/data/sharedpref/shared_preference_helper.dart';
+import 'package:todo_app/model/create_answer/create_answer.dart';
 import 'package:todo_app/model/create_question/create_question.dart';
 import 'package:todo_app/model/filter/filter.dart';
 import 'package:todo_app/model/get_answer/get_answer.dart';
@@ -106,8 +107,12 @@ class Repository {
   }
 
   ///create question
-  Future<CreateQuestion> createQuestion(CreateQuestion createQuestion) async {
+  Future createQuestion(CreateQuestion createQuestion) async {
     return await _services.createQuestion(createQuestion).catchError((e) => throw e);
+  }
+  ///create answer
+  Future<CreateAnswer> createAnswer(CreateAnswer createAnswer) async {
+    return await _services.createAnswer(createAnswer).catchError((e) => throw e);
   }
 
   ///get profile
