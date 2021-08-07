@@ -82,59 +82,62 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   ///drawer
-  Widget _buildDrawer()=>Drawer(
-    child: ListView(
-      padding: EdgeInsets.zero,
-      children: <Widget>[
-        _createHeader(),
+  Widget _buildDrawer() => Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            _createHeader(),
 
-        // _createDrawerItem(
-        //     icon: Icons.contacts,
-        //     text: 'My Question',
-        //     onTap: () {
-        //       // Navigator.of(context).pushNamed(Routes.my_question);
-        //     }),
-        // _createDrawerItem(icon: Icons.event, text: 'Events', onTap: () {}),
-        // _createDrawerItem(icon: Icons.note, text: 'Notes', onTap: () {}),
-        // Divider(),
-        // _createDrawerItem(
-        //     icon: Icons.collections_bookmark, text: 'Steps', onTap: () {}),
-        // _createDrawerItem(icon: Icons.face, text: 'Authors', onTap: () {}),
-        // _createDrawerItem(
-        //     icon: Icons.account_box,
-        //     text: 'Flutter Documentation',
-        //     onTap: () {}),
-        _createDrawerItem(
-            icon: Icons.logout,
-            text: 'Logout',
-            onTap: () {
-              Navigator.of(context).pop();
-              _store.logout();
-              Navigator.of(context).pushReplacementNamed(Routes.login);
-            }),
-        _createDrawerItem(
-            icon: Icons.settings,
-            text: 'Settings',
-            onTap: () {
-              Navigator.of(context).pop();
-            }),
-      ],
-    ),
-  );
+            // _createDrawerItem(
+            //     icon: Icons.contacts,
+            //     text: 'My Question',
+            //     onTap: () {
+            //       // Navigator.of(context).pushNamed(Routes.my_question);
+            //     }),
+            // _createDrawerItem(icon: Icons.event, text: 'Events', onTap: () {}),
+            // _createDrawerItem(icon: Icons.note, text: 'Notes', onTap: () {}),
+            // Divider(),
+            // _createDrawerItem(
+            //     icon: Icons.collections_bookmark, text: 'Steps', onTap: () {}),
+            // _createDrawerItem(icon: Icons.face, text: 'Authors', onTap: () {}),
+            // _createDrawerItem(
+            //     icon: Icons.account_box,
+            //     text: 'Flutter Documentation',
+            //     onTap: () {}),
+            _createDrawerItem(
+                icon: Icons.logout,
+                text: 'Logout',
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _store.logout();
+                  Navigator.of(context).pushReplacementNamed(Routes.login);
+                }),
+            _createDrawerItem(
+                icon: Icons.settings,
+                text: 'Settings',
+                onTap: () {
+                  Navigator.of(context).pop();
+                }),
+          ],
+        ),
+      );
+
   Widget _createHeader() {
     // onTap: () {
     //   Navigator.of(context).pop();
     //   Navigator.of(context).pushNamed(Routes.profile_screen);
     // },
     return UserAccountsDrawerHeader(
-      accountName:  Text(_store.user?.username ?? "null" ,
+      accountName: Text(_store.user?.username ?? "null",
           style: Theme.of(context).textTheme.bodyText1),
       accountEmail: Text(_store.user?.email ?? "null",
           style: Theme.of(context).textTheme.subtitle1),
       decoration: BoxDecoration(
-        color:  Theme.of(context).primaryColor,
+        color: Theme.of(context).primaryColor,
       ),
-      otherAccountsPictures: [ _buildThemeButton(),],
+      otherAccountsPictures: [
+        _buildThemeButton(),
+      ],
       currentAccountPicture: CircleAvatar(
         radius: Dimens.imageDrawer,
         child: ClipOval(
@@ -154,21 +157,22 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   Widget _buildThemeButton() => Observer(
-    builder: (context) {
-      return IconButton(
-        onPressed: () {
-          _themeStore.changeBrightnessToDark(!_themeStore.darkMode);
+        builder: (context) {
+          return IconButton(
+            onPressed: () {
+              _themeStore.changeBrightnessToDark(!_themeStore.darkMode);
+            },
+            icon: Icon(
+              _themeStore.darkMode ? Icons.brightness_5 : Icons.brightness_3,
+            ),
+          );
         },
-        icon: Icon(
-          _themeStore.darkMode ? Icons.brightness_5 : Icons.brightness_3,
-        ),
       );
-    },
-  );
+
   Widget _createDrawerItem(
       {required IconData icon,
-        required String text,
-        required GestureTapCallback onTap}) {
+      required String text,
+      required GestureTapCallback onTap}) {
     return ListTile(
       title: Row(
         children: <Widget>[
@@ -186,6 +190,7 @@ class _HomeScreenState extends State<HomeScreen>
       onTap: onTap,
     );
   }
+
   ///End drawer
 
   AppBar _buildAppBar() => AppBar(
@@ -260,11 +265,12 @@ class _HomeScreenState extends State<HomeScreen>
 
   Widget _buildFilterIcon() => IconButton(
         icon: Icon(Icons.filter_alt),
-        onPressed: ()async {
+        onPressed: () async {
           await _store.getCategory(0);
           showModalBottomSheet(
               isScrollControlled: true,
-              context: context, builder: (_) => FilterBottomSheet());
+              context: context,
+              builder: (_) => FilterBottomSheet());
         },
       );
 
@@ -315,57 +321,15 @@ class _HomeScreenState extends State<HomeScreen>
               ],
             ),
             itemBuilder: (context, item, index) => QuestionItem(
-                item: item, openContainer: (){
-              Navigator.of(context).
-              push(MaterialPageRoute(builder: (_)=>DetailsQuestionScreen(id: item.id! , myImage: _store.user!.image.toString())));
-            })
-            ///todo run this animation in navigation
-            //     _OpenContainerWrapper(
-            //   id: item.id!,
-            //   transitionType: _transitionType,
-            //   onClosed: _showMarkedAsDoneSnackbar,
-            //   closedBuilder: (BuildContext _, VoidCallback openContainer) =>
-            //       QuestionItem(
-            //     openContainer: () {
-            //       openContainer();
-            //     },
-            //     // currentLocation: LatLng(position.latitude, position.longitude),
-            //     // onLike: (bool isLiked) => onLikeButtonTapped(item.id, isLiked),
-            //     item: item,
-            //   ),
-            // ),
+                item: item,
+                onTap: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (_) => DetailsQuestionScreen(
+                        userId: _store.user!.id.toString(),
+                          id: item.id!,
+                          myImage: _store.user!.image.toString())));
+                }),
           ),
         ),
       );
-}
-
-class _OpenContainerWrapper extends StatelessWidget {
-  const _OpenContainerWrapper({
-    required this.closedBuilder,
-    required this.transitionType,
-    required this.onClosed,
-    required this.id,
-    required this.myImage
-  });
-
-  final String id;
-  final String myImage;
-  final CloseContainerBuilder closedBuilder;
-  final ContainerTransitionType transitionType;
-  final ClosedCallback<bool?> onClosed;
-
-  @override
-  Widget build(BuildContext context) {
-    return OpenContainer<bool>(
-        transitionType: transitionType,
-        openBuilder: (BuildContext context, VoidCallback _) {
-          return DetailsQuestionScreen(id: id , myImage: myImage,);
-        },
-        onClosed: onClosed,
-        transitionDuration: Duration(milliseconds: 500),
-        tappable: false,
-        closedBuilder: closedBuilder,
-        openColor: Theme.of(context).accentColor,
-        closedColor: Theme.of(context).scaffoldBackgroundColor);
-  }
 }

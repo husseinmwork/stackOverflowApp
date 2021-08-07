@@ -9,9 +9,9 @@ import 'package:todo_app/widgets/user_image_avatar.dart';
 
 class QuestionItem extends StatefulWidget {
   final Question item;
-  final VoidCallback openContainer;
+  final VoidCallback onTap;
 
-  QuestionItem({required this.item, required this.openContainer});
+  QuestionItem({required this.item, required this.onTap});
 
   @override
   _QuestionItemState createState() => _QuestionItemState();
@@ -24,7 +24,6 @@ class _QuestionItemState extends State<QuestionItem> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _themeStore = Provider.of<ThemeStore>(context);
-    print("this.void");
   }
 
   @override
@@ -33,7 +32,7 @@ class _QuestionItemState extends State<QuestionItem> {
       margin: EdgeInsets.symmetric(vertical: Dimens.padding_mini),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
       child: InkWell(
-        onTap: widget.openContainer,
+        onTap: widget.onTap,
         child: Padding(
           padding: EdgeInsets.symmetric(
               horizontal: Dimens.padding_mid, vertical: Dimens.padding_mid),

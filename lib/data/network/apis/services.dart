@@ -180,8 +180,7 @@ class Services {
   ///remove like or desLike
   Future questionDeleteLike(String likeId)async{
     try {
-      var response = await _dioClient.delete(Endpoints.questionLike,
-          data: {Endpoints.id:likeId});
+      var response = await _dioClient.delete(Endpoints.questionLike +'/'+ likeId);
       return response;
     } catch (error) {
       throw error;
@@ -190,10 +189,9 @@ class Services {
 
   ///question Like update
   ///convert like into desLike
-  Future questionUpdateLike(String likeId)async{
+  Future questionUpdateLike(String likeId , String type)async{
     try {
-      var response = await _dioClient.patch(Endpoints.questionLike,
-          data: {Endpoints.id:likeId});
+      var response = await _dioClient.patch(Endpoints.questionLike +'/'+ likeId , data: {"type":type});
       return response;
     } catch (error) {
       throw error;

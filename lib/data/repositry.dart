@@ -118,8 +118,8 @@ class Repository {
     return await _services.questionLike(like).catchError((e) => throw e);
   }
 
-  Future questionUpdateLike(String likeId)async{
-    return await _services.questionUpdateLike(likeId).catchError((e)=>throw e);
+  Future questionUpdateLike(String likeId , String type)async{
+    return await _services.questionUpdateLike(likeId , type).catchError((e)=>throw e);
   }
 
   Future questionDeleteLike(String likeId)async{

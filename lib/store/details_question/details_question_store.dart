@@ -48,7 +48,10 @@ abstract class _DetailsQuestionStore with Store {
   String? bodyAnswer;
 
   @observable
-  String typeLike  = "false";
+  String? typeLike ;
+
+  @observable
+  String? hsVoted ;
 
   @observable
   bool isLiked  = false;
@@ -71,6 +74,7 @@ abstract class _DetailsQuestionStore with Store {
     if (questionId != null) {
       loading = true;
       return await _repository.getDetailsQuestion(questionId!).then((value) {
+        hsVoted = value.hasVoted;
         question = value;
         success = true;
         successGetQuestion = true;
@@ -125,7 +129,7 @@ abstract class _DetailsQuestionStore with Store {
   Future questionLike() async {
     if (typeLike != null && questionId != null) {
      return await _repository
-          .questionLike(Like(questionId: questionId!, type: typeLike))
+          .questionLike(Like(questionId: questionId!, type: typeLike!))
           .catchError((e) {debugPrint("error in like $e");});
     }
   }
@@ -141,9 +145,9 @@ abstract class _DetailsQuestionStore with Store {
 
   @action
   Future questionUpdateLike() async {
-    if (likeId != null) {
+    if (likeId != null && typeLike != null) {
       return await _repository
-          .questionUpdateLike(likeId!)
+          .questionUpdateLike(likeId! , typeLike!)
           .catchError((e) {debugPrint("error in update like $e");});
     }
   }

@@ -5,7 +5,9 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:provider/provider.dart';
 
 import 'package:todo_app/constants/dimens.dart';
+import 'package:todo_app/constants/strings.dart';
 import 'package:todo_app/model/get_answer/get_answer.dart';
+import 'package:todo_app/model/get_question/get_question.dart';
 import 'package:todo_app/store/details_question/details_question_store.dart';
 import 'package:todo_app/store/theme/theme_store.dart';
 import 'package:todo_app/utils/device/device_utils.dart';
@@ -16,10 +18,12 @@ import 'package:todo_app/widgets/user_image_avatar.dart';
 class DetailsQuestionScreen extends StatefulWidget {
   const DetailsQuestionScreen(
       {required this.id,
+      required this.userId,
       this.includeMarkAsDoneButton = true,
       required this.myImage});
 
   final String id;
+  final String userId;
   final bool includeMarkAsDoneButton;
   final String myImage;
 
@@ -80,23 +84,93 @@ class _DetailsQuestionScreenState extends State<DetailsQuestionScreen> {
                       children: [
                         _buildTitleAndBody(),
                         _StackOverFlowLike(
-                            isSelected: _store.isLiked,
-                            like: _store.isLiked
-                                ? () {
-                                    //delete like
-                              // _store.savePrefLike(false);
-                                  }
-                                : () {
-                                    // _store.typeLike = 'UPVOTE';
-                                    // // _store.savePrefLike(true);
-                                    // _store.questionLike();
-                                  },
-                            desLike: () {
-                              // _store.typeLike = 'DOWNVOTE';
-                              // _store.questionLike();
-                            },
-                          ),
+                          hsVoted: _store.hsVoted,
+                          like: _store.hsVoted == Strings.like
 
+                              ///delete like
+                              ? () async {
+                                  VotesList? likedObj;
+                                  for (var i in _store.question!.votesList!) {
+                                    if (i.userId == widget.userId) likedObj = i;
+                                  }
+                                  if (likedObj != null) {
+                                    _store.likeId = likedObj.id;
+                                    _store.hsVoted = null;
+                                    await _store.questionDeleteLike();
+                                    _store.getQuestion();
+                                  }
+                                }
+                              : _store.hsVoted == Strings.desLike
+
+                                  ///update like
+                                  ? () async {
+                                      VotesList? likedObj;
+                                      for (var i
+                                          in _store.question!.votesList!) {
+                                        if (i.userId == widget.userId)
+                                          likedObj = i;
+                                      }
+                                      if (likedObj != null) {
+                                        _store.typeLike = Strings.like;
+                                        _store.likeId = likedObj.id;
+                                        _store.hsVoted = Strings.like;
+                                        await _store.questionUpdateLike();
+                                        _store.getQuestion();
+                                      }
+                                    }
+                                  :
+
+                                  ///post like
+                                  () async {
+                                      _store.typeLike = Strings.like;
+                                      _store.hsVoted = Strings.like;
+                                      await _store.questionLike();
+
+                                      _store.getQuestion();
+                                    },
+                          desLike: _store.hsVoted == Strings.desLike
+
+                              ///delete desLike
+                              ? () async {
+                                  VotesList? likedObj;
+                                  for (var i in _store.question!.votesList!) {
+                                    if (i.userId == widget.userId) likedObj = i;
+                                  }
+                                  if (likedObj != null) {
+                                    _store.likeId = likedObj.id;
+                                    _store.hsVoted = null;
+                                    await _store.questionDeleteLike();
+                                    _store.getQuestion();
+                                  }
+                                }
+                              : _store.hsVoted == Strings.like
+
+                                  ///update desLike
+                                  ? () async {
+                                      VotesList? likedObj;
+                                      for (var i
+                                          in _store.question!.votesList!) {
+                                        if (i.userId == widget.userId)
+                                          likedObj = i;
+                                      }
+                                      if (likedObj != null) {
+                                        _store.typeLike = Strings.desLike;
+                                        _store.likeId = likedObj.id;
+                                        _store.hsVoted = Strings.desLike;
+                                        await _store.questionUpdateLike();
+                                        _store.getQuestion();
+                                      }
+                                      //update
+                                    }
+
+                                  ///post desLike
+                                  : () async {
+                                      _store.typeLike = Strings.desLike;
+                                      _store.hsVoted = Strings.desLike;
+                                      await _store.questionLike();
+                                      _store.getQuestion();
+                                    },
+                        ),
                       ],
                     ),
                     SizedBox(height: Dimens.padding_normal),
@@ -358,12 +432,12 @@ class _AnswerItemState extends State<AnswerItem> {
 }
 
 class _StackOverFlowLike extends StatelessWidget {
-  final bool? isSelected;
+  final String? hsVoted;
   final Function like;
   final Function desLike;
 
   const _StackOverFlowLike(
-      {required this.like, required this.desLike, this.isSelected});
+      {required this.like, required this.desLike, required this.hsVoted});
 
   @override
   Widget build(BuildContext context) {
@@ -381,14 +455,9 @@ class _StackOverFlowLike extends StatelessWidget {
   Widget _buildLike() => ElevatedButton(
       style: ElevatedButton.styleFrom(
           onPrimary: Colors.white, minimumSize: Size(40, 40)),
-      child: isSelected == true
+      child: (hsVoted != null && hsVoted == Strings.like)
           ? Icon(Icons.thumb_up)
-          :
-          // Transform.rotate(
-          //     angle: -math.pi / 2,
-          //     child:
-          //         Icon(Icons.play_arrow_outlined, color: Colors.white, size: 40)),
-          Icon(Icons.thumb_up_alt_outlined, color: Colors.white),
+          : Icon(Icons.thumb_up_alt_outlined, color: Colors.white),
       onPressed: () {
         like();
       });
@@ -399,10 +468,9 @@ class _StackOverFlowLike extends StatelessWidget {
       style: ElevatedButton.styleFrom(
           onPrimary: Colors.white, minimumSize: Size(40, 40)),
       // Icon(Icons.arrow_drop_down_outlined , size: 60,color: Colors.white,)
-      child: Transform.rotate(
-          angle: -math.pi + -math.pi / 2,
-          child:
-              Icon(Icons.play_arrow_outlined, color: Colors.white, size: 40)),
+      child: (hsVoted != null && hsVoted == Strings.desLike)
+          ? Icon(Icons.thumb_down)
+          : Icon(Icons.thumb_down_alt_outlined),
       onPressed: () {
         desLike();
       });
