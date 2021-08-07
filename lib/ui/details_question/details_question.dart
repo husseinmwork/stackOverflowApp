@@ -39,6 +39,7 @@ class _DetailsQuestionScreenState extends State<DetailsQuestionScreen> {
     _store.questionId = widget.id;
     _store.getQuestion();
     _store.getAnswers(0);
+    // _store.getPrefUser();
   }
 
   @override
@@ -47,6 +48,7 @@ class _DetailsQuestionScreenState extends State<DetailsQuestionScreen> {
     _store.success = false;
     _store.successGetAnswers = false;
     _store.successGetQuestion = false;
+    _store.questionId = null;
   }
 
   @override
@@ -77,9 +79,24 @@ class _DetailsQuestionScreenState extends State<DetailsQuestionScreen> {
                     Row(
                       children: [
                         _buildTitleAndBody(),
-                        _StackOverFlowLike(like: (){
-                          _store.questionLike();
-                        },),
+                        _StackOverFlowLike(
+                            isSelected: _store.isLiked,
+                            like: _store.isLiked
+                                ? () {
+                                    //delete like
+                              // _store.savePrefLike(false);
+                                  }
+                                : () {
+                                    // _store.typeLike = 'UPVOTE';
+                                    // // _store.savePrefLike(true);
+                                    // _store.questionLike();
+                                  },
+                            desLike: () {
+                              // _store.typeLike = 'DOWNVOTE';
+                              // _store.questionLike();
+                            },
+                          ),
+
                       ],
                     ),
                     SizedBox(height: Dimens.padding_normal),
@@ -341,9 +358,13 @@ class _AnswerItemState extends State<AnswerItem> {
 }
 
 class _StackOverFlowLike extends StatelessWidget {
+  final bool? isSelected;
   final Function like;
+  final Function desLike;
 
-  const _StackOverFlowLike({required this.like}) ;
+  const _StackOverFlowLike(
+      {required this.like, required this.desLike, this.isSelected});
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -360,11 +381,17 @@ class _StackOverFlowLike extends StatelessWidget {
   Widget _buildLike() => ElevatedButton(
       style: ElevatedButton.styleFrom(
           onPrimary: Colors.white, minimumSize: Size(40, 40)),
-      child: Transform.rotate(
-          angle: -math.pi / 2,
-          child:
-              Icon(Icons.play_arrow_outlined, color: Colors.white, size: 40)),
-      onPressed: (){like();});
+      child: isSelected == true
+          ? Icon(Icons.thumb_up)
+          :
+          // Transform.rotate(
+          //     angle: -math.pi / 2,
+          //     child:
+          //         Icon(Icons.play_arrow_outlined, color: Colors.white, size: 40)),
+          Icon(Icons.thumb_up_alt_outlined, color: Colors.white),
+      onPressed: () {
+        like();
+      });
 
   Widget _buildNumLikeAndDisLike() => Text("4");
 
@@ -376,5 +403,7 @@ class _StackOverFlowLike extends StatelessWidget {
           angle: -math.pi + -math.pi / 2,
           child:
               Icon(Icons.play_arrow_outlined, color: Colors.white, size: 40)),
-      onPressed: () {});
+      onPressed: () {
+        desLike();
+      });
 }

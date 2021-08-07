@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:todo_app/model/like/like.dart';
 import 'package:todo_app/model/user/user.dart';
 
 
@@ -69,6 +70,7 @@ class SharedPreferenceHelper {
 
   Future<Future<bool>> removeUser() async =>
       _sharedPreference.remove(Preferences.user);
+
 
   // Theme:------------------------------------------------------
   bool get isDarkMode {

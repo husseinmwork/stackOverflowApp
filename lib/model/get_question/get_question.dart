@@ -21,8 +21,10 @@ class Question {
   final  String? title;
   @JsonKey(name: 'tags')
   final  List<String>? tags;
+  @JsonKey(name: 'answer')
+  final  List<Object>? answer;
 
-  Question({this.views, this.tags,this.id, this.body, this.votes, this.user, this.userId , this.title});
+  Question({ this.answer, this.views, this.tags,this.id, this.body, this.votes, this.user, this.userId , this.title});
 
   factory Question.fromJson(Map<String, dynamic> json) => _$QuestionFromJson(json);
 

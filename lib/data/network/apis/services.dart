@@ -165,11 +165,36 @@ class Services {
   }
 
   ///question Like
+  ///work like
   Future<Like> questionLike(Like like)async{
     try {
       var response = await _dioClient.post(Endpoints.questionLike,
-          data: like.toJson());
+          data: like.toJson().removeNull());
       return Like.fromJson(response);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  ///question Like delete
+  ///remove like or desLike
+  Future questionDeleteLike(String likeId)async{
+    try {
+      var response = await _dioClient.delete(Endpoints.questionLike,
+          data: {Endpoints.id:likeId});
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  ///question Like update
+  ///convert like into desLike
+  Future questionUpdateLike(String likeId)async{
+    try {
+      var response = await _dioClient.patch(Endpoints.questionLike,
+          data: {Endpoints.id:likeId});
+      return response;
     } catch (error) {
       throw error;
     }

@@ -177,7 +177,7 @@ class _QuestionItemState extends State<QuestionItem> {
           Icon(Icons.comment, color: Theme.of(context).iconTheme.color),
           SizedBox(width: Dimens.padding_normal),
           Text(
-            widget.item.user?.answer?.length.toString() ?? "0",
+            widget.item.answer?.length.toString() ?? "0",
             style: Theme.of(context).textTheme.caption?.copyWith(
                   color: _themeStore.darkMode ? Colors.white : Colors.black,
                 ),

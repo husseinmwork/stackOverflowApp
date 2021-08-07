@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:injectable/injectable.dart';
 import 'package:mobx/mobx.dart';
 import 'package:todo_app/data/repositry.dart';
@@ -47,19 +48,24 @@ abstract class _DetailsQuestionStore with Store {
   String? bodyAnswer;
 
   @observable
-  String like = 'UPVOTE';
+  String typeLike  = "false";
+
   @observable
-  String desLike = 'DOWNVOTE';
+  bool isLiked  = false;
+
+  @observable
+  String? likeId  ;
 
   @observable
   bool successGetQuestion = false;
+
   @observable
   bool successGetAnswers = false;
 
   @observable
   List<Answer> answers = ObservableList<Answer>();
 
-  ///get question details
+  ///question
   @action
   Future getQuestion() async {
     if (questionId != null) {
@@ -78,7 +84,7 @@ abstract class _DetailsQuestionStore with Store {
     }
   }
 
-  ///get Answer with paging
+  ///Answer
   @action
   Future getAnswers(int skip) async {
     if (questionId != null) {
@@ -111,14 +117,38 @@ abstract class _DetailsQuestionStore with Store {
     }
   }
 
-  ///question Like
-  Future questionLike() async {
-    if (like.isNotEmpty && questionId != null) {
-      await _repository
-          .questionLike(Like(questionId: questionId!, type: like))
-          .catchError((e) {});
-    }
 
+
+
+  ///question Like
+  @action
+  Future questionLike() async {
+    if (typeLike != null && questionId != null) {
+     return await _repository
+          .questionLike(Like(questionId: questionId!, type: typeLike))
+          .catchError((e) {debugPrint("error in like $e");});
+    }
   }
+
+  @action
+  Future questionDeleteLike() async {
+    if (likeId != null) {
+      return await _repository
+          .questionDeleteLike(likeId!)
+          .catchError((e) {debugPrint("error in delete like $e");});
+    }
+  }
+
+  @action
+  Future questionUpdateLike() async {
+    if (likeId != null) {
+      return await _repository
+          .questionUpdateLike(likeId!)
+          .catchError((e) {debugPrint("error in update like $e");});
+    }
+  }
+
+
 }
+
 

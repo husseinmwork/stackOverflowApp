@@ -48,6 +48,7 @@ class Repository {
 
   Future<Future<bool>> removeUser() async => _sharedPrefsHelper.removeUser();
 
+
   // is login user -------------------------------------------------------------
   Future<void> saveIsLoggedIn(bool value) =>
       _sharedPrefsHelper.saveIsLoggedIn(value);
@@ -115,6 +116,14 @@ class Repository {
   ///question like
   Future<Like> questionLike(Like like) async {
     return await _services.questionLike(like).catchError((e) => throw e);
+  }
+
+  Future questionUpdateLike(String likeId)async{
+    return await _services.questionUpdateLike(likeId).catchError((e)=>throw e);
+  }
+
+  Future questionDeleteLike(String likeId)async{
+    return await _services.questionDeleteLike(likeId).catchError((e)=>throw e);
   }
 
   ///create answer
