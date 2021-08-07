@@ -10,6 +10,7 @@ import 'package:todo_app/model/get_answer/get_answer.dart';
 import 'package:todo_app/model/get_category/get_category.dart';
 import 'package:todo_app/model/get_question/get_question.dart';
 import 'package:todo_app/model/helper/paging.dart';
+import 'package:todo_app/model/like/like.dart';
 import 'package:todo_app/model/login/login.dart';
 import 'package:todo_app/model/user/user.dart';
 
@@ -110,6 +111,12 @@ class Repository {
   Future createQuestion(CreateQuestion createQuestion) async {
     return await _services.createQuestion(createQuestion).catchError((e) => throw e);
   }
+
+  ///question like
+  Future<Like> questionLike(Like like) async {
+    return await _services.questionLike(like).catchError((e) => throw e);
+  }
+
   ///create answer
   Future<CreateAnswer> createAnswer(CreateAnswer createAnswer) async {
     return await _services.createAnswer(createAnswer).catchError((e) => throw e);

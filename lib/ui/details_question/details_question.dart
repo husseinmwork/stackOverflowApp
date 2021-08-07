@@ -1,12 +1,9 @@
-
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:provider/provider.dart';
 
-import 'package:todo_app/constants/assets.dart';
 import 'package:todo_app/constants/dimens.dart';
 import 'package:todo_app/model/get_answer/get_answer.dart';
 import 'package:todo_app/store/details_question/details_question_store.dart';
@@ -71,14 +68,20 @@ class _DetailsQuestionScreenState extends State<DetailsQuestionScreen> {
         builder: (_) => Visibility(
           visible: (_store.successGetQuestion && _store.successGetAnswers),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
                 child: ListView(
                   padding: EdgeInsets.all(Dimens.padding_large),
                   children: [
-                    _buildTitle(),
-                    SizedBox(height: Dimens.padding_normal),
-                    _buildQuestionBody(),
+                    Row(
+                      children: [
+                        _buildTitleAndBody(),
+                        _StackOverFlowLike(like: (){
+                          _store.questionLike();
+                        },),
+                      ],
+                    ),
                     SizedBox(height: Dimens.padding_normal),
                     _buildTags(),
                     SizedBox(height: Dimens.padding_large),
@@ -93,17 +96,24 @@ class _DetailsQuestionScreenState extends State<DetailsQuestionScreen> {
         ),
       );
 
-  Widget _buildTitle() => Text(
-        _store.question?.title ?? "",
-        style: Theme.of(context)
-            .textTheme
-            .headline6
-            ?.copyWith(fontWeight: FontWeight.w500),
-      );
-
-  Widget _buildQuestionBody() => Text(
-        _store.question?.body ?? "",
-        style: Theme.of(context).textTheme.subtitle2,
+  Widget _buildTitleAndBody() => Expanded(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              _store.question?.title ?? "",
+              style: Theme.of(context)
+                  .textTheme
+                  .headline6
+                  ?.copyWith(fontWeight: FontWeight.w500),
+            ),
+            SizedBox(height: Dimens.padding_normal),
+            Text(
+              _store.question?.body ?? "",
+              style: Theme.of(context).textTheme.subtitle2,
+            )
+          ],
+        ),
       );
 
   Widget _buildTags() => Wrap(
@@ -155,9 +165,8 @@ class _DetailsQuestionScreenState extends State<DetailsQuestionScreen> {
           padding: EdgeInsets.symmetric(
               horizontal: Dimens.padding_mid, vertical: Dimens.padding_mid),
           child: Row(
-
             children: [
-          UserImageAvatar(image: widget.myImage ,onTap: (){}),
+              UserImageAvatar(image: widget.myImage, onTap: () {}),
               SizedBox(width: Dimens.padding_normal),
               _buildCreateAnswer(),
               IconButton(
@@ -175,29 +184,29 @@ class _DetailsQuestionScreenState extends State<DetailsQuestionScreen> {
         ),
       );
 
-  Widget _buildCreateAnswer()=> Expanded(
-    child: TextFormField(
-      maxLines: 4,
-      minLines: 1,
-      decoration: InputDecoration(
-        hintText: "Write a answer...",
-        labelText:"Write a answer...",
-      ),
-      controller: _answerController,
-      onFieldSubmitted: (value) async {
-        /*    if (_answerController.text.isNotEmpty) {
+  Widget _buildCreateAnswer() => Expanded(
+        child: TextFormField(
+          maxLines: 4,
+          minLines: 1,
+          decoration: InputDecoration(
+            hintText: "Write a answer...",
+            labelText: "Write a answer...",
+          ),
+          controller: _answerController,
+          onFieldSubmitted: (value) async {
+            /*    if (_answerController.text.isNotEmpty) {
                       _answerController.text = '';
                       DeviceUtils.hideKeyboard(context);
 
                       await _store.createAnswer();
                       _store.getAnswers(0);
                     }*/
-      },
-      onChanged: (answer) {
-        _store.bodyAnswer = answer;
-      },
-    ),
-  );
+          },
+          onChanged: (answer) {
+            _store.bodyAnswer = answer;
+          },
+        ),
+      );
 }
 
 class AnswerItem extends StatefulWidget {
@@ -222,7 +231,6 @@ class _AnswerItemState extends State<AnswerItem> {
   @override
   Widget build(BuildContext context) {
     return Card(
-
       margin: EdgeInsets.symmetric(vertical: Dimens.padding_mini),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
       child: InkWell(
@@ -234,14 +242,13 @@ class _AnswerItemState extends State<AnswerItem> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(
-                 horizontal: Dimens.padding_mid, vertical: Dimens.padding_mid),
+                    horizontal: Dimens.padding_mid,
+                    vertical: Dimens.padding_mid),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-
                   children: [
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -250,13 +257,16 @@ class _AnswerItemState extends State<AnswerItem> {
                         SizedBox(width: Dimens.padding_mini),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [Row(
-                            children: [
-                              _buildUserName(),
-                              SizedBox(width: Dimens.padding_mini),
-                              _buildUserScore()
-                            ],
-                          ), _buildAnswerDate()],
+                          children: [
+                            Row(
+                              children: [
+                                _buildUserName(),
+                                SizedBox(width: Dimens.padding_mini),
+                                _buildUserScore()
+                              ],
+                            ),
+                            _buildAnswerDate()
+                          ],
                         ),
                       ],
                     ),
@@ -268,35 +278,33 @@ class _AnswerItemState extends State<AnswerItem> {
             ),
             //fixme
             Container(
-              child:Column(
+              child: Column(
                 mainAxisSize: MainAxisSize.max,
-
                 children: [
                   ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                          onPrimary: Colors.white,
-                          minimumSize: Size(40,40)
-                      ),
-                      child: Icon(Icons.thumb_up_alt_outlined , color: Colors.white), onPressed: (){}),
+                          onPrimary: Colors.white, minimumSize: Size(40, 40)),
+                      child: Icon(Icons.thumb_up_alt_outlined,
+                          color: Colors.white),
+                      onPressed: () {}),
                   Text("2"),
                   ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                          onPrimary: Colors.white,
-                          minimumSize: Size(40,40)
-                      ),
-                      child: Icon(Icons.thumb_down_alt_outlined , color: Colors.white), onPressed: (){}),
-
+                          onPrimary: Colors.white, minimumSize: Size(40, 40)),
+                      child: Icon(Icons.thumb_down_alt_outlined,
+                          color: Colors.white),
+                      onPressed: () {}),
                 ],
               ),
             ),
-
           ],
         ),
       ),
     );
   }
 
-  Widget _buildImage() =>UserImageAvatar(image: widget.item.user?.image ?? "null" , onTap: (){});
+  Widget _buildImage() =>
+      UserImageAvatar(image: widget.item.user?.image ?? "null", onTap: () {});
 
   Widget _buildUserName() => Text(
         widget.item.user!.cardUserName,
@@ -304,12 +312,13 @@ class _AnswerItemState extends State<AnswerItem> {
               color: _themeStore.darkMode ? Colors.white : Colors.black,
             ),
       );
+
   Widget _buildUserScore() => Text(
-    widget.item.user!.score.toString(),
-    style: Theme.of(context).textTheme.subtitle2?.copyWith(
-      color: _themeStore.darkMode ? Colors.white : Colors.black,
-    ),
-  );
+        widget.item.user!.score.toString(),
+        style: Theme.of(context).textTheme.subtitle2?.copyWith(
+              color: _themeStore.darkMode ? Colors.white : Colors.black,
+            ),
+      );
 
   Widget _buildAnswerDate() => Text(
         //todo this after add created at from backend
@@ -331,14 +340,14 @@ class _AnswerItemState extends State<AnswerItem> {
       );
 }
 
+class _StackOverFlowLike extends StatelessWidget {
+  final Function like;
 
-
-
-class StackOverFlowLike extends StatelessWidget {
+  const _StackOverFlowLike({required this.like}) ;
   @override
   Widget build(BuildContext context) {
-    return    Container(
-      child:Column(
+    return Container(
+      child: Column(
         children: [
           _buildLike(),
           _buildNumLikeAndDisLike(),
@@ -346,24 +355,26 @@ class StackOverFlowLike extends StatelessWidget {
         ],
       ),
     );
-
   }
+
   Widget _buildLike() => ElevatedButton(
       style: ElevatedButton.styleFrom(
-          onPrimary: Colors.white,
-          minimumSize: Size(40,40)
-      ),
+          onPrimary: Colors.white, minimumSize: Size(40, 40)),
       child: Transform.rotate(
-          angle: -math.pi /2,
-          child: Icon(Icons.play_arrow_outlined , color: Colors.white , size: 40)), onPressed: (){});
-  Widget _buildNumLikeAndDisLike()=>Text("4");
+          angle: -math.pi / 2,
+          child:
+              Icon(Icons.play_arrow_outlined, color: Colors.white, size: 40)),
+      onPressed: (){like();});
+
+  Widget _buildNumLikeAndDisLike() => Text("4");
+
   Widget _buildDisLike() => ElevatedButton(
       style: ElevatedButton.styleFrom(
-          onPrimary: Colors.white,
-          minimumSize: Size(40,40)
-      ),
+          onPrimary: Colors.white, minimumSize: Size(40, 40)),
       // Icon(Icons.arrow_drop_down_outlined , size: 60,color: Colors.white,)
       child: Transform.rotate(
-          angle: -math.pi + -math.pi / 2 ,
-          child: Icon(Icons.play_arrow_outlined , color: Colors.white , size: 40)), onPressed: (){});
+          angle: -math.pi + -math.pi / 2,
+          child:
+              Icon(Icons.play_arrow_outlined, color: Colors.white, size: 40)),
+      onPressed: () {});
 }

@@ -26,7 +26,7 @@ class Endpoints {
   static const String id = 'id';
   static const String questionId = 'questionId';
 
-  // question
+  /// question
   static const String question = baseUrl + "/questions";
 
   ///profile
@@ -36,5 +36,7 @@ class Endpoints {
   static const String category = baseUrl + "/fields";
   /// Answer
   static const String answer = baseUrl + "/answers";
+  /// question like
+  static const String questionLike = baseUrl + "/question/votes";
 
 }

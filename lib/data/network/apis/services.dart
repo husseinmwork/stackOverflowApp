@@ -12,6 +12,7 @@ import 'package:todo_app/model/get_answer/get_answer.dart';
 import 'package:todo_app/model/get_category/get_category.dart';
 import 'package:todo_app/model/get_question/get_question.dart';
 import 'package:todo_app/model/helper/paging.dart';
+import 'package:todo_app/model/like/like.dart';
 import 'package:todo_app/model/login/login.dart';
 import 'package:todo_app/model/profile/profile.dart';
 import 'package:todo_app/model/user/user.dart';
@@ -158,6 +159,17 @@ class Services {
       var response = await _dioClient.post(Endpoints.answer,
           data: createAnswer.toJson());
       return CreateAnswer.fromJson(response);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  ///question Like
+  Future<Like> questionLike(Like like)async{
+    try {
+      var response = await _dioClient.post(Endpoints.questionLike,
+          data: like.toJson());
+      return Like.fromJson(response);
     } catch (error) {
       throw error;
     }

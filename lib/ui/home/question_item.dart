@@ -167,7 +167,7 @@ class _QuestionItemState extends State<QuestionItem> {
         children: [
           Icon(Icons.thumb_up_alt_outlined, color: Colors.white),
           SizedBox(width: Dimens.padding_normal),
-          Text("7"),
+          Text(widget.item.votes!.toInt().toString()),
         ],
       );
 
