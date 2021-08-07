@@ -58,8 +58,6 @@ abstract class _DetailsQuestionStore with Store {
   if(questionId != null){
     loading = true;
     return await _repository.getDetailsQuestion(questionId!).then((value) {
-
-
       question = value;
       success = true;
       successGetQuestion = true;
@@ -84,10 +82,12 @@ abstract class _DetailsQuestionStore with Store {
             answers = value.results;
         success = true;
         successGetAnswers = true;
-      }).catchError((e) {
+      }).catchError((error) {
         loading = false;
         successGetAnswers = false;
         success = false;
+        DioErrorUtil.handleError(error);
+        errorStore.errorMessage = DioErrorUtil.handleError(error);
       });
     }
   }

@@ -1,7 +1,11 @@
+
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:provider/provider.dart';
+
 import 'package:todo_app/constants/assets.dart';
 import 'package:todo_app/constants/dimens.dart';
 import 'package:todo_app/model/get_answer/get_answer.dart';
@@ -325,4 +329,41 @@ class _AnswerItemState extends State<AnswerItem> {
               color: _themeStore.darkMode ? Colors.white : Colors.black,
             ),
       );
+}
+
+
+
+
+class StackOverFlowLike extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return    Container(
+      child:Column(
+        children: [
+          _buildLike(),
+          _buildNumLikeAndDisLike(),
+          _buildDisLike(),
+        ],
+      ),
+    );
+
+  }
+  Widget _buildLike() => ElevatedButton(
+      style: ElevatedButton.styleFrom(
+          onPrimary: Colors.white,
+          minimumSize: Size(40,40)
+      ),
+      child: Transform.rotate(
+          angle: -math.pi /2,
+          child: Icon(Icons.play_arrow_outlined , color: Colors.white , size: 40)), onPressed: (){});
+  Widget _buildNumLikeAndDisLike()=>Text("4");
+  Widget _buildDisLike() => ElevatedButton(
+      style: ElevatedButton.styleFrom(
+          onPrimary: Colors.white,
+          minimumSize: Size(40,40)
+      ),
+      // Icon(Icons.arrow_drop_down_outlined , size: 60,color: Colors.white,)
+      child: Transform.rotate(
+          angle: -math.pi + -math.pi / 2 ,
+          child: Icon(Icons.play_arrow_outlined , color: Colors.white , size: 40)), onPressed: (){});
 }
