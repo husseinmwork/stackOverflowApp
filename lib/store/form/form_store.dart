@@ -27,7 +27,9 @@ abstract class _FormStore with Store {
       reaction((_) => userEmail, validateUserEmail),
       reaction((_) => password, validatePassword),
       reaction((_) => userName, validateUserName),
-      reaction((_) => confirmPassword, validateConfirmPassword)
+      reaction((_) => confirmPassword, validateConfirmPassword),
+      reaction((_) => questionTitle, validateCreateQuestionTitle),
+      reaction((_) => questionBody, validateCreateQuestionBody),
     ];
   }
 
@@ -40,6 +42,12 @@ abstract class _FormStore with Store {
 
   @observable
   String password = '';
+
+  @observable
+  String questionTitle = '';
+
+  @observable
+  String questionBody = '';
 
   @observable
   String confirmPassword = '';
@@ -72,6 +80,11 @@ abstract class _FormStore with Store {
   bool get canForgetPassword =>
       !formErrorStore.hasErrorInForgotPassword && userEmail.isNotEmpty;
 
+  @computed
+  bool get canCreateQuestion =>
+      !formErrorStore.hasErrorInCreateQuestion &&
+          questionTitle.isNotEmpty&&questionBody.isNotEmpty;
+
   // actions:-------------------------------------------------------------------
   @action
   void setUserId(String value) {
@@ -92,6 +105,18 @@ abstract class _FormStore with Store {
   void setConfirmPassword(String value) {
     confirmPassword = value;
   }
+
+  @action
+  void setQuestionTitle(String value) {
+    questionTitle = value;
+  }
+
+  @action
+  void setQuestionBody(String value) {
+    questionBody = value;
+  }
+
+
 
   @action
   void validateUserEmail(String value) {
@@ -141,37 +166,33 @@ abstract class _FormStore with Store {
     }
   }
 
+
   @action
-  Future register() async {
-    loading = true;
+  void validateCreateQuestionTitle(String value) {
+    if (value.isEmpty) {
+      formErrorStore.questionTitle = "Title can't be empty";
+    }  else {
+      formErrorStore.questionTitle = null;
+    }
   }
 
   @action
-  Future login() async {
-    loading = true;
-
-    Future.delayed(Duration(milliseconds: 2000)).then((future) {
-      loading = false;
-      success = true;
-    }).catchError((e) {
-      loading = false;
-      success = false;
-      errorStore.errorMessage = e.toString().contains("ERROR_USER_NOT_FOUND")
-          ? "Username and password doesn't match"
-          : "Something went wrong, please check your internet connection and try again";
-      print(e);
-    });
+  void validateCreateQuestionBody(String value) {
+    if (value.isEmpty) {
+      formErrorStore.questionBody = "Body can't be empty";
+    }  else {
+      formErrorStore.questionBody = null;
+    }
   }
+
+
+
 
   @action
   Future forgotPassword() async {
     loading = true;
   }
 
-  @action
-  Future logout() async {
-    loading = true;
-  }
 
   // general methods:-----------------------------------------------------------
   void dispose() {
@@ -184,6 +205,8 @@ abstract class _FormStore with Store {
     validatePassword(password);
     validateUserEmail(userEmail);
     validateUserName(userName);
+    validateCreateQuestionTitle(questionTitle);
+   validateCreateQuestionBody(questionBody);
   }
 }
 
@@ -202,6 +225,12 @@ abstract class _FormErrorStore with Store {
   @observable
   String? confirmPassword;
 
+  @observable
+  String? questionTitle ;
+
+  @observable
+  String? questionBody ;
+
   @computed
   bool get hasErrorsInLogin => password != null || userName != null;
 
@@ -218,4 +247,8 @@ abstract class _FormErrorStore with Store {
 
   @computed
   bool get hasErrorInForgotPassword => userEmail != null;
+
+  @computed
+  bool get hasErrorInCreateQuestion => questionTitle != null || questionBody != null;
+
 }

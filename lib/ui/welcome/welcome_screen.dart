@@ -152,8 +152,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                           ),
                         );
                       },
-                      title: Text("Sign In",
-                          style: Theme.of(context).textTheme.subtitle1)),
+                      title: "Sign In"),
                 ),
                 SizedBox(height: Dimens.padding_large),
                 ItemFader(

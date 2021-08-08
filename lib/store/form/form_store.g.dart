@@ -36,6 +36,13 @@ mixin _$FormStore on _FormStore, Store {
           () => super.canForgetPassword,
           name: '_FormStore.canForgetPassword'))
       .value;
+  Computed<bool>? _$canCreateQuestionComputed;
+
+  @override
+  bool get canCreateQuestion => (_$canCreateQuestionComputed ??= Computed<bool>(
+          () => super.canCreateQuestion,
+          name: '_FormStore.canCreateQuestion'))
+      .value;
 
   final _$userEmailAtom = Atom(name: '_FormStore.userEmail');
 
@@ -79,6 +86,36 @@ mixin _$FormStore on _FormStore, Store {
   set password(String value) {
     _$passwordAtom.reportWrite(value, super.password, () {
       super.password = value;
+    });
+  }
+
+  final _$questionTitleAtom = Atom(name: '_FormStore.questionTitle');
+
+  @override
+  String get questionTitle {
+    _$questionTitleAtom.reportRead();
+    return super.questionTitle;
+  }
+
+  @override
+  set questionTitle(String value) {
+    _$questionTitleAtom.reportWrite(value, super.questionTitle, () {
+      super.questionTitle = value;
+    });
+  }
+
+  final _$questionBodyAtom = Atom(name: '_FormStore.questionBody');
+
+  @override
+  String get questionBody {
+    _$questionBodyAtom.reportRead();
+    return super.questionBody;
+  }
+
+  @override
+  set questionBody(String value) {
+    _$questionBodyAtom.reportWrite(value, super.questionBody, () {
+      super.questionBody = value;
     });
   }
 
@@ -127,32 +164,11 @@ mixin _$FormStore on _FormStore, Store {
     });
   }
 
-  final _$registerAsyncAction = AsyncAction('_FormStore.register');
-
-  @override
-  Future<dynamic> register() {
-    return _$registerAsyncAction.run(() => super.register());
-  }
-
-  final _$loginAsyncAction = AsyncAction('_FormStore.login');
-
-  @override
-  Future<dynamic> login() {
-    return _$loginAsyncAction.run(() => super.login());
-  }
-
   final _$forgotPasswordAsyncAction = AsyncAction('_FormStore.forgotPassword');
 
   @override
   Future<dynamic> forgotPassword() {
     return _$forgotPasswordAsyncAction.run(() => super.forgotPassword());
-  }
-
-  final _$logoutAsyncAction = AsyncAction('_FormStore.logout');
-
-  @override
-  Future<dynamic> logout() {
-    return _$logoutAsyncAction.run(() => super.logout());
   }
 
   final _$_FormStoreActionController = ActionController(name: '_FormStore');
@@ -196,6 +212,28 @@ mixin _$FormStore on _FormStore, Store {
         name: '_FormStore.setConfirmPassword');
     try {
       return super.setConfirmPassword(value);
+    } finally {
+      _$_FormStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setQuestionTitle(String value) {
+    final _$actionInfo = _$_FormStoreActionController.startAction(
+        name: '_FormStore.setQuestionTitle');
+    try {
+      return super.setQuestionTitle(value);
+    } finally {
+      _$_FormStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setQuestionBody(String value) {
+    final _$actionInfo = _$_FormStoreActionController.startAction(
+        name: '_FormStore.setQuestionBody');
+    try {
+      return super.setQuestionBody(value);
     } finally {
       _$_FormStoreActionController.endAction(_$actionInfo);
     }
@@ -246,18 +284,43 @@ mixin _$FormStore on _FormStore, Store {
   }
 
   @override
+  void validateCreateQuestionTitle(String value) {
+    final _$actionInfo = _$_FormStoreActionController.startAction(
+        name: '_FormStore.validateCreateQuestionTitle');
+    try {
+      return super.validateCreateQuestionTitle(value);
+    } finally {
+      _$_FormStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void validateCreateQuestionBody(String value) {
+    final _$actionInfo = _$_FormStoreActionController.startAction(
+        name: '_FormStore.validateCreateQuestionBody');
+    try {
+      return super.validateCreateQuestionBody(value);
+    } finally {
+      _$_FormStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 userEmail: ${userEmail},
 userName: ${userName},
 password: ${password},
+questionTitle: ${questionTitle},
+questionBody: ${questionBody},
 confirmPassword: ${confirmPassword},
 success: ${success},
 loading: ${loading},
 canLogin: ${canLogin},
 canSendEmail: ${canSendEmail},
 canRegister: ${canRegister},
-canForgetPassword: ${canForgetPassword}
+canForgetPassword: ${canForgetPassword},
+canCreateQuestion: ${canCreateQuestion}
     ''';
   }
 }
@@ -290,6 +353,13 @@ mixin _$FormErrorStore on _FormErrorStore, Store {
   bool get hasErrorInForgotPassword => (_$hasErrorInForgotPasswordComputed ??=
           Computed<bool>(() => super.hasErrorInForgotPassword,
               name: '_FormErrorStore.hasErrorInForgotPassword'))
+      .value;
+  Computed<bool>? _$hasErrorInCreateQuestionComputed;
+
+  @override
+  bool get hasErrorInCreateQuestion => (_$hasErrorInCreateQuestionComputed ??=
+          Computed<bool>(() => super.hasErrorInCreateQuestion,
+              name: '_FormErrorStore.hasErrorInCreateQuestion'))
       .value;
 
   final _$userEmailAtom = Atom(name: '_FormErrorStore.userEmail');
@@ -352,6 +422,36 @@ mixin _$FormErrorStore on _FormErrorStore, Store {
     });
   }
 
+  final _$questionTitleAtom = Atom(name: '_FormErrorStore.questionTitle');
+
+  @override
+  String? get questionTitle {
+    _$questionTitleAtom.reportRead();
+    return super.questionTitle;
+  }
+
+  @override
+  set questionTitle(String? value) {
+    _$questionTitleAtom.reportWrite(value, super.questionTitle, () {
+      super.questionTitle = value;
+    });
+  }
+
+  final _$questionBodyAtom = Atom(name: '_FormErrorStore.questionBody');
+
+  @override
+  String? get questionBody {
+    _$questionBodyAtom.reportRead();
+    return super.questionBody;
+  }
+
+  @override
+  set questionBody(String? value) {
+    _$questionBodyAtom.reportWrite(value, super.questionBody, () {
+      super.questionBody = value;
+    });
+  }
+
   @override
   String toString() {
     return '''
@@ -359,10 +459,13 @@ userEmail: ${userEmail},
 userName: ${userName},
 password: ${password},
 confirmPassword: ${confirmPassword},
+questionTitle: ${questionTitle},
+questionBody: ${questionBody},
 hasErrorsInLogin: ${hasErrorsInLogin},
 hasErrorsSendEmail: ${hasErrorsSendEmail},
 hasErrorsInRegister: ${hasErrorsInRegister},
-hasErrorInForgotPassword: ${hasErrorInForgotPassword}
+hasErrorInForgotPassword: ${hasErrorInForgotPassword},
+hasErrorInCreateQuestion: ${hasErrorInCreateQuestion}
     ''';
   }
 }

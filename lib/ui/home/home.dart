@@ -10,6 +10,7 @@ import 'package:todo_app/model/get_question/get_question.dart';
 import 'package:todo_app/packages/anim_search_widget.dart';
 import 'package:todo_app/store/home/home_store.dart';
 import 'package:todo_app/store/theme/theme_store.dart';
+import 'package:todo_app/ui/create_question/create_question.dart';
 import 'package:todo_app/ui/details_question/details_question.dart';
 import 'package:todo_app/ui/home/filter.dart';
 import 'package:todo_app/ui/home/question_item.dart';
@@ -17,7 +18,12 @@ import 'package:todo_app/utils/device/device_utils.dart';
 import 'package:todo_app/utils/routes/routes.dart';
 import 'package:todo_app/widgets/stack_overflow_indecator.dart';
 
+const double _fabDimension = 56.0;
+
 class HomeScreen extends StatefulWidget {
+  final bool? refreshPage;
+
+  const HomeScreen({ this.refreshPage});
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -26,6 +32,7 @@ class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
   late HomeStore _store;
   late ThemeStore _themeStore;
+
 
   ContainerTransitionType _transitionType = ContainerTransitionType.fade;
 
@@ -65,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen>
     _store = Provider.of<HomeStore>(context);
     _themeStore = Provider.of<ThemeStore>(context);
     _store.getPrefUser();
-    _store.updateScrolling();
+   /* _store.updateScrolling();*/
     _store.pagingController.addPageRequestListener((pageKey) async {
       _fetchPage(pageKey);
     });
@@ -73,10 +80,15 @@ class _HomeScreenState extends State<HomeScreen>
 
   @override
   Widget build(BuildContext context) {
+    if(widget.refreshPage == true){
+      Future.sync(() {
+        _store.pagingController.refresh();
+      });
+    }
     return Scaffold(
       drawer: _buildDrawer(),
       appBar: _buildAppBar(),
-      floatingActionButton: _buildFAB(),
+      floatingActionButton:  Observer(builder: (_)=>_store.showIconFilter?_buildCreateQuestionFAB():_buildRemoveFilterFAB()),
       body: _buildBody(),
     );
   }
@@ -221,7 +233,7 @@ class _HomeScreenState extends State<HomeScreen>
         ],
       );
 
-  Widget _buildFAB() => Observer(
+  Widget _buildRemoveFilterFAB() => Observer(
         builder: (_) => Visibility(
           visible: _store.showIconFilter == false,
           child: FloatingActionButton(
@@ -274,7 +286,7 @@ class _HomeScreenState extends State<HomeScreen>
         },
       );
 
-/*  Widget _buildFAB() => Observer(
+/*  Widget _buildCreateQuestionFAB() => Observer(
         builder: (_) => AnimatedOpacity(
           child: FloatingActionButton(
             child: Icon(Icons.arrow_upward, color: Colors.black),
@@ -291,8 +303,33 @@ class _HomeScreenState extends State<HomeScreen>
           opacity: _store.fabIsVisible ? 1 : 0,
         ),
       );*/
+  Widget _buildCreateQuestionFAB()=>OpenContainer(
+    transitionType: _transitionType,
+    openBuilder: (BuildContext context, VoidCallback _) {
+      return CreateQuestionScreen();
+    },
+    closedShape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(
+        Radius.circular(_fabDimension / 2),
+      ),
+    ),
+    closedColor: Theme.of(context).colorScheme.secondary,
+    closedBuilder: (BuildContext context, VoidCallback openContainer) {
+      return SizedBox(
+        height: _fabDimension,
+        width: _fabDimension,
+        child: Center(
+          child: Icon(
+            Icons.add,
+            color: Theme.of(context).colorScheme.onSecondary,
+          ),
+        ),
+      );
+    },
+  );
 
-  Widget _buildBody() => _buildMainPaging();
+  Widget _buildBody() =>_buildMainPaging();
+
 
   Widget _buildMainPaging() => RefreshIndicator(
         onRefresh: () async => await Future.sync(() {

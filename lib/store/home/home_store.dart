@@ -40,15 +40,13 @@ abstract class _HomeStore with Store {
   @observable
   bool loading = false;
 
-  //User screen Scroll
+/*  //User screen Scroll
   @observable
   ScrollController controller = ScrollController();
 
   @observable
-  bool fabIsVisible = false;
+  bool fabIsVisible = false;*/
 
-  @observable
-  QuestionFilter? filter;
 
   @observable
   int? minVotes;
@@ -87,6 +85,9 @@ abstract class _HomeStore with Store {
   @observable
   String? categoryId;
 
+  @observable
+  QuestionFilter? filter ;
+
   @computed
   bool get showIconFilter =>
       minVotes == null &&
@@ -104,7 +105,7 @@ abstract class _HomeStore with Store {
   @action
   void getPrefUser() => user = _repository.user;
 
-  @action
+/*  @action
   void updateScrolling() {
     controller.addListener(() {
       this.fabIsVisible =
@@ -115,7 +116,7 @@ abstract class _HomeStore with Store {
   @action
   void disposeController() {
     controller.removeListener(() {});
-  }
+  }*/
 
   @action
   void removeFilter() {

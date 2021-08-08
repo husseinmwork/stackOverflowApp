@@ -82,6 +82,7 @@ class _QuestionItemState extends State<QuestionItem> {
                   ],
                 ),
               ),
+              SizedBox(width: Dimens.padding_normal),
               Column(
                 mainAxisSize: MainAxisSize.max,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -119,9 +120,9 @@ class _QuestionItemState extends State<QuestionItem> {
       );
 
   Widget _buildAskDate() => Text(
-        //todo this after add created at from backend
-        /*    widget.item.user!.createdAt.toString(),*/
-        "asked 49 secs ago",
+        //todo
+            widget.item.createdAt.toString(),
+     /*   "asked 49 secs ago",*/
         style: Theme.of(context).textTheme.caption?.copyWith(
               color: _themeStore.darkMode ? Colors.white : Colors.black,
             ),

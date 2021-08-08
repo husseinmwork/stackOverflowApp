@@ -6,14 +6,23 @@ part 'create_question.g.dart';
 class CreateQuestion {
   @JsonKey(name: 'id')
   String? id;
+
   @JsonKey(name: 'body')
   String? body;
+
+  @JsonKey(name: 'title')
+  String? title;
+
+  @JsonKey(name: 'tags')
+  List<String>? tags;
+
   @JsonKey(name: 'votes')
   int? votes;
+
   @JsonKey(name: 'userId')
   String? userId;
 
-  CreateQuestion({this.id, this.body, this.votes, this.userId});
+  CreateQuestion({ this.tags,this.title, this.id, this.body, this.votes, this.userId});
 
   factory CreateQuestion.fromJson(Map<String, dynamic> json) => _$CreateQuestionFromJson(json);
 

@@ -1,7 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:injectable/injectable.dart';
 import 'package:mobx/mobx.dart';
 import 'package:todo_app/data/repositry.dart';
+import 'package:todo_app/model/create_question/create_question.dart';
 import 'package:todo_app/store/error/error_store.dart';
+import 'package:todo_app/widgets/tags_language.dart';
 
 part 'create_question_store.g.dart';
 
@@ -23,5 +26,35 @@ abstract class _CreateQuestionStore with Store {
   bool loading = false;
 
   @observable
-  bool errorCreateQuestion = false;
+  String? title;
+
+  @observable
+  String? body;
+
+  @observable
+  List<Language>? tags;
+
+  @observable
+  List<String> allTags = [];
+
+  @action
+  Future createQuestion() async {
+    loading = true;
+    if (tags != null) {
+      allTags = [];
+      for (var i in tags!) {
+        allTags.add(i.name);
+      }
+    }
+
+    await _repository
+        .createQuestion(CreateQuestion(body: body, title: title, tags: allTags))
+        .then((value) {
+      success = true;
+    }).catchError((e) {
+      loading = false;
+      success = false;
+      debugPrint("error in create question $e");
+    });
+  }
 }

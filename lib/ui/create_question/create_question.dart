@@ -1,7 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:provider/provider.dart';
 import 'package:todo_app/constants/dimens.dart';
+import 'package:todo_app/store/create_question/create_question_store.dart';
+import 'package:todo_app/store/form/form_store.dart';
+import 'package:todo_app/ui/home/home.dart';
+import 'package:todo_app/utils/routes/routes.dart';
+import 'package:todo_app/utils/todo/todo_utils.dart';
 import 'package:todo_app/widgets/arrow_back_icon.dart';
-import 'package:todo_app/widgets/labeled_text_field.dart';
+import 'package:todo_app/widgets/stack_overflow_indecator.dart';
+import 'package:todo_app/widgets/tags_language.dart';
+import 'package:todo_app/widgets/todo_button.dart';
 
 class CreateQuestionScreen extends StatefulWidget {
   @override
@@ -12,6 +21,17 @@ class _CreateQuestionScreenState extends State<CreateQuestionScreen> {
   TextEditingController _titleController = TextEditingController();
   TextEditingController _bodyController = TextEditingController();
   TextEditingController _tagController = TextEditingController();
+
+  List<Language> tags = [];
+
+  late CreateQuestionStore _store;
+  final _formStore = FormStore();
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _store = Provider.of<CreateQuestionStore>(context);
+  }
 
   @override
   void dispose() {
@@ -37,23 +57,50 @@ class _CreateQuestionScreenState extends State<CreateQuestionScreen> {
         style: Theme.of(context).textTheme.headline6,
       ));
 
-  Widget _buildBody() => Center(
-    child: SingleChildScrollView(
-      child: Column(
-            children: [
-              _buildQuestionTitle(),
-              SizedBox(height: Dimens.padding_large),
-              _buildQuestionBody(),
-              SizedBox(height: Dimens.padding_large),
-              _buildQuestionTags(),
-            ],
+  Widget _buildBody() => Stack(
+        children: [
+          Center(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  _buildQuestionTitle(),
+                  SizedBox(height: Dimens.padding_large),
+                  _buildQuestionBody(),
+                  SizedBox(height: Dimens.padding_large),
+                  _buildQuestionTags(),
+                  SizedBox(height: Dimens.padding_large),
+                  _buildButton(),
+                ],
+              ),
+            ),
           ),
-    ),
-  );
+          Align(
+            alignment: Alignment.center,
+            child: Observer(
+              builder: (_) => Visibility(
+                visible: _store.loading,
+                child: StackOverFlowIndecator(),
+              ),
+            ),
+          ),
+          Observer(builder: (_) {
+            return _store.success
+                ? _navigateToLoginScreen(context)
+                : _buildClosed();
+          }),
+        ],
+      );
 
   Widget _buildQuestionTitle() => TextFeildAddQuestion(
+    errorText: _formStore.formErrorStore.questionTitle.toString(),
+        onChanged: (value) {
+          _formStore.setQuestionTitle(_titleController.text);
+
+          _store.title = value;
+
+        },
         controller: _titleController,
-        maxLines: 1,
+        maxLines: 2,
         hint:
             "e.g. there an R function for finding the index of element in a vector?",
         title: "Title",
@@ -62,22 +109,67 @@ class _CreateQuestionScreenState extends State<CreateQuestionScreen> {
       );
 
   Widget _buildQuestionBody() => TextFeildAddQuestion(
+    errorText: _formStore.formErrorStore.questionBody.toString(),
+        onChanged: (value) {
+          _formStore.setQuestionBody(_bodyController.text);
+
+          _store.body = value;
+        },
         controller: _bodyController,
-        maxLines: 1,
+        maxLines: 4,
         hint: "Enter question body",
         title: "Body",
         label:
             "Include all the information someone would need to answer your question",
       );
 
-  Widget _buildQuestionTags() => TextFeildAddQuestion(
-        controller: _tagController,
-        maxLines: 1,
-        hint: "e.g. (spring windows database)",
-        title: "Tags",
-        label:
-            "Add up to 5 tags to describe what your question is about",
+  Widget _buildQuestionTags() => Padding(
+        padding: const EdgeInsets.symmetric(horizontal: Dimens.padding_large),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Tags".toString(),
+                style: Theme.of(context).textTheme.subtitle2),
+            StackOverFlowTags(
+              onChange: () {
+                _store.tags = tags;
+              },
+              selectedLanguages: tags,
+            ),
+          ],
+        ),
       );
+
+  Widget _buildButton() => Padding(
+        padding: const EdgeInsets.symmetric(horizontal: Dimens.padding_large),
+        child: RoundedButton(
+            onPressed: () async {
+              if (_formStore.canCreateQuestion == true) {
+                await _store.createQuestion();
+              } else {
+                showErrorMessage('Please check all fields', context);
+              }
+            },
+            title: "Create Question"),
+      );
+
+  ///this  Navigation to another page
+  _buildClosed() {
+    return SizedBox.shrink();
+  }
+
+  Widget _navigateToLoginScreen(BuildContext context) {
+    Future.delayed(Duration.zero, () {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (_) => HomeScreen(refreshPage: false),
+        ),
+      );
+      _store.loading = false;
+    });
+    _store.success = false;
+    return Container();
+  }
 }
 
 class TextFeildAddQuestion extends StatelessWidget {
@@ -86,9 +178,13 @@ class TextFeildAddQuestion extends StatelessWidget {
   final String? label;
   final String? title;
   final int? maxLines;
+  final Function onChanged;
+  final String errorText;
 
   const TextFeildAddQuestion({
     required this.controller,
+    required this.onChanged,
+    required this.errorText,
     this.hint,
     this.label,
     this.title,
@@ -98,22 +194,31 @@ class TextFeildAddQuestion extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: Dimens.padding_xl),
+      padding: const EdgeInsets.symmetric(horizontal: Dimens.padding_large),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(title.toString(), style: Theme.of(context).textTheme.subtitle2),
           Text(label.toString()),
-          TextFormField(
-            maxLines: maxLines,
-            controller: controller,
-            decoration: InputDecoration(
-                hintText: hint,
-                hintStyle: Theme.of(context)
-                    .textTheme
-                    .caption
-                    ?.copyWith(color: Colors.grey),
-                enabled: true),
+          Observer(
+            builder:(_)=> TextFormField(
+              onChanged: (value) {
+                onChanged(value);
+              },
+
+              maxLines: maxLines,
+              minLines: 1,
+              controller: controller,
+              decoration: InputDecoration(
+                  errorText: errorText,
+
+                  hintText: hint,
+                  hintStyle: Theme.of(context)
+                      .textTheme
+                      .caption
+                      ?.copyWith(color: Colors.grey),
+                  enabled: true),
+            ),
           ),
         ],
       ),

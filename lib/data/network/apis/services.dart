@@ -146,7 +146,7 @@ class Services {
   Future createQuestion(CreateQuestion createQuestion) async {
     try {
       var response = await _dioClient.post(Endpoints.question,
-          data: createQuestion.toJson());
+          data: createQuestion.toJson().removeNull());
       return CreateQuestion.fromJson(response);
     } catch (error) {
       throw error;

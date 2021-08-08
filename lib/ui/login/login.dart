@@ -191,8 +191,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     showErrorMessage('Please check all fields', context);
                   }
                 },
-                title: Text(LocaleKeys.login.tr(),
-                    style: Theme.of(context).textTheme.button),
+                title: LocaleKeys.login.tr(),
               ),
               SizedBox(
                 height: Dimens.padding_normal,

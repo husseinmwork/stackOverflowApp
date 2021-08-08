@@ -32,4 +32,5 @@ class AppColors {
 
 
   static const borderButtonColor = Colors.amber;
+  static const secondaryColor = Colors.amber;
 }

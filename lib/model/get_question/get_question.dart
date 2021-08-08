@@ -19,6 +19,8 @@ class Question {
   final  Account? user;
   @JsonKey(name: 'title')
   final  String? title;
+  @JsonKey(name: 'createdAt')
+  final  String? createdAt;
   @JsonKey(name: 'hasVoted')
   final  String? hasVoted;
   @JsonKey(name: 'tags')
@@ -28,7 +30,7 @@ class Question {
   @JsonKey(name: 'votesList')
   final  List<VotesList>? votesList;
 
-  Question({ this.votesList,this.hasVoted,this.answer, this.views, this.tags,this.id, this.body, this.votes, this.user, this.userId , this.title});
+  Question({ this.createdAt,this.votesList,this.hasVoted,this.answer, this.views, this.tags,this.id, this.body, this.votes, this.user, this.userId , this.title});
 
   factory Question.fromJson(Map<String, dynamic> json) => _$QuestionFromJson(json);
 

@@ -295,8 +295,7 @@ class _SignUpScreenState extends State<SignUpScreen>
             showErrorMessage('Please check all fields', context);
           }
         },
-        title: Text(LocaleKeys.sign_up.tr(),
-            style: Theme.of(context).textTheme.button));
+        title: LocaleKeys.sign_up.tr());
   }
 
   Widget _buildButtonLogin() {

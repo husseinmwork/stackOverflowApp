@@ -62,51 +62,6 @@ mixin _$HomeStore on _HomeStore, Store {
     });
   }
 
-  final _$controllerAtom = Atom(name: '_HomeStore.controller');
-
-  @override
-  ScrollController get controller {
-    _$controllerAtom.reportRead();
-    return super.controller;
-  }
-
-  @override
-  set controller(ScrollController value) {
-    _$controllerAtom.reportWrite(value, super.controller, () {
-      super.controller = value;
-    });
-  }
-
-  final _$fabIsVisibleAtom = Atom(name: '_HomeStore.fabIsVisible');
-
-  @override
-  bool get fabIsVisible {
-    _$fabIsVisibleAtom.reportRead();
-    return super.fabIsVisible;
-  }
-
-  @override
-  set fabIsVisible(bool value) {
-    _$fabIsVisibleAtom.reportWrite(value, super.fabIsVisible, () {
-      super.fabIsVisible = value;
-    });
-  }
-
-  final _$filterAtom = Atom(name: '_HomeStore.filter');
-
-  @override
-  QuestionFilter? get filter {
-    _$filterAtom.reportRead();
-    return super.filter;
-  }
-
-  @override
-  set filter(QuestionFilter? value) {
-    _$filterAtom.reportWrite(value, super.filter, () {
-      super.filter = value;
-    });
-  }
-
   final _$minVotesAtom = Atom(name: '_HomeStore.minVotes');
 
   @override
@@ -287,6 +242,21 @@ mixin _$HomeStore on _HomeStore, Store {
     });
   }
 
+  final _$filterAtom = Atom(name: '_HomeStore.filter');
+
+  @override
+  QuestionFilter? get filter {
+    _$filterAtom.reportRead();
+    return super.filter;
+  }
+
+  @override
+  set filter(QuestionFilter? value) {
+    _$filterAtom.reportWrite(value, super.filter, () {
+      super.filter = value;
+    });
+  }
+
   final _$logoutAsyncAction = AsyncAction('_HomeStore.logout');
 
   @override
@@ -324,28 +294,6 @@ mixin _$HomeStore on _HomeStore, Store {
   }
 
   @override
-  void updateScrolling() {
-    final _$actionInfo = _$_HomeStoreActionController.startAction(
-        name: '_HomeStore.updateScrolling');
-    try {
-      return super.updateScrolling();
-    } finally {
-      _$_HomeStoreActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
-  void disposeController() {
-    final _$actionInfo = _$_HomeStoreActionController.startAction(
-        name: '_HomeStore.disposeController');
-    try {
-      return super.disposeController();
-    } finally {
-      _$_HomeStoreActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
   void removeFilter() {
     final _$actionInfo = _$_HomeStoreActionController.startAction(
         name: '_HomeStore.removeFilter');
@@ -362,9 +310,6 @@ mixin _$HomeStore on _HomeStore, Store {
 user: ${user},
 success: ${success},
 loading: ${loading},
-controller: ${controller},
-fabIsVisible: ${fabIsVisible},
-filter: ${filter},
 minVotes: ${minVotes},
 maxVotes: ${maxVotes},
 minViews: ${minViews},
@@ -377,6 +322,7 @@ question: ${question},
 category: ${category},
 pagingController: ${pagingController},
 categoryId: ${categoryId},
+filter: ${filter},
 showIconFilter: ${showIconFilter}
     ''';
   }

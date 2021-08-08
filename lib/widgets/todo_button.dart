@@ -4,7 +4,7 @@ import 'package:todo_app/constants/dimens.dart';
 
 class RoundedButton extends StatelessWidget {
   final Function onPressed;
-  final Widget title;
+  final String title;
   final bool isIcon;
 
   const RoundedButton({
@@ -18,8 +18,8 @@ class RoundedButton extends StatelessWidget {
     return TextButton(
       style: TextButton.styleFrom(
           minimumSize: Size(double.infinity, 48),
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(Dimens.padding_small)),
+          /*shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(Dimens.padding_small)),*/
 
           primary: Colors.white),
       onPressed: () {
@@ -36,8 +36,8 @@ class RoundedButton extends StatelessWidget {
           SizedBox(
             width: Dimens.padding_small,
           ),
+    Text(title.toUpperCase() , style: Theme.of(context).textTheme.button?.copyWith(color: Colors.black),)
 
-            title,
 
         ],
       ),

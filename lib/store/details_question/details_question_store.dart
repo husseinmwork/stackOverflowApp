@@ -9,7 +9,6 @@ import 'package:todo_app/model/like/like.dart';
 import 'package:todo_app/store/error/error_store.dart';
 import 'package:todo_app/utils/dio/dio_error_util.dart';
 
-
 part 'details_question_store.g.dart';
 
 @Injectable()
@@ -48,16 +47,13 @@ abstract class _DetailsQuestionStore with Store {
   String? bodyAnswer;
 
   @observable
-  String? typeLike ;
+  String? typeLike;
 
   @observable
-  String? hsVoted ;
+  String? hsVoted;
 
   @observable
-  bool isLiked  = false;
-
-  @observable
-  String? likeId  ;
+  String? likeId;
 
   @observable
   bool successGetQuestion = false;
@@ -121,25 +117,24 @@ abstract class _DetailsQuestionStore with Store {
     }
   }
 
-
-
-
   ///question Like
   @action
   Future questionLike() async {
     if (typeLike != null && questionId != null) {
-     return await _repository
+      return await _repository
           .questionLike(Like(questionId: questionId!, type: typeLike!))
-          .catchError((e) {debugPrint("error in like $e");});
+          .catchError((e) {
+        debugPrint("error in like $e");
+      });
     }
   }
 
   @action
   Future questionDeleteLike() async {
     if (likeId != null) {
-      return await _repository
-          .questionDeleteLike(likeId!)
-          .catchError((e) {debugPrint("error in delete like $e");});
+      return await _repository.questionDeleteLike(likeId!).catchError((e) {
+        debugPrint("error in delete like $e");
+      });
     }
   }
 
@@ -147,12 +142,10 @@ abstract class _DetailsQuestionStore with Store {
   Future questionUpdateLike() async {
     if (likeId != null && typeLike != null) {
       return await _repository
-          .questionUpdateLike(likeId! , typeLike!)
-          .catchError((e) {debugPrint("error in update like $e");});
+          .questionUpdateLike(likeId!, typeLike!)
+          .catchError((e) {
+        debugPrint("error in update like $e");
+      });
     }
   }
-
-
 }
-
-

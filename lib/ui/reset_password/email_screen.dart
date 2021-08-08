@@ -137,8 +137,7 @@ class _EmailScreenState extends State<EmailScreen> {
 
   Widget _buildButton() {
     return RoundedButton(
-        title: Text(LocaleKeys.reset_password.tr(),
-            style: Theme.of(context).textTheme.button),
+        title: LocaleKeys.reset_password.tr(),
         onPressed: () async {
           DeviceUtils.hideKeyboard(context);
           if (_formStore.canSendEmail) {

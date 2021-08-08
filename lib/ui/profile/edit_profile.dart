@@ -222,7 +222,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 _store.userName = null;
                 _store.email= null;
               },
-              title: Text("Edit", style: Theme.of(context).textTheme.button),
+              title:"Edit",
             ),
           ],
         ),

@@ -69,7 +69,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                     // _store.getQuestion(skip);
                     _store.pagingController.refresh();
                   },
-                  title: Text('Show Result'))
+                  title: 'Show Result')
             ],
           ),
         ),

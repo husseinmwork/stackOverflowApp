@@ -93,24 +93,18 @@ class Repository {
     await _sharedPrefsHelper.removeAuthToken();
   }
 
-  ///get question with paging
+  ///question
   Future<Paging<Question>> getQuestion(int skip,
       {QuestionFilter? filter}) async {
     return await _services.getQuestion(skip: skip , filter:filter).catchError((e) => throw e);
   }
-  ///get question details page
-  Future<Question> getDetailsQuestion(String id) async {
-    return await _services.getDetailsQuestion(id).catchError((e) => throw e);
-  }
 
-  ///get Answer with paging
-  Future<Paging<Answer>> getAnswers({required int skip,required String questionId}) async {
-    return await _services.getAnswers( questionId: questionId , skip: skip).catchError((e) => throw e);
-  }
-
-  ///create question
   Future createQuestion(CreateQuestion createQuestion) async {
     return await _services.createQuestion(createQuestion).catchError((e) => throw e);
+  }
+
+  Future<Question> getDetailsQuestion(String id) async {
+    return await _services.getDetailsQuestion(id).catchError((e) => throw e);
   }
 
   ///question like
@@ -126,22 +120,24 @@ class Repository {
     return await _services.questionDeleteLike(likeId).catchError((e)=>throw e);
   }
 
-  ///create answer
+  ///Answer
+  Future<Paging<Answer>> getAnswers({required int skip,required String questionId}) async {
+    return await _services.getAnswers( questionId: questionId , skip: skip).catchError((e) => throw e);
+  }
   Future<CreateAnswer> createAnswer(CreateAnswer createAnswer) async {
     return await _services.createAnswer(createAnswer).catchError((e) => throw e);
   }
 
-  ///get profile
+  /// profile
   Future<Profile> getProfile()async{
    return await _services.getProfile().catchError((error)=>throw error);
   }
 
-  ///update profile
   Future<Account> updateProfile(FormData profile)async{
     return await _services.updateProfile(profile).catchError((error)=>throw error);
   }
 
-  ///get category with paging
+  /// category
   Future<Paging<Category>> getCategory(int skip) async {
     return await _services.getCategory(skip: skip ).catchError((e) => throw e);
   }

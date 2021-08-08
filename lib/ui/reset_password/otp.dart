@@ -168,10 +168,8 @@ class _OtpScreenState extends State<OtpScreen>
         onPressed: () {
           _store.sendOtpAndNewPassword();
         },
-        title: Text(
-          LocaleKeys.otp_screen_resend_OTP.tr(),
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
-        ),
+        title: LocaleKeys.otp_screen_resend_OTP.tr(),
+
       ),
     );
   }
