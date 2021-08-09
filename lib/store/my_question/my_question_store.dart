@@ -13,7 +13,7 @@ part 'my_question_store.g.dart';
 class MyQuestionStore = _MyQuestionStore with _$MyQuestionStore;
 
 abstract class _MyQuestionStore with Store {
-  // repository instance
+
   late Repository _repository;
 
   final ErrorStore errorStore = ErrorStore();
@@ -31,8 +31,6 @@ abstract class _MyQuestionStore with Store {
   @observable
   bool loading = false;
 
-  // @action
-  // void getPrefUser() => user = _repository.user;
 
   @observable
   PagingController<int, Question> pagingController =

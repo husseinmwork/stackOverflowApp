@@ -10,6 +10,7 @@ import 'package:todo_app/model/get_answer/get_answer.dart';
 import 'package:todo_app/model/get_question/get_question.dart';
 import 'package:todo_app/store/details_question/details_question_store.dart';
 import 'package:todo_app/store/theme/theme_store.dart';
+import 'package:todo_app/ui/home/home.dart';
 import 'package:todo_app/utils/device/device_utils.dart';
 import 'package:todo_app/widgets/arrow_back_icon.dart';
 import 'package:todo_app/widgets/stack_overflow_indecator.dart';
@@ -57,9 +58,11 @@ class _DetailsQuestionScreenState extends State<DetailsQuestionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _buildAppBar(),
-      body: _buildBody(),
+    return Observer(
+      builder: (_) => Scaffold(
+        appBar: _buildAppBar(),
+        body: _buildBody(),
+      ),
     );
   }
 
@@ -68,41 +71,39 @@ class _DetailsQuestionScreenState extends State<DetailsQuestionScreen> {
         leading: ArrowBackIcon(),
         title: Text("Details Question",
             style: Theme.of(context).textTheme.headline6),
+        actions: widget.userId == _store.question?.userId
+            ? [
+                IconButton(icon: Icon(Icons.edit), onPressed: () {}),
+                IconButton(
+                    icon: Icon(Icons.delete),
+                    onPressed: () async {
+                      await _store.deleteQuestion();
+                    }),
+              ]
+            : [],
       );
 
-  Widget _buildBody() => Observer(
-        builder: (_) => Visibility(
-          visible: (_store.successGetQuestion && _store.successGetAnswers),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: ListView(
-                  padding: EdgeInsets.all(Dimens.padding_large),
-                  children: [
-                    Row(
+  Widget _buildBody() => Stack(
+        children: [
+
+          Observer(
+            builder: (_) => Visibility(
+              visible: (_store.successGetQuestion && _store.successGetAnswers),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: ListView(
+                      padding: EdgeInsets.all(Dimens.padding_large),
                       children: [
-                        _buildTitleAndBody(),
-                        _StackOverFlowLike(
-                          hsVoted: _store.hsVoted,
-                          like: _store.hsVoted == Strings.like
+                        Row(
+                          children: [
+                            _buildTitleAndBody(),
+                            _StackOverFlowLike(
+                              hsVoted: _store.hsVoted,
+                              like: _store.hsVoted == Strings.like
 
-                              ///delete like
-                              ? () async {
-                                  VotesList? likedObj;
-                                  for (var i in _store.question!.votesList!) {
-                                    if (i.userId == widget.userId) likedObj = i;
-                                  }
-                                  if (likedObj != null) {
-                                    _store.likeId = likedObj.id;
-                                    _store.hsVoted = null;
-                                    await _store.questionDeleteLike();
-                                    _store.getQuestion();
-                                  }
-                                }
-                              : _store.hsVoted == Strings.desLike
-
-                                  ///update like
+                                  ///delete like
                                   ? () async {
                                       VotesList? likedObj;
                                       for (var i
@@ -111,41 +112,43 @@ class _DetailsQuestionScreenState extends State<DetailsQuestionScreen> {
                                           likedObj = i;
                                       }
                                       if (likedObj != null) {
-                                        _store.typeLike = Strings.like;
                                         _store.likeId = likedObj.id;
-                                        _store.hsVoted = Strings.like;
-                                        await _store.questionUpdateLike();
+                                        _store.hsVoted = null;
+                                        await _store.questionDeleteLike();
                                         _store.getQuestion();
                                       }
                                     }
-                                  :
+                                  : _store.hsVoted == Strings.desLike
 
-                                  ///post like
-                                  () async {
-                                      _store.typeLike = Strings.like;
-                                      _store.hsVoted = Strings.like;
-                                      await _store.questionLike();
+                                      ///update like
+                                      ? () async {
+                                          VotesList? likedObj;
+                                          for (var i
+                                              in _store.question!.votesList!) {
+                                            if (i.userId == widget.userId)
+                                              likedObj = i;
+                                          }
+                                          if (likedObj != null) {
+                                            _store.typeLike = Strings.like;
+                                            _store.likeId = likedObj.id;
+                                            _store.hsVoted = Strings.like;
+                                            await _store.questionUpdateLike();
+                                            _store.getQuestion();
+                                          }
+                                        }
+                                      :
 
-                                      _store.getQuestion();
-                                    },
-                          desLike: _store.hsVoted == Strings.desLike
+                                      ///post like
+                                      () async {
+                                          _store.typeLike = Strings.like;
+                                          _store.hsVoted = Strings.like;
+                                          await _store.questionLike();
 
-                              ///delete desLike
-                              ? () async {
-                                  VotesList? likedObj;
-                                  for (var i in _store.question!.votesList!) {
-                                    if (i.userId == widget.userId) likedObj = i;
-                                  }
-                                  if (likedObj != null) {
-                                    _store.likeId = likedObj.id;
-                                    _store.hsVoted = null;
-                                    await _store.questionDeleteLike();
-                                    _store.getQuestion();
-                                  }
-                                }
-                              : _store.hsVoted == Strings.like
+                                          _store.getQuestion();
+                                        },
+                              desLike: _store.hsVoted == Strings.desLike
 
-                                  ///update desLike
+                                  ///delete desLike
                                   ? () async {
                                       VotesList? likedObj;
                                       for (var i
@@ -154,37 +157,94 @@ class _DetailsQuestionScreenState extends State<DetailsQuestionScreen> {
                                           likedObj = i;
                                       }
                                       if (likedObj != null) {
-                                        _store.typeLike = Strings.desLike;
                                         _store.likeId = likedObj.id;
-                                        _store.hsVoted = Strings.desLike;
-                                        await _store.questionUpdateLike();
+                                        _store.hsVoted = null;
+                                        await _store.questionDeleteLike();
                                         _store.getQuestion();
                                       }
-                                      //update
                                     }
+                                  : _store.hsVoted == Strings.like
 
-                                  ///post desLike
-                                  : () async {
-                                      _store.typeLike = Strings.desLike;
-                                      _store.hsVoted = Strings.desLike;
-                                      await _store.questionLike();
-                                      _store.getQuestion();
-                                    },
+                                      ///update desLike
+                                      ? () async {
+                                          VotesList? likedObj;
+                                          for (var i
+                                              in _store.question!.votesList!) {
+                                            if (i.userId == widget.userId)
+                                              likedObj = i;
+                                          }
+                                          if (likedObj != null) {
+                                            _store.typeLike = Strings.desLike;
+                                            _store.likeId = likedObj.id;
+                                            _store.hsVoted = Strings.desLike;
+                                            await _store.questionUpdateLike();
+                                            _store.getQuestion();
+                                          }
+                                          //update
+                                        }
+
+                                      ///post desLike
+                                      : () async {
+                                          _store.typeLike = Strings.desLike;
+                                          _store.hsVoted = Strings.desLike;
+                                          await _store.questionLike();
+                                          _store.getQuestion();
+                                        },
+                            ),
+                          ],
                         ),
+                        SizedBox(height: Dimens.padding_normal),
+                        _buildTags(),
+                        SizedBox(height: Dimens.padding_large),
+                        _buildAnswer(),
                       ],
                     ),
-                    SizedBox(height: Dimens.padding_normal),
-                    _buildTags(),
-                    SizedBox(height: Dimens.padding_large),
-                    _buildAnswer(),
-                  ],
-                ),
+                  ),
+                  _buildYourAnswer(),
+                ],
               ),
-              _buildYourAnswer(),
-            ],
+              replacement: StackOverFlowIndecator(),
+            ),
           ),
-          replacement: StackOverFlowIndecator(),
-        ),
+
+          Center(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+
+                Align(
+                  alignment: Alignment.center,
+                  child: Observer(
+                    builder: (_) => Visibility(
+                      visible: (_store.loadingCreateAns ),
+                      child: StackOverFlowIndecator(),
+                    ),
+                  ),
+                ),
+                Observer(builder: (_) {
+                  return (_store.successCreateAns) ? _buildClosed() : _buildClosed();
+                }),
+
+                Align(
+                  alignment: Alignment.center,
+                  child: Observer(
+                    builder: (_) => Visibility(
+                      visible: (_store.loading ),
+                      child: StackOverFlowIndecator(),
+                    ),
+                  ),
+                ),
+                Observer(builder: (_) {
+                  return (_store.success)
+                      ? _navigateToLoginScreen(context)
+                      : _buildClosed();
+                }),
+              ],
+            ),
+          ),
+
+        ],
       );
 
   Widget _buildTitleAndBody() => Expanded(
@@ -298,6 +358,27 @@ class _DetailsQuestionScreenState extends State<DetailsQuestionScreen> {
           },
         ),
       );
+
+  ///this  Navigation to another page
+  _buildClosed() {
+    _store.successCreateAns = false;
+    _store.loadingCreateAns = false;
+
+    return SizedBox.shrink();
+  }
+
+  Widget _navigateToLoginScreen(BuildContext context) {
+    Future.delayed(Duration.zero, () {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (_) => HomeScreen(refreshPage: true),
+        ),
+      );
+      _store.loading = false;
+    });
+    _store.success = false;
+    return Container();
+  }
 }
 
 class AnswerItem extends StatefulWidget {

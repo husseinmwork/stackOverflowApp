@@ -90,7 +90,7 @@ class Services {
     }
   }
 
-  ///get question with paging
+  /// question
   Future<Paging<Question>> getQuestion(
       {int skip = 0, int? take = 1000, QuestionFilter? filter}) async {
     try {
@@ -111,7 +111,7 @@ class Services {
       throw e;
     }
   }
-  ///get question details
+
   Future<Question> getDetailsQuestion(String id) async {
     try {
       var response = await _dioClient.get(Endpoints.question,
@@ -122,7 +122,26 @@ class Services {
     }
   }
 
-  ///get question with paging
+  Future createQuestion(CreateQuestion createQuestion) async {
+    try {
+      var response = await _dioClient.post(Endpoints.question,
+          data: createQuestion.toJson().removeNull());
+      return CreateQuestion.fromJson(response);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  Future deleteQuestion(String questionId)async{
+    try{
+      var response = await _dioClient.delete(Endpoints.question +'/'+ questionId);
+      return response ;
+    }catch(error){
+      throw error;
+    }
+  }
+
+  ///Answer
   Future<Paging<Answer>> getAnswers(
       {int skip = 0, int? take = 1000, required String questionId}) async {
     try {
@@ -142,18 +161,7 @@ class Services {
     }
   }
 
-  ///create question
-  Future createQuestion(CreateQuestion createQuestion) async {
-    try {
-      var response = await _dioClient.post(Endpoints.question,
-          data: createQuestion.toJson().removeNull());
-      return CreateQuestion.fromJson(response);
-    } catch (error) {
-      throw error;
-    }
-  }
 
-  ///create question
   Future createAnswer(CreateAnswer createAnswer) async {
     try {
       var response = await _dioClient.post(Endpoints.answer,

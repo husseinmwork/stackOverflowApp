@@ -70,12 +70,20 @@ class _HomeScreenState extends State<HomeScreen>
   void didChangeDependencies() {
     super.didChangeDependencies();
     _store = Provider.of<HomeStore>(context);
+
     _themeStore = Provider.of<ThemeStore>(context);
     _store.getPrefUser();
    /* _store.updateScrolling();*/
     _store.pagingController.addPageRequestListener((pageKey) async {
       _fetchPage(pageKey);
     });
+
+
+  }
+
+  @override
+  void dispose() {
+        super.dispose();
   }
 
   @override

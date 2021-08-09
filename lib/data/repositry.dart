@@ -103,6 +103,10 @@ class Repository {
     return await _services.createQuestion(createQuestion).catchError((e) => throw e);
   }
 
+  Future deleteQuestion(String questionId)async{
+    return await _services.deleteQuestion(questionId).catchError((error)=>throw error);
+  }
+
   Future<Question> getDetailsQuestion(String id) async {
     return await _services.getDetailsQuestion(id).catchError((e) => throw e);
   }

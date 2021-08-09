@@ -38,6 +38,13 @@ abstract class _DetailsQuestionStore with Store {
   bool loading = false;
 
   @observable
+  bool successCreateAns = false;
+
+  @observable
+  bool loadingCreateAns = false;
+
+
+  @observable
   Question? question;
 
   @observable
@@ -68,18 +75,30 @@ abstract class _DetailsQuestionStore with Store {
   @action
   Future getQuestion() async {
     if (questionId != null) {
-      loading = true;
       return await _repository.getDetailsQuestion(questionId!).then((value) {
         hsVoted = value.hasVoted;
         question = value;
-        success = true;
         successGetQuestion = true;
       }).catchError((error) {
-        loading = false;
         successGetQuestion = false;
-        success = false;
         DioErrorUtil.handleError(error);
         errorStore.errorMessage = DioErrorUtil.handleError(error);
+      });
+    }
+  }
+
+  @action
+  Future deleteQuestion() async {
+    if (questionId != null) {
+      loading = true;
+      return await _repository
+          .deleteQuestion(questionId!)
+          .then((value) {
+        success = true;
+      })
+          .catchError((error) {
+        loading = false;
+        success = false;
       });
     }
   }
@@ -88,17 +107,13 @@ abstract class _DetailsQuestionStore with Store {
   @action
   Future getAnswers(int skip) async {
     if (questionId != null) {
-      loading = true;
       await _repository
           .getAnswers(skip: skip, questionId: questionId!)
           .then((value) {
         answers = value.results;
-        success = true;
         successGetAnswers = true;
       }).catchError((error) {
-        loading = false;
         successGetAnswers = false;
-        success = false;
         DioErrorUtil.handleError(error);
         errorStore.errorMessage = DioErrorUtil.handleError(error);
       });
@@ -108,12 +123,19 @@ abstract class _DetailsQuestionStore with Store {
   @action
   Future createAnswer() async {
     if (bodyAnswer != null && questionId != null) {
+      loadingCreateAns = true;
       await _repository
           .createAnswer(CreateAnswer(
             questionId: questionId!,
             body: bodyAnswer!,
-          ))
-          .catchError((e) {});
+          )).then((value) {
+            successCreateAns = true;
+      })
+          .catchError((e) {
+        successCreateAns = false;
+        loadingCreateAns = false;
+
+      });
     }
   }
 
