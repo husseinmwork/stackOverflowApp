@@ -9,6 +9,7 @@ import 'package:todo_app/store/details_question/details_question_store.dart';
 import 'package:todo_app/store/home/home_store.dart';
 import 'package:todo_app/store/language/language_store.dart';
 import 'package:todo_app/store/login/login.dart';
+import 'package:todo_app/store/my_question/my_question_store.dart';
 import 'package:todo_app/store/profile/profile_store.dart';
 import 'package:todo_app/store/reset_password/reset_password.dart';
 import 'package:todo_app/store/sign_up/sign_up.dart';
@@ -32,7 +33,7 @@ class MyApp extends StatelessWidget {
   final ProfileStore _profileStore = ProfileStore(getIt<Repository>());
   final CreateQuestionStore _createQuestionStore = CreateQuestionStore(getIt<Repository>());
   final DetailsQuestionStore _detailsQuestionStore = DetailsQuestionStore(getIt<Repository>());
-  // final MyQuestionStore _myQuestionStore = MyQuestionStore(getIt<Repository>());
+  final MyQuestionStore _myQuestionStore = MyQuestionStore(getIt<Repository>());
   final ResetPasswordStore _resetPasswordStore =
       ResetPasswordStore(getIt<Repository>());
 
@@ -49,7 +50,7 @@ class MyApp extends StatelessWidget {
         Provider<ProfileStore>(create: (_) => _profileStore),
         Provider<DetailsQuestionStore>(create: (_) => _detailsQuestionStore),
         Provider<CreateQuestionStore>(create: (_) => _createQuestionStore),
-        // Provider<MyQuestionStore>(create: (_) => _myQuestionStore),
+        Provider<MyQuestionStore>(create: (_) => _myQuestionStore),
       ],
       child: Observer(
         name: 'global-observer',

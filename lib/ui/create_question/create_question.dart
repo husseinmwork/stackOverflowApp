@@ -91,36 +91,38 @@ class _CreateQuestionScreenState extends State<CreateQuestionScreen> {
         ],
       );
 
-  Widget _buildQuestionTitle() => TextFeildAddQuestion(
-    errorText: _formStore.formErrorStore.questionTitle.toString(),
-        onChanged: (value) {
-          _formStore.setQuestionTitle(_titleController.text);
+  Widget _buildQuestionTitle() => Observer(
+        builder: (_) => TextFeildAddQuestion(
+          errorText: _formStore.formErrorStore.questionTitle,
+          onChanged: (value) {
+            _formStore.setQuestionTitle(_titleController.text);
 
-          _store.title = value;
-
-        },
-        controller: _titleController,
-        maxLines: 2,
-        hint:
-            "e.g. there an R function for finding the index of element in a vector?",
-        title: "Title",
-        label:
-            "Be specific and imagine you’re asking a question to another person",
+            _store.title = value;
+          },
+          controller: _titleController,
+          maxLines: 2,
+          hint:
+              "e.g. there an R function for finding the index of element in a vector?",
+          title: "Title",
+          label:
+              "Be specific and imagine you’re asking a question to another person",
+        ),
       );
 
-  Widget _buildQuestionBody() => TextFeildAddQuestion(
-    errorText: _formStore.formErrorStore.questionBody.toString(),
-        onChanged: (value) {
-          _formStore.setQuestionBody(_bodyController.text);
-
-          _store.body = value;
-        },
-        controller: _bodyController,
-        maxLines: 4,
-        hint: "Enter question body",
-        title: "Body",
-        label:
-            "Include all the information someone would need to answer your question",
+  Widget _buildQuestionBody() => Observer(
+        builder: (_) => TextFeildAddQuestion(
+          errorText: _formStore.formErrorStore.questionBody,
+          onChanged: (value) {
+            _formStore.setQuestionBody(_bodyController.text);
+            _store.body = value;
+          },
+          controller: _bodyController,
+          maxLines: 4,
+          hint: "Enter question body",
+          title: "Body",
+          label:
+              "Include all the information someone would need to answer your question",
+        ),
       );
 
   Widget _buildQuestionTags() => Padding(
@@ -162,7 +164,7 @@ class _CreateQuestionScreenState extends State<CreateQuestionScreen> {
     Future.delayed(Duration.zero, () {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (_) => HomeScreen(refreshPage: false),
+          builder: (_) => HomeScreen(refreshPage: true),
         ),
       );
       _store.loading = false;
@@ -179,12 +181,12 @@ class TextFeildAddQuestion extends StatelessWidget {
   final String? title;
   final int? maxLines;
   final Function onChanged;
-  final String errorText;
+  final String? errorText;
 
   const TextFeildAddQuestion({
     required this.controller,
     required this.onChanged,
-    required this.errorText,
+    this.errorText,
     this.hint,
     this.label,
     this.title,
@@ -200,25 +202,21 @@ class TextFeildAddQuestion extends StatelessWidget {
         children: [
           Text(title.toString(), style: Theme.of(context).textTheme.subtitle2),
           Text(label.toString()),
-          Observer(
-            builder:(_)=> TextFormField(
-              onChanged: (value) {
-                onChanged(value);
-              },
-
-              maxLines: maxLines,
-              minLines: 1,
-              controller: controller,
-              decoration: InputDecoration(
-                  errorText: errorText,
-
-                  hintText: hint,
-                  hintStyle: Theme.of(context)
-                      .textTheme
-                      .caption
-                      ?.copyWith(color: Colors.grey),
-                  enabled: true),
-            ),
+          TextFormField(
+            onChanged: (value) {
+              onChanged(value);
+            },
+            maxLines: maxLines,
+            minLines: 1,
+            controller: controller,
+            decoration: InputDecoration(
+                errorText: errorText,
+                hintText: hint,
+                hintStyle: Theme.of(context)
+                    .textTheme
+                    .caption
+                    ?.copyWith(color: Colors.grey),
+                enabled: true),
           ),
         ],
       ),

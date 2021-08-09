@@ -34,7 +34,7 @@ class StackOverFlowTags extends StatelessWidget {
             position: 0,
           );
         },
-        onAdded: (language){
+        onAdded:(language){
           // api calls here, triggered when add to tag button is pressed
           print(language);
           return Language(name: "name");
@@ -59,6 +59,7 @@ class StackOverFlowTags extends StatelessWidget {
           );
         },
         configureChip: (lang) {
+
           return ChipConfiguration(
             deleteIcon: Icon(Icons.cancel , color:  Theme.of(context).appBarTheme.color),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
@@ -66,6 +67,7 @@ class StackOverFlowTags extends StatelessWidget {
             backgroundColor: AppColors.secondaryColor,
             labelStyle: TextStyle(color: Colors.black),
             deleteIconColor: Colors.white,
+
           );
         },
         onChanged: () {

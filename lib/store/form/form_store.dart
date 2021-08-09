@@ -19,7 +19,7 @@ abstract class _FormStore with Store {
     _setupValidations();
   }
 
-  // disposers:-----------------------------------------------------------------
+  // disposers:--------------------------- --------------------------------------
   late List<ReactionDisposer> _disposers;
 
   void _setupValidations() {

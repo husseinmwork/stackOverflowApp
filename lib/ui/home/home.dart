@@ -99,23 +99,13 @@ class _HomeScreenState extends State<HomeScreen>
           padding: EdgeInsets.zero,
           children: <Widget>[
             _createHeader(),
-
-            // _createDrawerItem(
-            //     icon: Icons.contacts,
-            //     text: 'My Question',
-            //     onTap: () {
-            //       // Navigator.of(context).pushNamed(Routes.my_question);
-            //     }),
-            // _createDrawerItem(icon: Icons.event, text: 'Events', onTap: () {}),
-            // _createDrawerItem(icon: Icons.note, text: 'Notes', onTap: () {}),
-            // Divider(),
-            // _createDrawerItem(
-            //     icon: Icons.collections_bookmark, text: 'Steps', onTap: () {}),
-            // _createDrawerItem(icon: Icons.face, text: 'Authors', onTap: () {}),
-            // _createDrawerItem(
-            //     icon: Icons.account_box,
-            //     text: 'Flutter Documentation',
-            //     onTap: () {}),
+            _createDrawerItem(
+                icon: Icons.view_list,
+                text: 'My Question',
+                onTap: () {
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pushNamed(Routes.my_question);
+                }),
             _createDrawerItem(
                 icon: Icons.logout,
                 text: 'Logout',
@@ -130,6 +120,7 @@ class _HomeScreenState extends State<HomeScreen>
                 onTap: () {
                   Navigator.of(context).pop();
                 }),
+            Divider(color: Colors.white)
           ],
         ),
       );

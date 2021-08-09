@@ -151,7 +151,7 @@ class _QuestionItemState extends State<QuestionItem> {
               .map((e) => Container(
                     color: Colors.amber.shade600,
                     padding: EdgeInsets.all(Dimens.padding_normal),
-                    margin: EdgeInsets.only(right: Dimens.padding_normal),
+                    margin: EdgeInsets.only(right: Dimens.padding_normal, bottom: Dimens.padding_normal),
                     child: Text(e,
                         style: Theme.of(context)
                             .textTheme
