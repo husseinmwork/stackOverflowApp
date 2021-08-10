@@ -6,6 +6,7 @@ import 'package:todo_app/model/create_answer/create_answer.dart';
 import 'package:todo_app/model/get_answer/get_answer.dart';
 import 'package:todo_app/model/get_question/get_question.dart';
 import 'package:todo_app/model/like/like.dart';
+import 'package:todo_app/model/user/user.dart';
 import 'package:todo_app/store/error/error_store.dart';
 import 'package:todo_app/utils/dio/dio_error_util.dart';
 
@@ -38,10 +39,12 @@ abstract class _DetailsQuestionStore with Store {
   bool loading = false;
 
   @observable
-  bool successCreateAns = false;
+  bool successGetQuestion = false;
 
   @observable
-  bool loadingCreateAns = false;
+  bool successGetAnswer = false;
+
+
 
 
   @observable
@@ -62,25 +65,46 @@ abstract class _DetailsQuestionStore with Store {
   @observable
   String? likeId;
 
-  @observable
-  bool successGetQuestion = false;
-
-  @observable
-  bool successGetAnswers = false;
 
   @observable
   List<Answer> answers = ObservableList<Answer>();
 
+  @observable
+  Account? user;
+
+
+
+  @action
+  void getPrefUser() => user = _repository.user;
+
   ///question
   @action
   Future getQuestion() async {
+    // successGetQuestion = false;
+
     if (questionId != null) {
       return await _repository.getDetailsQuestion(questionId!).then((value) {
         hsVoted = value.hasVoted;
         question = value;
         successGetQuestion = true;
       }).catchError((error) {
-        successGetQuestion = false;
+        DioErrorUtil.handleError(error);
+        errorStore.errorMessage = DioErrorUtil.handleError(error);
+      });
+    }
+  }
+
+  ///Answer
+  @action
+  Future getAnswers(int skip) async {
+    // successGetAnswer = false;
+    if (questionId != null) {
+      await _repository
+          .getAnswers(skip: skip, questionId: questionId!)
+          .then((value) {
+         answers = value.results;
+        successGetAnswer = true;
+      }).catchError((error) {
         DioErrorUtil.handleError(error);
         errorStore.errorMessage = DioErrorUtil.handleError(error);
       });
@@ -103,37 +127,24 @@ abstract class _DetailsQuestionStore with Store {
     }
   }
 
-  ///Answer
-  @action
-  Future getAnswers(int skip) async {
-    if (questionId != null) {
-      await _repository
-          .getAnswers(skip: skip, questionId: questionId!)
-          .then((value) {
-        answers = value.results;
-        successGetAnswers = true;
-      }).catchError((error) {
-        successGetAnswers = false;
-        DioErrorUtil.handleError(error);
-        errorStore.errorMessage = DioErrorUtil.handleError(error);
-      });
-    }
-  }
+
 
   @action
   Future createAnswer() async {
+    successGetAnswer = false;
+    successGetQuestion = false;
     if (bodyAnswer != null && questionId != null) {
-      loadingCreateAns = true;
+      // loadingCreateAns = true;
       await _repository
           .createAnswer(CreateAnswer(
             questionId: questionId!,
             body: bodyAnswer!,
           )).then((value) {
-            successCreateAns = true;
+            // successCreateAns = true;
       })
           .catchError((e) {
-        successCreateAns = false;
-        loadingCreateAns = false;
+        // successCreateAns = false;
+        // loadingCreateAns = false;
 
       });
     }

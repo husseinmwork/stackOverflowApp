@@ -22,7 +22,10 @@ class CreateQuestion {
   @JsonKey(name: 'userId')
   String? userId;
 
-  CreateQuestion({ this.tags,this.title, this.id, this.body, this.votes, this.userId});
+  @JsonKey(name: 'fieldId')
+  String? fieldId;
+
+  CreateQuestion({ this.fieldId,this.tags,this.title, this.id, this.body, this.votes, this.userId});
 
   factory CreateQuestion.fromJson(Map<String, dynamic> json) => _$CreateQuestionFromJson(json);
 

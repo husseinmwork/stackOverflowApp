@@ -8,6 +8,7 @@ import 'package:todo_app/ui/home/home.dart';
 import 'package:todo_app/utils/routes/routes.dart';
 import 'package:todo_app/utils/todo/todo_utils.dart';
 import 'package:todo_app/widgets/arrow_back_icon.dart';
+import 'package:todo_app/widgets/category_dropdown.dart';
 import 'package:todo_app/widgets/stack_overflow_indecator.dart';
 import 'package:todo_app/widgets/tags_language.dart';
 import 'package:todo_app/widgets/todo_button.dart';
@@ -31,6 +32,7 @@ class _CreateQuestionScreenState extends State<CreateQuestionScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _store = Provider.of<CreateQuestionStore>(context);
+    _store.getCategory(0);
   }
 
   @override
@@ -68,6 +70,8 @@ class _CreateQuestionScreenState extends State<CreateQuestionScreen> {
                   _buildQuestionBody(),
                   SizedBox(height: Dimens.padding_large),
                   _buildQuestionTags(),
+                  SizedBox(height: Dimens.padding_large),
+                  _buildSelectCategory(),
                   SizedBox(height: Dimens.padding_large),
                   _buildButton(),
                 ],
@@ -142,6 +146,28 @@ class _CreateQuestionScreenState extends State<CreateQuestionScreen> {
         ),
       );
 
+  Widget _buildSelectCategory() => Observer(
+    builder: (_) => Padding(
+      padding: const EdgeInsets.symmetric(horizontal: Dimens.padding_large),
+      child: CategoryDropDown(
+        value: _store.categoryId,
+        item: [
+          ..._store.category.map((e) {
+            return DropdownMenuItem<String>(
+              child: Text(e.name.toString()),
+              value: e.id,
+            );
+          }).toList(),
+        ],
+        onChange: (String? value){
+          setState(() {
+            _store.categoryId = value;
+          });
+        },
+      ),
+    ),
+  );
+
   Widget _buildButton() => Padding(
         padding: const EdgeInsets.symmetric(horizontal: Dimens.padding_large),
         child: RoundedButton(
@@ -162,11 +188,7 @@ class _CreateQuestionScreenState extends State<CreateQuestionScreen> {
 
   Widget _navigateToLoginScreen(BuildContext context) {
     Future.delayed(Duration.zero, () {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (_) => HomeScreen(refreshPage: true),
-        ),
-      );
+      Navigator.of(context).pop();
       _store.loading = false;
     });
     _store.success = false;

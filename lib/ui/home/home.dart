@@ -23,7 +23,8 @@ const double _fabDimension = 56.0;
 class HomeScreen extends StatefulWidget {
   final bool? refreshPage;
 
-  const HomeScreen({ this.refreshPage});
+  const HomeScreen({this.refreshPage});
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -32,7 +33,6 @@ class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
   late HomeStore _store;
   late ThemeStore _themeStore;
-
 
   ContainerTransitionType _transitionType = ContainerTransitionType.fade;
 
@@ -73,22 +73,20 @@ class _HomeScreenState extends State<HomeScreen>
 
     _themeStore = Provider.of<ThemeStore>(context);
     _store.getPrefUser();
-   /* _store.updateScrolling();*/
+    /* _store.updateScrolling();*/
     _store.pagingController.addPageRequestListener((pageKey) async {
       _fetchPage(pageKey);
     });
-
-
   }
 
   @override
   void dispose() {
-        super.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if(widget.refreshPage == true){
+    if (widget.refreshPage == true) {
       Future.sync(() {
         _store.pagingController.refresh();
       });
@@ -96,7 +94,10 @@ class _HomeScreenState extends State<HomeScreen>
     return Scaffold(
       drawer: _buildDrawer(),
       appBar: _buildAppBar(),
-      floatingActionButton:  Observer(builder: (_)=>_store.showIconFilter?_buildCreateQuestionFAB():_buildRemoveFilterFAB()),
+      floatingActionButton: Observer(
+          builder: (_) => _store.showIconFilter
+              ? _buildCreateQuestionFAB()
+              : _buildRemoveFilterFAB()),
       body: _buildBody(),
     );
   }
@@ -302,35 +303,32 @@ class _HomeScreenState extends State<HomeScreen>
           opacity: _store.fabIsVisible ? 1 : 0,
         ),
       );*/
-  Widget _buildCreateQuestionFAB()=>OpenContainer(
-    transitionType: _transitionType,
-    openBuilder: (BuildContext context, VoidCallback _) {
-      return CreateQuestionScreen();
-    },
-    closedShape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.all(
-        Radius.circular(_fabDimension / 2),
-      ),
-    ),
-    closedColor: Theme.of(context).colorScheme.secondary,
-    closedBuilder: (BuildContext context, VoidCallback openContainer) {
-      return SizedBox(
-        height: _fabDimension,
-        width: _fabDimension,
-        child: Center(
-          child: Icon(
-            Icons.add,
-            color: Theme.of(context).colorScheme.onSecondary,
+  Widget _buildCreateQuestionFAB() => OpenContainer(
+        transitionType: _transitionType,
+        openBuilder: (BuildContext context, VoidCallback _) {
+          return CreateQuestionScreen();
+        },
+        closedShape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(_fabDimension / 2),
           ),
         ),
+        closedColor: Theme.of(context).colorScheme.secondary,
+        closedBuilder: (BuildContext context, VoidCallback openContainer) {
+          return SizedBox(
+            height: _fabDimension,
+            width: _fabDimension,
+            child: Center(
+              child: Icon(
+                Icons.add,
+                color: Theme.of(context).colorScheme.onSecondary,
+              ),
+            ),
+          );
+        },
       );
-    },
-  );
 
-  Widget _buildBody() =>_buildMainPaging();
-
-
-  Widget _buildMainPaging() => RefreshIndicator(
+  Widget _buildBody() => RefreshIndicator(
         onRefresh: () async => await Future.sync(() {
           _store.pagingController.refresh();
         }),
@@ -359,11 +357,13 @@ class _HomeScreenState extends State<HomeScreen>
             itemBuilder: (context, item, index) => QuestionItem(
                 item: item,
                 onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
                       builder: (_) => DetailsQuestionScreen(
-                        userId: _store.user!.id.toString(),
-                          id: item.id!,
-                          myImage: _store.user!.image.toString())));
+                        id: item.id!,
+                      ),
+                    ),
+                  );
                 }),
           ),
         ),

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:todo_app/constants/dimens.dart';
 import 'package:todo_app/packages/textfield_tags.dart';
 import 'package:todo_app/store/home/home_store.dart';
+import 'package:todo_app/widgets/category_dropdown.dart';
 import 'package:todo_app/widgets/filter_dropdown.dart';
 import 'package:todo_app/widgets/todo_button.dart';
 
@@ -241,40 +242,25 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
         ),
       );
 
-  Widget _buildSelectCategory() => Visibility(
-        visible: _store.category.isNotEmpty,
-        child: Observer(
-          builder: (_) => Container(
-            padding: EdgeInsets.symmetric(horizontal: Dimens.padding_small),
-            width: double.infinity,
-            height: 37,
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey),
-              borderRadius: BorderRadius.circular(Dimens.border_small),
-            ),
-            child: DropdownButton(
-              value: _store.categoryId,
-              icon: Icon(
-                Icons.keyboard_arrow_down,
-              ),
-              underline: Text(""),
-              isExpanded: true,
-              hint: Text("Select Category",
-                  style: Theme.of(context).textTheme.bodyText1),
-              style: Theme.of(context).textTheme.bodyText1,
-              items: [
-                ..._store.category.map((e) {
-                  return DropdownMenuItem<String>(
-                    child: Text(e.name.toString()),
-                    value: e.id,
-                  );
-                }).toList(),
-              ],
-              onChanged: (String? value) {
-                _store.categoryId = value;
-              },
-            ),
-          ),
-        ),
-      );
+  Widget _buildSelectCategory() => Observer(
+    builder: (_) => CategoryDropDown(
+      value: _store.categoryId,
+      item: [
+        ..._store.category.map((e) {
+          return DropdownMenuItem<String>(
+            child: Text(e.name.toString()),
+            value: e.id,
+          );
+        }).toList(),
+      ],
+      onChange: (String? value){
+        setState(() {
+          _store.categoryId = value;
+        });
+      },
+    ),
+  );
+
+
+
 }

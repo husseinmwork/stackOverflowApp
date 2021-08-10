@@ -3,6 +3,7 @@ import 'package:injectable/injectable.dart';
 import 'package:mobx/mobx.dart';
 import 'package:todo_app/data/repositry.dart';
 import 'package:todo_app/model/create_question/create_question.dart';
+import 'package:todo_app/model/get_category/get_category.dart';
 import 'package:todo_app/store/error/error_store.dart';
 import 'package:todo_app/widgets/tags_language.dart';
 
@@ -37,6 +38,12 @@ abstract class _CreateQuestionStore with Store {
   @observable
   List<String> allTags = [];
 
+  @observable
+  List<Category> category = ObservableList<Category>();
+
+  @observable
+  String? categoryId;
+
   @action
   Future createQuestion() async {
     loading = true;
@@ -48,7 +55,11 @@ abstract class _CreateQuestionStore with Store {
     }
 
     await _repository
-        .createQuestion(CreateQuestion(body: body, title: title, tags: allTags))
+        .createQuestion(CreateQuestion(
+      body: body,
+      title: title,
+      tags: allTags,
+    ))
         .then((value) {
       success = true;
     }).catchError((e) {
@@ -56,5 +67,13 @@ abstract class _CreateQuestionStore with Store {
       success = false;
       debugPrint("error in create question $e");
     });
+  }
+
+  ///get category with paging
+  @action
+  Future getCategory(int skip, {int? limit}) async {
+    await _repository.getCategory(skip).then((value) {
+      return category = value.results;
+    }).catchError((e) {});
   }
 }

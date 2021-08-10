@@ -8,6 +8,10 @@ class QuestionFilter {
   final String? id;
   @JsonKey(name: 'userId')
   final String? userId;
+
+  @JsonKey(name: 'questionId')
+  final String? questionId;
+
   @JsonKey(name: 'fieldId')
   final String? fieldId;
   @JsonKey(name: 'minVotes')
@@ -32,7 +36,8 @@ class QuestionFilter {
     this.fieldId,
     this.minViews,
     this.maxViews,
-    this.tags
+    this.tags,
+    this.questionId
   });
 
   factory QuestionFilter.fromJson(Map<String, dynamic> json) =>
