@@ -36,7 +36,7 @@ abstract class _DetailsQuestionStore with Store {
   bool success = false;
 
   @observable
-  bool loading = false;
+  bool loadingDeleteQuestion = false;
 
   @observable
   bool successGetQuestion = false;
@@ -53,8 +53,7 @@ abstract class _DetailsQuestionStore with Store {
   @observable
   String? questionId;
 
-  @observable
-  String? bodyAnswer;
+
 
   @observable
   String? typeLike;
@@ -66,8 +65,7 @@ abstract class _DetailsQuestionStore with Store {
   String? likeId;
 
 
-  @observable
-  List<Answer> answers = ObservableList<Answer>();
+
 
   @observable
   Account? user;
@@ -94,61 +92,28 @@ abstract class _DetailsQuestionStore with Store {
     }
   }
 
-  ///Answer
-  @action
-  Future getAnswers(int skip) async {
-    // successGetAnswer = false;
-    if (questionId != null) {
-      await _repository
-          .getAnswers(skip: skip, questionId: questionId!)
-          .then((value) {
-         answers = value.results;
-        successGetAnswer = true;
-      }).catchError((error) {
-        DioErrorUtil.handleError(error);
-        errorStore.errorMessage = DioErrorUtil.handleError(error);
-      });
-    }
-  }
+
 
   @action
   Future deleteQuestion() async {
     if (questionId != null) {
-      loading = true;
+      loadingDeleteQuestion = true;
       return await _repository
           .deleteQuestion(questionId!)
           .then((value) {
-        success = true;
       })
           .catchError((error) {
-        loading = false;
-        success = false;
+        DioErrorUtil.handleError(error);
+        errorStore.errorMessage = DioErrorUtil.handleError(error);
+        loadingDeleteQuestion = false;
+        throw error;
       });
     }
   }
 
 
 
-  @action
-  Future createAnswer() async {
-    successGetAnswer = false;
-    successGetQuestion = false;
-    if (bodyAnswer != null && questionId != null) {
-      // loadingCreateAns = true;
-      await _repository
-          .createAnswer(CreateAnswer(
-            questionId: questionId!,
-            body: bodyAnswer!,
-          )).then((value) {
-            // successCreateAns = true;
-      })
-          .catchError((e) {
-        // successCreateAns = false;
-        // loadingCreateAns = false;
 
-      });
-    }
-  }
 
   ///question Like
   @action

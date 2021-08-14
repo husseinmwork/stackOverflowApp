@@ -92,7 +92,7 @@ class Services {
 
   /// question
   Future<Paging<Question>> getQuestion(
-      {int skip = 0, int? take = 5, QuestionFilter? filter}) async {
+      {int skip = 0, int? take = 1000, QuestionFilter? filter}) async {
     try {
       Map<String, dynamic?> queries = {
         Endpoints.querySkip: skip,
@@ -143,7 +143,7 @@ class Services {
 
   ///Answer
   Future<Paging<Answer>> getAnswers(
-      {int skip = 0, int? take = 1000, required String questionId}) async {
+      {required int skip ,required int take , required String questionId}) async {
     try {
       Map<String, dynamic?> queries = {
         Endpoints.querySkip: skip,

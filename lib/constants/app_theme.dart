@@ -123,6 +123,7 @@ final ThemeData themeDataDark = ThemeData(
   accentColor: Colors.white,
   accentIconTheme: IconThemeData(color: Colors.black),
   dividerColor: Colors.black12,
+  dividerTheme: DividerThemeData(color: Colors.white),
 
 ).copyWith(
   pageTransitionsTheme: const PageTransitionsTheme(

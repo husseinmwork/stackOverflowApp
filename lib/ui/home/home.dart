@@ -47,13 +47,32 @@ class _HomeScreenState extends State<HomeScreen>
   bool _showNameApp = true;
   bool _showSearchColor = false;
 
+
+
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _store = Provider.of<HomeStore>(context);
+    _themeStore = Provider.of<ThemeStore>(context);
+    _store.getPrefUser();
+    /* _store.updateScrolling();*/
+    _store.pagingController.addPageRequestListener((pageKey) async {
+      print("this length of question after added question ${pageKey}");
+
+      await _fetchPage(pageKey);
+    });
+
+  }
+
   Future<void> _fetchPage(int pageKey) async {
+
     try {
+
       await _store.getQuestion(pageKey);
       final newItems = _store.question;
       // fixme this will make another unnecessary request
-      final isLastPage = newItems.isEmpty;
-
+      final isLastPage = newItems.length<pageKey;
       if (isLastPage) {
         _store.pagingController.appendLastPage(newItems);
       } else {
@@ -66,23 +85,14 @@ class _HomeScreenState extends State<HomeScreen>
     }
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _store = Provider.of<HomeStore>(context);
 
-    _themeStore = Provider.of<ThemeStore>(context);
-    _store.getPrefUser();
-    /* _store.updateScrolling();*/
-    _store.pagingController.addPageRequestListener((pageKey) async {
-      _fetchPage(pageKey);
-    });
-  }
-
+/*
   @override
   void dispose() {
+    _store.pagingController.dispose();
     super.dispose();
-  }
+
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -90,6 +100,7 @@ class _HomeScreenState extends State<HomeScreen>
       Future.sync(() {
         _store.pagingController.refresh();
       });
+
     }
     return Scaffold(
       drawer: _buildDrawer(),
@@ -184,7 +195,7 @@ class _HomeScreenState extends State<HomeScreen>
   Widget _createDrawerItem(
       {required IconData icon,
       required String text,
-      required GestureTapCallback onTap}) {
+      required GestureTapCallback onTap}){
     return ListTile(
       title: Row(
         children: <Widget>[
@@ -315,6 +326,7 @@ class _HomeScreenState extends State<HomeScreen>
         ),
         closedColor: Theme.of(context).colorScheme.secondary,
         closedBuilder: (BuildContext context, VoidCallback openContainer) {
+
           return SizedBox(
             height: _fabDimension,
             width: _fabDimension,
@@ -329,10 +341,10 @@ class _HomeScreenState extends State<HomeScreen>
       );
 
   Widget _buildBody() => RefreshIndicator(
-        onRefresh: () async => await Future.sync(() {
-          _store.pagingController.refresh();
-        }),
-        child: PagedListView(
+        onRefresh: () =>  Future.sync(() =>
+          _store.pagingController.refresh()
+        ),
+        child: PagedListView<int , Question>(
           pagingController: _store.pagingController,
           builderDelegate: PagedChildBuilderDelegate<Question>(
             firstPageProgressIndicatorBuilder: (_) => StackOverFlowIndecator(),
@@ -356,14 +368,19 @@ class _HomeScreenState extends State<HomeScreen>
             ),
             itemBuilder: (context, item, index) => QuestionItem(
                 item: item,
-                onTap: () {
-                  Navigator.of(context).push(
+                onTap: () async{
+                 final result = await Navigator.push(context,
                     MaterialPageRoute(
                       builder: (_) => DetailsQuestionScreen(
                         id: item.id!,
                       ),
                     ),
                   );
+
+                 if(result == true){
+                   ///work refresh controller until remove question from ui
+                   ///this work after change pagination of home page
+                 }
                 }),
           ),
         ),

@@ -125,8 +125,8 @@ class Repository {
   }
 
   ///Answer
-  Future<Paging<Answer>> getAnswers({required int skip,required String questionId}) async {
-    return await _services.getAnswers( questionId: questionId , skip: skip).catchError((e) => throw e);
+  Future<Paging<Answer>> getAnswers({required int take ,required int skip,required String questionId}) async {
+    return await _services.getAnswers( questionId: questionId , skip: skip , take: take).catchError((e) => throw e);
   }
   Future<CreateAnswer> createAnswer(CreateAnswer createAnswer) async {
     return await _services.createAnswer(createAnswer).catchError((e) => throw e);

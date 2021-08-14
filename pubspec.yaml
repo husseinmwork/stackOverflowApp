@@ -69,6 +69,8 @@ dependencies:
   flutter_spinkit: ^5.0.0
   animations: ^2.0.1
   flutter_tagging: ^3.0.0
+  flutter_keyboard_visibility: ^5.0.3
+  pull_to_refresh: ^2.0.0
 
 
 dev_dependencies:

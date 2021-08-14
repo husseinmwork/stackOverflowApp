@@ -80,7 +80,7 @@ abstract class _HomeStore with Store {
 
   @observable
   PagingController<int, Question> pagingController =
-      PagingController(firstPageKey: 0);
+      PagingController(firstPageKey: 0 );
 
   @observable
   String? categoryId;
@@ -161,7 +161,8 @@ abstract class _HomeStore with Store {
                 tags:tags
             ))
         .then((value) {
-      return question = value.results;
+       question = value.results;
+
     }).catchError((e) {
       throw e;
     });
