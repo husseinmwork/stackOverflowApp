@@ -94,9 +94,8 @@ class Repository {
   }
 
   ///question
-  Future<Paging<Question>> getQuestion(int skip,
-      {QuestionFilter? filter}) async {
-    return await _services.getQuestion(skip: skip , filter:filter).catchError((e) => throw e);
+  Future<Paging<Question>> getQuestion({int? skip, int?take, QuestionFilter? filter }) async {
+    return await _services.getQuestion(skip: skip , filter:filter , take: take).catchError((e) => throw e);
   }
 
   Future createQuestion(CreateQuestion createQuestion) async {

@@ -4,7 +4,6 @@ import 'package:todo_app/data/repositry.dart';
 import 'package:todo_app/model/filter/filter.dart';
 import 'package:todo_app/model/get_question/get_question.dart';
 import 'package:todo_app/model/user/user.dart';
-import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:todo_app/store/error/error_store.dart';
 
 part 'my_question_store.g.dart';
@@ -32,21 +31,18 @@ abstract class _MyQuestionStore with Store {
   bool loading = false;
 
 
-  @observable
-  PagingController<int, Question> pagingController =
-  PagingController(firstPageKey: 0);
 
   @observable
   List<Question> question = ObservableList<Question>();
 
   ///get question with paging
   @action
-  Future getQuestion(int skip, {int? limit}) async {
+  Future getQuestion(int skip, ) async {
     user = _repository.user;
     print("thisssssssssssssssss${user?.id}");
     if(user != null){
       await _repository
-          .getQuestion(skip,
+          .getQuestion(skip:skip,take: 6,
           filter: QuestionFilter(
             userId: user?.id,
           ))

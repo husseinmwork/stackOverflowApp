@@ -212,21 +212,6 @@ mixin _$HomeStore on _HomeStore, Store {
     });
   }
 
-  final _$pagingControllerAtom = Atom(name: '_HomeStore.pagingController');
-
-  @override
-  PagingController<int, Question> get pagingController {
-    _$pagingControllerAtom.reportRead();
-    return super.pagingController;
-  }
-
-  @override
-  set pagingController(PagingController<int, Question> value) {
-    _$pagingControllerAtom.reportWrite(value, super.pagingController, () {
-      super.pagingController = value;
-    });
-  }
-
   final _$categoryIdAtom = Atom(name: '_HomeStore.categoryId');
 
   @override
@@ -267,9 +252,8 @@ mixin _$HomeStore on _HomeStore, Store {
   final _$getQuestionAsyncAction = AsyncAction('_HomeStore.getQuestion');
 
   @override
-  Future<dynamic> getQuestion(int skip, {int? limit}) {
-    return _$getQuestionAsyncAction
-        .run(() => super.getQuestion(skip, limit: limit));
+  Future<dynamic> getQuestion(int skip) {
+    return _$getQuestionAsyncAction.run(() => super.getQuestion(skip));
   }
 
   final _$getCategoryAsyncAction = AsyncAction('_HomeStore.getCategory');
@@ -320,7 +304,6 @@ userId: ${userId},
 tags: ${tags},
 question: ${question},
 category: ${category},
-pagingController: ${pagingController},
 categoryId: ${categoryId},
 filter: ${filter},
 showIconFilter: ${showIconFilter}

@@ -2,16 +2,14 @@ import 'package:animations/animations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:provider/provider.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:todo_app/constants/assets.dart';
 import 'package:todo_app/constants/dimens.dart';
-import 'package:todo_app/model/get_question/get_question.dart';
 import 'package:todo_app/packages/anim_search_widget.dart';
 import 'package:todo_app/store/home/home_store.dart';
 import 'package:todo_app/store/theme/theme_store.dart';
 import 'package:todo_app/ui/create_question/create_question.dart';
-import 'package:todo_app/ui/details_question/details_question.dart';
 import 'package:todo_app/ui/home/filter.dart';
 import 'package:todo_app/ui/home/question_item.dart';
 import 'package:todo_app/utils/device/device_utils.dart';
@@ -34,18 +32,18 @@ class _HomeScreenState extends State<HomeScreen>
   late HomeStore _store;
   late ThemeStore _themeStore;
 
+  RefreshController _refreshController =
+  RefreshController(initialRefresh: false);
+  int _page = 0;
+
   ContainerTransitionType _transitionType = ContainerTransitionType.fade;
 
-  void _showMarkedAsDoneSnackbar(bool? isMarkedAsDone) {
-    if (isMarkedAsDone ?? false)
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Marked as done!'),
-      ));
-  }
 
   TextEditingController searchController = TextEditingController();
   bool _showNameApp = true;
   bool _showSearchColor = false;
+
+
 
 
 
@@ -56,52 +54,17 @@ class _HomeScreenState extends State<HomeScreen>
     _store = Provider.of<HomeStore>(context);
     _themeStore = Provider.of<ThemeStore>(context);
     _store.getPrefUser();
-    /* _store.updateScrolling();*/
-    _store.pagingController.addPageRequestListener((pageKey) async {
-      print("this length of question after added question ${pageKey}");
-
-      await _fetchPage(pageKey);
-    });
-
+    _store.getQuestion(_page);
   }
-
-  Future<void> _fetchPage(int pageKey) async {
-
-    try {
-
-      await _store.getQuestion(pageKey);
-      final newItems = _store.question;
-      // fixme this will make another unnecessary request
-      final isLastPage = newItems.length<pageKey;
-      if (isLastPage) {
-        _store.pagingController.appendLastPage(newItems);
-      } else {
-        final nextPageKey = pageKey + newItems.length;
-        _store.pagingController.appendPage(newItems, nextPageKey);
-      }
-    } catch (error) {
-      _store.pagingController.error = error;
-      debugPrint("$error");
-    }
-  }
-
-
-/*
-  @override
-  void dispose() {
-    _store.pagingController.dispose();
-    super.dispose();
-
-  }*/
 
   @override
   Widget build(BuildContext context) {
-    if (widget.refreshPage == true) {
-      Future.sync(() {
-        _store.pagingController.refresh();
-      });
-
-    }
+    // if (widget.refreshPage == true) {
+    //   Future.sync(() {
+    //     _store.pagingController.refresh();
+    //   });
+    //
+    // }
     return Scaffold(
       drawer: _buildDrawer(),
       appBar: _buildAppBar(),
@@ -250,9 +213,9 @@ class _HomeScreenState extends State<HomeScreen>
           child: FloatingActionButton(
               backgroundColor: Colors.red,
               onPressed: () {
-                _store.removeFilter();
-                _store.pagingController.refresh();
-                DeviceUtils.hideKeyboard(context);
+                // _store.removeFilter();
+                // _store.pagingController.refresh();
+                // DeviceUtils.hideKeyboard(context);
                 // Navigator.of(context).pushNamed(Routes.create_question);
               },
               child: Icon(Icons.clear,
@@ -276,7 +239,7 @@ class _HomeScreenState extends State<HomeScreen>
         onChange: (value) {
           print(value);
           _store.body = value;
-          _store.pagingController.refresh();
+          // _store.pagingController.refresh();
         },
         onSuffixTap: () {
           setState(() {
@@ -297,23 +260,6 @@ class _HomeScreenState extends State<HomeScreen>
         },
       );
 
-/*  Widget _buildCreateQuestionFAB() => Observer(
-        builder: (_) => AnimatedOpacity(
-          child: FloatingActionButton(
-            child: Icon(Icons.arrow_upward, color: Colors.black),
-            elevation: 2.0,
-            onPressed: () {
-              _store.controller.animateTo(
-                .0,
-                curve: Curves.easeOut,
-                duration: const Duration(milliseconds: 300),
-              );
-            },
-          ),
-          duration: Duration(milliseconds: 100),
-          opacity: _store.fabIsVisible ? 1 : 0,
-        ),
-      );*/
   Widget _buildCreateQuestionFAB() => OpenContainer(
         transitionType: _transitionType,
         openBuilder: (BuildContext context, VoidCallback _) {
@@ -340,7 +286,7 @@ class _HomeScreenState extends State<HomeScreen>
         },
       );
 
-  Widget _buildBody() => RefreshIndicator(
+ /* Widget _buildBody() => RefreshIndicator(
         onRefresh: () =>  Future.sync(() =>
           _store.pagingController.refresh()
         ),
@@ -384,5 +330,76 @@ class _HomeScreenState extends State<HomeScreen>
                 }),
           ),
         ),
-      );
+      );*/
+
+  Widget _buildBody()=>Stack(
+    children: [
+      Align(
+        alignment: Alignment.center,
+        child: Observer(
+          builder: (_) => Visibility(
+            visible: _store.success,
+            child: SmartRefresher(
+              enablePullDown: true,
+              enablePullUp: true,
+              header: WaterDropMaterialHeader(
+                backgroundColor: Theme.of(context).appBarTheme.color,
+              ),
+              footer: CustomFooter(
+                builder: (BuildContext context, LoadStatus? mode) {
+                  Widget body;
+                  if (mode == LoadStatus.idle) {
+                    body = Text("pull up load");
+                  } else if (mode == LoadStatus.loading) {
+                    body = CupertinoActivityIndicator();
+                  } else if (mode == LoadStatus.failed) {
+                    body = Text("Load Failed!Click retry!");
+                  } else if (mode == LoadStatus.canLoading) {
+                    body = Text("release to load more");
+                  } else {
+                    body = Text("No more Data");
+                  }
+                  return Container(
+                    height: 50.0,
+                    child: Center(child: body),
+                  );
+                },
+              ),
+              controller: _refreshController,
+              onRefresh: () async {
+                //return page 0 because onLoading function can send request again
+                _page = 0;
+                debugPrint("Pagination onRefresh");
+                await Future.delayed(Duration(milliseconds: 1000));
+                _store.question.clear();
+                await _store.getQuestion(0);
+                setState(() {});
+                _refreshController.refreshCompleted();
+              },
+              onLoading: () async {
+                debugPrint("Pagination onLoading");
+                await Future.delayed(Duration(milliseconds: 1000));
+                if (!(_page >= _store.question.length)) {
+                  _page += 6;
+                  await _store.getQuestion(_page);
+                  setState(() {
+                    _refreshController.loadComplete();
+                  });
+                } else {
+                  setState(() {
+                    _refreshController.loadComplete();
+                  });
+                }
+              },
+              child: ListView.builder(
+                itemCount: _store.question.length,
+                itemBuilder: (_ , index)=>QuestionItem(item: _store.question[index], onTap: (){}),
+              ),
+            ),
+            replacement: StackOverFlowIndecator(),
+          ),
+        ),
+      ),
+    ],
+  );
 }

@@ -20,7 +20,8 @@ class CreateQuestionScreen extends StatefulWidget {
   final bool? editQuestion;
   final Question? questionItem;
   final String? questionId;
-  CreateQuestionScreen({this.questionId,this.editQuestion , this.questionItem});
+
+  CreateQuestionScreen({this.questionId, this.editQuestion, this.questionItem});
 
   @override
   _CreateQuestionScreenState createState() => _CreateQuestionScreenState();
@@ -41,15 +42,14 @@ class _CreateQuestionScreenState extends State<CreateQuestionScreen> {
     super.didChangeDependencies();
     _store = Provider.of<CreateQuestionStore>(context);
     _store.getCategory(0);
-    if(widget.editQuestion == true){
+    if (widget.editQuestion == true) {
       _store.questionId = widget.questionId;
-      _titleController.text= widget.questionItem!.title!;
-    _bodyController.text = widget.questionItem!.body!;
-    for(var i in widget.questionItem!.tags!){
-      _tags.add(Language(name: i));
-
-    }
-     // widget.questionItem!.tags!.forEach((element) =>Language(name: element ,position: element.length));
+      _titleController.text = widget.questionItem!.title!;
+      _bodyController.text = widget.questionItem!.body!;
+      for (var i in widget.questionItem!.tags!) {
+        _tags.add(Language(name: i));
+      }
+      // widget.questionItem!.tags!.forEach((element) =>Language(name: element ,position: element.length));
     }
   }
 
@@ -74,7 +74,7 @@ class _CreateQuestionScreenState extends State<CreateQuestionScreen> {
       //todo change languages
       leading: ArrowBackIcon(),
       title: Text(
-        widget.editQuestion == true? "Edit Question" :"Ask Question",
+        widget.editQuestion == true ? "Edit Question" : "Ask Question",
         style: Theme.of(context).textTheme.headline6,
       ));
 
@@ -111,14 +111,13 @@ class _CreateQuestionScreenState extends State<CreateQuestionScreen> {
                 ? _navigateToLoginScreen(context)
                 : _buildClosed();
           }),
-
-          Observer(builder:(_)=> Visibility(
-            visible: _store.loadingEditQuestion,
-            child: StackOverFlowIndecator(),
-          )),
+          Observer(
+              builder: (_) => Visibility(
+                    visible: _store.loadingEditQuestion,
+                    child: StackOverFlowIndecator(),
+                  )),
         ],
       );
-
 
   Widget _buildQuestionTitle() => Observer(
         builder: (_) => TextFeildAddQuestion(
@@ -172,54 +171,59 @@ class _CreateQuestionScreenState extends State<CreateQuestionScreen> {
       );
 
   Widget _buildSelectCategory() => Observer(
-    builder: (_) => Padding(
-      padding: const EdgeInsets.symmetric(horizontal: Dimens.padding_large),
-      child: CategoryDropDown(
-        //todo
-        //category name this maens widget.questionitem.categoryName but this not return from api
-        hint: widget.editQuestion == true?"category name":"Select Category",
-        value: _store.categoryId,
-        item: [
-          ..._store.category.map((e) {
-            return DropdownMenuItem<String>(
-              child: Text(e.name.toString()),
-              value: e.id,
-            );
-          }).toList(),
-        ],
-        onChange: (String? value){
-          if(widget.editQuestion == true){
-            setState(() {
-              value = widget.questionItem!.categoryId;
-              _store.categoryId = value;
-            });
-          }
-          setState(() {
-            _store.categoryId = value;
-          });
-        },
-      ),
-    ),
-  );
+        builder: (_) => Padding(
+          padding: const EdgeInsets.symmetric(horizontal: Dimens.padding_large),
+          child: CategoryDropDown(
+            //todo
+            //category name this maens widget.questionitem.categoryName but this not return from api
+            hint: widget.editQuestion == true
+                ? "category name"
+                : "Select Category",
+            value: _store.categoryId,
+            item: [
+              ..._store.category.map((e) {
+                return DropdownMenuItem<String>(
+                  child: Text(e.name.toString()),
+                  value: e.id,
+                );
+              }).toList(),
+            ],
+            onChange: (String? value) {
+              if (widget.editQuestion == true) {
+                setState(() {
+                  value = widget.questionItem!.categoryId;
+                  _store.categoryId = value;
+                });
+              }
+              setState(() {
+                _store.categoryId = value;
+              });
+            },
+          ),
+        ),
+      );
 
   Widget _buildButton() => Padding(
         padding: const EdgeInsets.symmetric(horizontal: Dimens.padding_large),
         child: RoundedButton(
-            onPressed: widget.editQuestion == true?
-                ()async{
-              await _store.updateQuestion().then((value) {
-                Navigator.pop(context , true);
-              }).catchError((e){print(e);});
-
-            }
-                :() async {
-              if (_formStore.canCreateQuestion == true) {
-                await _store.createQuestion();
-              } else {
-                showErrorMessage('Please check all fields', context);
-              }
-            },
-            title: widget.editQuestion == true?"Edit Question":"Create Question"),
+            onPressed: widget.editQuestion == true
+                ? () async {
+                    await _store.updateQuestion().then((value) {
+                      Navigator.pop(context, true);
+                    }).catchError((e) {
+                      print(e);
+                    });
+                  }
+                : () async {
+                    if (_formStore.canCreateQuestion == true) {
+                      await _store.createQuestion();
+                    } else {
+                      showErrorMessage('Please check all fields', context);
+                    }
+                  },
+            title: widget.editQuestion == true
+                ? "Edit Question"
+                : "Create Question"),
       );
 
   ///this  Navigation to another page

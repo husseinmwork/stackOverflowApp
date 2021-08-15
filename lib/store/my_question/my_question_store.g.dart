@@ -54,22 +54,6 @@ mixin _$MyQuestionStore on _MyQuestionStore, Store {
     });
   }
 
-  final _$pagingControllerAtom =
-      Atom(name: '_MyQuestionStore.pagingController');
-
-  @override
-  PagingController<int, Question> get pagingController {
-    _$pagingControllerAtom.reportRead();
-    return super.pagingController;
-  }
-
-  @override
-  set pagingController(PagingController<int, Question> value) {
-    _$pagingControllerAtom.reportWrite(value, super.pagingController, () {
-      super.pagingController = value;
-    });
-  }
-
   final _$questionAtom = Atom(name: '_MyQuestionStore.question');
 
   @override
@@ -88,9 +72,8 @@ mixin _$MyQuestionStore on _MyQuestionStore, Store {
   final _$getQuestionAsyncAction = AsyncAction('_MyQuestionStore.getQuestion');
 
   @override
-  Future<dynamic> getQuestion(int skip, {int? limit}) {
-    return _$getQuestionAsyncAction
-        .run(() => super.getQuestion(skip, limit: limit));
+  Future<dynamic> getQuestion(int skip) {
+    return _$getQuestionAsyncAction.run(() => super.getQuestion(skip));
   }
 
   @override
@@ -99,7 +82,6 @@ mixin _$MyQuestionStore on _MyQuestionStore, Store {
 user: ${user},
 success: ${success},
 loading: ${loading},
-pagingController: ${pagingController},
 question: ${question}
     ''';
   }

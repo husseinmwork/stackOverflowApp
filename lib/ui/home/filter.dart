@@ -68,7 +68,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                   onPressed: () {
                     Navigator.of(context).pop();
                     // _store.getQuestion(skip);
-                    _store.pagingController.refresh();
+                    // _store.pagingController.refresh();
                   },
                   title: 'Show Result')
             ],

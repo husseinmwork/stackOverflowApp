@@ -1,6 +1,3 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/rendering.dart';
-import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:injectable/injectable.dart';
 import 'package:mobx/mobx.dart';
 import 'package:todo_app/data/repositry.dart';
@@ -47,7 +44,6 @@ abstract class _HomeStore with Store {
   @observable
   bool fabIsVisible = false;*/
 
-
   @observable
   int? minVotes;
 
@@ -79,14 +75,10 @@ abstract class _HomeStore with Store {
   List<Category> category = ObservableList<Category>();
 
   @observable
-  PagingController<int, Question> pagingController =
-      PagingController(firstPageKey: 0 );
-
-  @observable
   String? categoryId;
 
   @observable
-  QuestionFilter? filter ;
+  QuestionFilter? filter;
 
   @computed
   bool get showIconFilter =>
@@ -97,7 +89,7 @@ abstract class _HomeStore with Store {
       categoryId == null &&
       minViews == null &&
       maxViews == null &&
-          //this problems
+      //this problems
       tags.isEmpty &&
       userId == null;
 
@@ -128,7 +120,7 @@ abstract class _HomeStore with Store {
     categoryId = null;
     minViews = null;
     maxViews = null;
-    tags = [] ;
+    tags = [];
   }
 
   ///this method work logout and remove (user , authToken , IsLoggedIn) shared preferences
@@ -143,27 +135,29 @@ abstract class _HomeStore with Store {
     // debugPrint(user.toString());
   }
 
-
   ///get question with paging
   @action
-  Future getQuestion(int skip, {int? limit}) async {
+  Future getQuestion(int skip) async {
     await _repository
-        .getQuestion(skip,
-            filter: QuestionFilter(
-                body: body,
-                maxVotes: maxVotes,
-                minVotes: minVotes,
-                id: id,
-                userId: userId,
-                fieldId: categoryId,
-                minViews: minViews,
-                maxViews: maxViews,
-                tags:tags
-            ))
+        .getQuestion(
+      skip: skip,
+      take: 6,
+      filter: QuestionFilter(
+          body: body,
+          maxVotes: maxVotes,
+          minVotes: minVotes,
+          id: id,
+          userId: userId,
+          fieldId: categoryId,
+          minViews: minViews,
+          maxViews: maxViews,
+          tags: tags),
+    )
         .then((value) {
-       question = value.results;
-
+      question = value.results;
+      success = true;
     }).catchError((e) {
+      success = false;
       throw e;
     });
   }
