@@ -132,6 +132,16 @@ class Services {
     }
   }
 
+  Future<Question> updateQuestion(Question question , String questionId) async {
+    try {
+      var response =
+      await _dioClient.patch(Endpoints.question +'/'+ questionId, data: question.toJson().removeNull());
+      return Question.fromJson(response);
+    } catch (e) {
+      throw e;
+    }
+  }
+
   Future deleteQuestion(String questionId)async{
     try{
       var response = await _dioClient.delete(Endpoints.question +'/'+ questionId);

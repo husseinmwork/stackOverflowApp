@@ -5,8 +5,9 @@ class CategoryDropDown extends StatelessWidget {
   final Function? onChange;
   final List<DropdownMenuItem<String>>? item;
   final String? value;
+  final String hint;
 
-  const CategoryDropDown({ this.onChange ,  this.item ,  this.value}) ;
+  const CategoryDropDown({required this.hint ,this.onChange ,  this.item ,  this.value}) ;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +26,7 @@ class CategoryDropDown extends StatelessWidget {
         ),
         underline: Text(""),
         isExpanded: true,
-        hint: Text("Select Category",
+        hint: Text(hint,
             style: Theme.of(context).textTheme.bodyText1),
         style: Theme.of(context).textTheme.bodyText1,
         items: item,

@@ -4,6 +4,7 @@ import 'package:mobx/mobx.dart';
 import 'package:todo_app/data/repositry.dart';
 import 'package:todo_app/model/create_question/create_question.dart';
 import 'package:todo_app/model/get_category/get_category.dart';
+import 'package:todo_app/model/get_question/get_question.dart';
 import 'package:todo_app/store/error/error_store.dart';
 import 'package:todo_app/widgets/tags_language.dart';
 
@@ -27,6 +28,9 @@ abstract class _CreateQuestionStore with Store {
   bool loading = false;
 
   @observable
+  bool loadingEditQuestion = false;
+
+  @observable
   String? title;
 
   @observable
@@ -43,6 +47,9 @@ abstract class _CreateQuestionStore with Store {
 
   @observable
   String? categoryId;
+
+  @observable
+  String? questionId;
 
   @action
   Future createQuestion() async {
@@ -75,5 +82,29 @@ abstract class _CreateQuestionStore with Store {
     await _repository.getCategory(skip).then((value) {
       return category = value.results;
     }).catchError((e) {});
+  }
+
+
+  @action
+  Future updateQuestion()async{
+    loadingEditQuestion = true;
+    if (tags != null) {
+      allTags = [];
+      for (var i in tags!) {
+        allTags.add(i.name);
+      }
+    }
+    await _repository.updateQuestion(Question(
+      body: body,
+      title: title,
+      tags: allTags,
+      categoryId: categoryId,
+    ) , questionId!).then((value) {
+
+    }).catchError((error){
+      loadingEditQuestion = false;
+     debugPrint("error in update question");
+     throw error;
+    });
   }
 }

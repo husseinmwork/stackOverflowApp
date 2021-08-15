@@ -6,6 +6,7 @@ import 'package:todo_app/constants/strings.dart';
 import 'package:todo_app/model/get_question/get_question.dart';
 import 'package:todo_app/store/details_question/details_question_store.dart';
 import 'package:todo_app/ui/answers/answers.dart';
+import 'package:todo_app/ui/create_question/create_question.dart';
 import 'package:todo_app/ui/home/home.dart';
 import 'package:todo_app/utils/todo/todo_utils.dart';
 import 'package:todo_app/widgets/like.dart';
@@ -146,7 +147,12 @@ class _DetailsQuestionScreenState extends State<DetailsQuestionScreen> {
                     }).catchError((e) {
                       showErrorMessage(_store.errorStore.errorMessage, context);
                     });
-                  } else {}
+                  } else {
+                   final resultEditQuestion = await Navigator.push(context, MaterialPageRoute(builder: (_)=>CreateQuestionScreen(editQuestion:true , questionItem: _store.question,questionId: widget.id,)));
+                  if(resultEditQuestion == true){
+                    _store.getQuestion();
+                  }
+                  }
                 },
               ),
             ),

@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app/constants/dimens.dart';
+import 'package:todo_app/model/get_question/get_question.dart';
 import 'package:todo_app/store/create_question/create_question_store.dart';
 import 'package:todo_app/store/form/form_store.dart';
 import 'package:todo_app/ui/home/home.dart';
@@ -14,6 +17,11 @@ import 'package:todo_app/widgets/tags_language.dart';
 import 'package:todo_app/widgets/todo_button.dart';
 
 class CreateQuestionScreen extends StatefulWidget {
+  final bool? editQuestion;
+  final Question? questionItem;
+  final String? questionId;
+  CreateQuestionScreen({this.questionId,this.editQuestion , this.questionItem});
+
   @override
   _CreateQuestionScreenState createState() => _CreateQuestionScreenState();
 }
@@ -23,7 +31,7 @@ class _CreateQuestionScreenState extends State<CreateQuestionScreen> {
   TextEditingController _bodyController = TextEditingController();
   TextEditingController _tagController = TextEditingController();
 
-  List<Language> tags = [];
+  List<Language> _tags = [];
 
   late CreateQuestionStore _store;
   final _formStore = FormStore();
@@ -33,6 +41,16 @@ class _CreateQuestionScreenState extends State<CreateQuestionScreen> {
     super.didChangeDependencies();
     _store = Provider.of<CreateQuestionStore>(context);
     _store.getCategory(0);
+    if(widget.editQuestion == true){
+      _store.questionId = widget.questionId;
+      _titleController.text= widget.questionItem!.title!;
+    _bodyController.text = widget.questionItem!.body!;
+    for(var i in widget.questionItem!.tags!){
+      _tags.add(Language(name: i));
+
+    }
+     // widget.questionItem!.tags!.forEach((element) =>Language(name: element ,position: element.length));
+    }
   }
 
   @override
@@ -41,6 +59,7 @@ class _CreateQuestionScreenState extends State<CreateQuestionScreen> {
     _titleController.dispose();
     _bodyController.dispose();
     _tagController.dispose();
+    _store.loadingEditQuestion = false;
   }
 
   @override
@@ -55,7 +74,7 @@ class _CreateQuestionScreenState extends State<CreateQuestionScreen> {
       //todo change languages
       leading: ArrowBackIcon(),
       title: Text(
-        "Ask Question",
+        widget.editQuestion == true? "Edit Question" :"Ask Question",
         style: Theme.of(context).textTheme.headline6,
       ));
 
@@ -92,6 +111,11 @@ class _CreateQuestionScreenState extends State<CreateQuestionScreen> {
                 ? _navigateToLoginScreen(context)
                 : _buildClosed();
           }),
+
+          Observer(builder:(_)=> Visibility(
+            visible: _store.loadingEditQuestion,
+            child: StackOverFlowIndecator(),
+          )),
         ],
       );
 
@@ -138,9 +162,9 @@ class _CreateQuestionScreenState extends State<CreateQuestionScreen> {
                 style: Theme.of(context).textTheme.subtitle2),
             StackOverFlowTags(
               onChange: () {
-                _store.tags = tags;
+                _store.tags = _tags;
               },
-              selectedLanguages: tags,
+              selectedLanguages: _tags,
             ),
           ],
         ),
@@ -150,6 +174,9 @@ class _CreateQuestionScreenState extends State<CreateQuestionScreen> {
     builder: (_) => Padding(
       padding: const EdgeInsets.symmetric(horizontal: Dimens.padding_large),
       child: CategoryDropDown(
+        //todo
+        //category name this maens widget.questionitem.categoryName but this not return from api
+        hint: widget.editQuestion == true?"category name":"Select Category",
         value: _store.categoryId,
         item: [
           ..._store.category.map((e) {
@@ -160,6 +187,12 @@ class _CreateQuestionScreenState extends State<CreateQuestionScreen> {
           }).toList(),
         ],
         onChange: (String? value){
+          if(widget.editQuestion == true){
+            setState(() {
+              value = widget.questionItem!.categoryId;
+              _store.categoryId = value;
+            });
+          }
           setState(() {
             _store.categoryId = value;
           });
@@ -171,14 +204,21 @@ class _CreateQuestionScreenState extends State<CreateQuestionScreen> {
   Widget _buildButton() => Padding(
         padding: const EdgeInsets.symmetric(horizontal: Dimens.padding_large),
         child: RoundedButton(
-            onPressed: () async {
+            onPressed: widget.editQuestion == true?
+                ()async{
+              await _store.updateQuestion().then((value) {
+                Navigator.pop(context , true);
+              }).catchError((e){print(e);});
+
+            }
+                :() async {
               if (_formStore.canCreateQuestion == true) {
                 await _store.createQuestion();
               } else {
                 showErrorMessage('Please check all fields', context);
               }
             },
-            title: "Create Question"),
+            title: widget.editQuestion == true?"Edit Question":"Create Question"),
       );
 
   ///this  Navigation to another page

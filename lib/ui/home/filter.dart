@@ -244,6 +244,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
 
   Widget _buildSelectCategory() => Observer(
     builder: (_) => CategoryDropDown(
+      hint: "Select Category",
       value: _store.categoryId,
       item: [
         ..._store.category.map((e) {

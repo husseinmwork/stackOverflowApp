@@ -124,6 +124,10 @@ class Repository {
     return await _services.questionDeleteLike(likeId).catchError((e)=>throw e);
   }
 
+  Future updateQuestion(Question question , String questionId)async{
+    return await _services.updateQuestion(question , questionId).catchError((e)=>throw e);
+  }
+
   ///Answer
   Future<Paging<Answer>> getAnswers({required int take ,required int skip,required String questionId}) async {
     return await _services.getAnswers( questionId: questionId , skip: skip , take: take).catchError((e) => throw e);
