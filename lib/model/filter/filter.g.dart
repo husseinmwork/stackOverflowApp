@@ -18,6 +18,7 @@ QuestionFilter _$QuestionFilterFromJson(Map<String, dynamic> json) {
     maxViews: json['maxViews'] as int?,
     tags: (json['tags'] as List<dynamic>?)?.map((e) => e as String).toList(),
     questionId: json['questionId'] as String?,
+    oldest: json['createdAt'] as String?,
   );
 }
 
@@ -32,5 +33,6 @@ Map<String, dynamic> _$QuestionFilterToJson(QuestionFilter instance) =>
       'minViews': instance.minViews,
       'maxViews': instance.maxViews,
       'body': instance.body,
+      'createdAt': instance.oldest,
       'tags': instance.tags,
     };

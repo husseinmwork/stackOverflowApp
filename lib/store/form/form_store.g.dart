@@ -92,13 +92,13 @@ mixin _$FormStore on _FormStore, Store {
   final _$questionTitleAtom = Atom(name: '_FormStore.questionTitle');
 
   @override
-  String get questionTitle {
+  String? get questionTitle {
     _$questionTitleAtom.reportRead();
     return super.questionTitle;
   }
 
   @override
-  set questionTitle(String value) {
+  set questionTitle(String? value) {
     _$questionTitleAtom.reportWrite(value, super.questionTitle, () {
       super.questionTitle = value;
     });
@@ -107,13 +107,13 @@ mixin _$FormStore on _FormStore, Store {
   final _$questionBodyAtom = Atom(name: '_FormStore.questionBody');
 
   @override
-  String get questionBody {
+  String? get questionBody {
     _$questionBodyAtom.reportRead();
     return super.questionBody;
   }
 
   @override
-  set questionBody(String value) {
+  set questionBody(String? value) {
     _$questionBodyAtom.reportWrite(value, super.questionBody, () {
       super.questionBody = value;
     });

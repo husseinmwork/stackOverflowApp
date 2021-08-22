@@ -81,6 +81,7 @@ final ThemeData themeData = new ThemeData(
 );
 
 final ThemeData themeDataDark = ThemeData(
+
   appBarTheme: AppBarTheme(
     color: Colors.grey[800],
     backwardsCompatibility: false,
@@ -115,6 +116,8 @@ final ThemeData themeDataDark = ThemeData(
       elevation: 0,
     ),
   ),
+
+
 
   primarySwatch: Colors.grey,
   primaryColor:  Colors.grey[800],

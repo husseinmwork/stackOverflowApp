@@ -6,6 +6,8 @@ import 'package:todo_app/model/get_question/get_question.dart';
 import 'package:todo_app/model/user/user.dart';
 import 'package:todo_app/model/filter/filter.dart';
 import 'package:todo_app/store/error/error_store.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:todo_app/utils/dio/dio_error_util.dart';
 
 part 'home_store.g.dart';
 
@@ -45,6 +47,9 @@ abstract class _HomeStore with Store {
   bool fabIsVisible = false;*/
 
   @observable
+  String? oldest;
+
+  @observable
   int? minVotes;
 
   @observable
@@ -80,6 +85,10 @@ abstract class _HomeStore with Store {
   @observable
   QuestionFilter? filter;
 
+  @observable
+  RefreshController refreshController =
+      RefreshController(initialRefresh: false);
+
   @computed
   bool get showIconFilter =>
       minVotes == null &&
@@ -89,8 +98,7 @@ abstract class _HomeStore with Store {
       categoryId == null &&
       minViews == null &&
       maxViews == null &&
-      //this problems
-      tags.isEmpty &&
+      oldest == null &&
       userId == null;
 
   // actions:-------------------------------------------------------------------
@@ -120,6 +128,7 @@ abstract class _HomeStore with Store {
     categoryId = null;
     minViews = null;
     maxViews = null;
+    oldest = null;
     tags = [];
   }
 
@@ -130,7 +139,7 @@ abstract class _HomeStore with Store {
     _repository.removeUser();
     _repository.removeIsLoggedIn();
     _repository.removeAuthToken();
-    user = await _repository.user;
+    user = _repository.user;
     // // todo handel error
     // debugPrint(user.toString());
   }
@@ -138,26 +147,33 @@ abstract class _HomeStore with Store {
   ///get question with paging
   @action
   Future getQuestion(int skip) async {
+    loading = true;
     await _repository
         .getQuestion(
       skip: skip,
       take: 6,
       filter: QuestionFilter(
-          body: body,
-          maxVotes: maxVotes,
-          minVotes: minVotes,
-          id: id,
-          userId: userId,
-          fieldId: categoryId,
-          minViews: minViews,
-          maxViews: maxViews,
-          tags: tags),
+        body: body,
+        maxVotes: maxVotes,
+        minVotes: minVotes,
+        id: id,
+        userId: userId,
+        fieldId: categoryId,
+        minViews: minViews,
+        maxViews: maxViews,
+        tags: tags,
+        oldest: oldest,
+      ),
     )
         .then((value) {
-      question = value.results;
+      loading = false;
+      question.addAll(value.results);
       success = true;
     }).catchError((e) {
+      loading = false;
       success = false;
+      DioErrorUtil.handleError(e);
+      errorStore.errorMessage = DioErrorUtil.handleError(e);
       throw e;
     });
   }

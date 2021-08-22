@@ -6,35 +6,52 @@ part 'get_question.g.dart';
 @JsonSerializable()
 class Question {
   @JsonKey(name: 'id')
-  final  String? id;
+  final String? id;
   @JsonKey(name: 'body')
-  final  String? body;
+  final String? body;
   @JsonKey(name: 'votes')
-  final  double? votes;
+  final double? votes;
   @JsonKey(name: 'views')
-  final  double? views;
+  final double? views;
   @JsonKey(name: 'userId')
-  final  String? userId;
+  final String? userId;
   @JsonKey(name: 'user')
-  final  Account? user;
+  final Account? user;
   @JsonKey(name: 'title')
-  final  String? title;
+  final String? title;
   @JsonKey(name: 'fieldId')
-  final  String? categoryId;
+  final String? categoryId;
   @JsonKey(name: 'createdAt')
-  final  String? createdAt;
+  final DateTime? createdAt;
   @JsonKey(name: 'hasVoted')
-  final  String? hasVoted;
+  final String? hasVoted;
   @JsonKey(name: 'tags')
-  final  List<String>? tags;
+  final List<String>? tags;
   @JsonKey(name: 'answer')
-  final  List<Object>? answer;
+  final List<Object>? answer;
   @JsonKey(name: 'votesList')
-  final  List<VotesList>? votesList;
+  final List<VotesList>? votesList;
+  @JsonKey(name: 'field')
+  final Field? category;
 
-  Question({ this.categoryId ,this.createdAt,this.votesList,this.hasVoted,this.answer, this.views, this.tags,this.id, this.body, this.votes, this.user, this.userId , this.title});
+  Question(
+      {this.category,
+      this.categoryId,
+      this.createdAt,
+      this.votesList,
+      this.hasVoted,
+      this.answer,
+      this.views,
+      this.tags,
+      this.id,
+      this.body,
+      this.votes,
+      this.user,
+      this.userId,
+      this.title});
 
-  factory Question.fromJson(Map<String, dynamic> json) => _$QuestionFromJson(json);
+  factory Question.fromJson(Map<String, dynamic> json) =>
+      _$QuestionFromJson(json);
 
   static Question fromJsonModel(Map<String, dynamic> json) =>
       Question.fromJson(json);
@@ -43,23 +60,37 @@ class Question {
 }
 
 @JsonSerializable()
-class VotesList{
+class VotesList {
   @JsonKey(name: 'id')
-  final  String? id;
+  final String? id;
   @JsonKey(name: 'userId')
-  final  String? userId;
+  final String? userId;
   @JsonKey(name: 'questionId')
-  final  String? questionId;
+  final String? questionId;
   @JsonKey(name: 'type')
-  final  String? type;
+  final String? type;
 
   VotesList({this.id, this.userId, this.questionId, this.type});
 
-  factory VotesList.fromJson(Map<String, dynamic> json) => _$VotesListFromJson(json);
+  factory VotesList.fromJson(Map<String, dynamic> json) =>
+      _$VotesListFromJson(json);
 
   static VotesList fromJsonModel(Map<String, dynamic> json) =>
       VotesList.fromJson(json);
 
   Map<String, dynamic> toJson() => _$VotesListToJson(this);
+}
 
+@JsonSerializable()
+class Field {
+  @JsonKey(name: 'name')
+  final String? name;
+
+  Field({this.name});
+
+  factory Field.fromJson(Map<String, dynamic> json) => _$FieldFromJson(json);
+
+  static Field fromJsonModel(Map<String, dynamic> json) => Field.fromJson(json);
+
+  Map<String, dynamic> toJson() => _$FieldToJson(this);
 }

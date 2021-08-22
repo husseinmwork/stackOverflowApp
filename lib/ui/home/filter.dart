@@ -1,82 +1,100 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app/constants/dimens.dart';
-import 'package:todo_app/packages/textfield_tags.dart';
 import 'package:todo_app/store/home/home_store.dart';
+import 'package:todo_app/store/theme/theme_store.dart';
 import 'package:todo_app/widgets/category_dropdown.dart';
 import 'package:todo_app/widgets/filter_dropdown.dart';
+import 'package:todo_app/widgets/tags_language.dart';
 import 'package:todo_app/widgets/todo_button.dart';
 
-class FilterBottomSheet extends StatefulWidget {
+enum SortBy { NEWEST, OLDEST }
+
+class FilterScreen extends StatefulWidget {
   @override
-  _FilterBottomSheetState createState() => _FilterBottomSheetState();
+  _FilterScreenState createState() => _FilterScreenState();
 }
 
-class _FilterBottomSheetState extends State<FilterBottomSheet> {
-  //filter section
+class _FilterScreenState extends State<FilterScreen> {
+  late HomeStore _store;
+  late ThemeStore _themeStore;
+
   String? _valueMinVotes;
   String? _valueMaxVotes;
   String? _valueMinViews;
   String? _valueMaxViews;
-
   final List<String> _minVotes = ['10', '20', '30', '40', '50'];
   final List<String> _maxVotes = ['100', '110', '120', '130', '140'];
   final List<String> _minViews = ['10', '20', '30', '40', '50'];
   final List<String> _maxViews = ['100', '110', '120', '130', '140'];
-
-  ///tags
-  final FocusNode _focusNode = FocusNode();
-  final TextEditingController _textEditingController = TextEditingController();
-  late PersistentBottomSheetController _controller;
-
-  ///end tag
-
-  late HomeStore _store;
+  TextEditingController _tagController = TextEditingController();
+  List<Language> _tags = [];
+  SortBy _defaultValue = SortBy.NEWEST;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _store = Provider.of<HomeStore>(context);
+    _themeStore = Provider.of<ThemeStore>(context);
+    _store.getCategory(0);
   }
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Center(
-        child: Container(
-          padding: const EdgeInsets.symmetric(
-              vertical: Dimens.padding_normal, horizontal: Dimens.padding_xxl),
-          color: Theme.of(context).scaffoldBackgroundColor,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Column(
-                children: [
-                  _buildTags(),
-                  SizedBox(height: Dimens.padding_large),
-                  _buildVotes(),
-                  SizedBox(height: Dimens.padding_normal),
-                  _buildViews(),
-                  SizedBox(height: Dimens.padding_xxl),
-                  _buildSelectCategory(),
-                  SizedBox(height: Dimens.padding_xxl),
-                ],
-              ),
-              RoundedButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    // _store.getQuestion(skip);
-                    // _store.pagingController.refresh();
-                  },
-                  title: 'Show Result')
-            ],
-          ),
-        ),
-      ),
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      appBar: _buildAppBar(),
+      body: _buildBody(),
     );
   }
+
+  AppBar _buildAppBar() => AppBar(
+      title: Text("Filter", style: Theme.of(context).textTheme.headline6));
+
+  Widget _buildBody() => Container(
+        padding: const EdgeInsets.symmetric(
+            vertical: Dimens.padding_normal, horizontal: Dimens.padding_xl),
+        color: Theme.of(context).scaffoldBackgroundColor,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  //todo work validation add max five tags
+                  _buildFilterTags(),
+                  _buildVotes(),
+                  _buildViews(),
+                  _buildSelectCategory(),
+                  _buildSortedBy(),
+                ],
+              ),
+            ),
+            Observer(
+              builder: (_) => RoundedButton(
+                loading: _store.loading,
+                onPressed: () async {
+                  Future.delayed(Duration(milliseconds: 600));
+                  await _store.getQuestion(0).then((value) {
+                    _store.success = false;
+                    _store.question.clear();
+                    _store.getQuestion(0);
+                    Navigator.of(context).pop();
+                  }).catchError((e) {
+                    debugPrint("error");
+                  });
+                },
+                title: 'Show Result',
+              ),
+            )
+          ],
+        ),
+      );
 
   Widget _buildVotes() => Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -190,78 +208,69 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
         ],
       );
 
-  Widget _buildTags() => Observer(
-        builder: (_) => TagEditor(
-          length: _store.tags.length,
-          controller: _textEditingController,
-          focusNode: _focusNode,
-          delimiters: [',', ' '],
-          hasAddButton: true,
-          resetTextOnSubmitted: true,
-          // This is set to grey just to illustrate the `textStyle` prop
-          textStyle: const TextStyle(color: Colors.grey),
-          onSubmitted: (outstandingValue) {
-            if (_store.tags.length < 5) {
-              setState(() {
-                _store.tags.add(outstandingValue);
-              });
-            }
-          },
-          maxLength: 20,
-          inputDecoration: const InputDecoration(
-            border: InputBorder.none,
-            contentPadding: EdgeInsets.zero,
-            hintText: 'Hint Text...',
-            labelText: "Enter 5 tags or less",
-            // errorText: "Please enter 5 tags or less"
-          ),
-          onTagChanged: (String newValue) {
-            //  print("hhhhhhhhhhhhhh${newValue}");
-            // if(_values.length < 5){
-            //              setState(() {
-            //                _values.add(newValue);
-            //              });
-            //
-            // }
-          },
-          tagBuilder: (context, index) => Chip(
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
-            labelPadding: EdgeInsets.zero,
-            label: Text(_store.tags[index]),
-            deleteIcon: const Icon(
-              Icons.close,
-              size: 18,
-            ),
-            onDeleted: () {
-              setState(() {
-                _store.tags.removeAt(index);
-              });
+  Widget _buildFilterTags() => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text("Tags".toString(), style: Theme.of(context).textTheme.subtitle2),
+          StackOverFlowTags(
+            controller: _tagController,
+            onChange: () {
+              for (var i in _tags) {
+                _store.tags.add(i.name);
+              }
             },
+            selectedLanguages: _tags,
           ),
-        ),
+        ],
       );
 
   Widget _buildSelectCategory() => Observer(
-    builder: (_) => CategoryDropDown(
-      hint: "Select Category",
-      value: _store.categoryId,
-      item: [
-        ..._store.category.map((e) {
-          return DropdownMenuItem<String>(
-            child: Text(e.name.toString()),
-            value: e.id,
-          );
-        }).toList(),
-      ],
-      onChange: (String? value){
-        setState(() {
-          _store.categoryId = value;
-        });
-      },
-    ),
-  );
+        builder: (_) => CategoryDropDown(
+          hint: "Select Category",
+          value: _store.categoryId,
+          item: [
+            ..._store.category.map((e) {
+              return DropdownMenuItem<String>(
+                child: Text(e.name.toString()),
+                value: e.id,
+              );
+            }).toList(),
+          ],
+          onChange: (String? value) {
+            setState(() {
+              _store.categoryId = value;
+            });
+          },
+        ),
+      );
 
-
-
+  Widget _buildSortedBy() => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text("Sorted By", style: Theme.of(context).textTheme.subtitle2),
+          RadioListTile<SortBy>(
+            value: SortBy.NEWEST,
+            groupValue: _defaultValue,
+            onChanged: (SortBy? c) {
+              //because default value of  question sort is newest
+              _store.oldest = null;
+              setState(() {
+                _defaultValue = c!;
+              });
+            },
+            title: Text("Newest", style: Theme.of(context).textTheme.bodyText1),
+          ),
+          RadioListTile(
+            value: SortBy.OLDEST,
+            groupValue: _defaultValue,
+            onChanged: (SortBy? c) {
+              _store.oldest = 'OLDEST';
+              setState(() {
+                _defaultValue = c!;
+              });
+            },
+            title: Text("Oldest", style: Theme.of(context).textTheme.bodyText1),
+          )
+        ],
+      );
 }

@@ -36,6 +36,7 @@ class Dimens {
 
   //size
   static const double image = 50;
+  static const double paginationLoading = 50;
   static const double imageProfile = 60;
   static const double imageDrawer = 40;
   static const double cardQuestionImage = 18;

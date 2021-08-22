@@ -105,6 +105,7 @@ class _AnswersScreenState extends State<AnswersScreen> {
                           _refreshController.refreshCompleted();
                         },
                         onLoading: () async {
+                         //todo remove numberOfAnswers and add _store.answer.length
                           debugPrint("Pagination onLoading");
                           await Future.delayed(Duration(milliseconds: 1000));
                           if (!(_page >= widget.numberOfAnswers)) {

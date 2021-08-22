@@ -51,6 +51,10 @@ abstract class _CreateQuestionStore with Store {
   @observable
   String? questionId;
 
+/*  @computed
+  bool get createQuestionSuccess => loading && success;*/
+
+
   @action
   Future createQuestion() async {
     loading = true;
@@ -66,6 +70,7 @@ abstract class _CreateQuestionStore with Store {
       body: body,
       title: title,
       tags: allTags,
+      fieldId: categoryId,
     ))
         .then((value) {
       success = true;
@@ -73,6 +78,7 @@ abstract class _CreateQuestionStore with Store {
       loading = false;
       success = false;
       debugPrint("error in create question $e");
+      throw e;
     });
   }
 

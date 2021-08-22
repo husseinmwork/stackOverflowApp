@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:material_dialog/material_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app/constants/dimens.dart';
 import 'package:todo_app/constants/strings.dart';
@@ -7,7 +8,6 @@ import 'package:todo_app/model/get_question/get_question.dart';
 import 'package:todo_app/store/details_question/details_question_store.dart';
 import 'package:todo_app/ui/answers/answers.dart';
 import 'package:todo_app/ui/create_question/create_question.dart';
-import 'package:todo_app/ui/home/home.dart';
 import 'package:todo_app/utils/todo/todo_utils.dart';
 import 'package:todo_app/widgets/like.dart';
 import 'package:todo_app/widgets/stack_overflow_indecator.dart';
@@ -141,17 +141,20 @@ class _DetailsQuestionScreenState extends State<DetailsQuestionScreen> {
               child: PopUpMenuWidget(
                 onSelected: (result) async {
                   if (result == question.delete) {
-                    await _store.deleteQuestion().then((value) {
-                      //if event error not work pop
-                      Navigator.pop(context, true);
-                    }).catchError((e) {
-                      showErrorMessage(_store.errorStore.errorMessage, context);
-                    });
+                    _buildDeleteDialog();
                   } else {
-                   final resultEditQuestion = await Navigator.push(context, MaterialPageRoute(builder: (_)=>CreateQuestionScreen(editQuestion:true , questionItem: _store.question,questionId: widget.id,)));
-                  if(resultEditQuestion == true){
-                    _store.getQuestion();
-                  }
+                    final resultEditQuestion = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => CreateQuestionScreen(
+                                  editQuestion: true,
+                                  questionItem: _store.question,
+                                  questionId: widget.id,
+                                )),);
+                    if (resultEditQuestion == true) {
+                      _store.successGetQuestion = false;
+                      _store.getQuestion();
+                    }
                   }
                 },
               ),
@@ -263,4 +266,63 @@ class _DetailsQuestionScreenState extends State<DetailsQuestionScreen> {
           ],
         ),
       );
+
+  _buildDeleteDialog() {
+    showGeneralDialog(
+        barrierColor: Colors.black.withOpacity(0.5),
+        transitionBuilder: (context, a1, a2, widget) {
+          final curvedValue = Curves.easeInOutBack.transform(a1.value) - 1.0;
+          return Transform(
+            transform: Matrix4.translationValues(0.0, curvedValue * 200, 0.0),
+            child: Opacity(
+              opacity: a1.value,
+              child: MaterialDialog(
+                actions: [
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text("CANCEL",
+                        style: Theme.of(context).textTheme.button),
+                  ),
+                  ElevatedButton(
+                    onPressed: () async {
+                      await _store.deleteQuestion().then((value) {
+                        Navigator.pop(context);
+                        Navigator.pop(context, true);
+                      }).catchError((e) {
+                        showErrorMessage(
+                            _store.errorStore.errorMessage, context);
+                      });
+                    },
+                    child:
+                        Text("OK", style: Theme.of(context).textTheme.button),
+                  ),
+                ],
+                content: Text(
+                  "Are you sure you want to delete the question?",
+                  style: Theme.of(context).textTheme.subtitle2,
+                ),
+                borderRadius: Dimens.border_mid,
+                enableFullWidth: true,
+                title: Text(
+                  "Delete Question",
+                  style: Theme.of(context).textTheme.subtitle1,
+                ),
+                headerColor: Theme.of(context).primaryColor,
+                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                enableCloseButton: false,
+                enableBackButton: false,
+              ),
+            ),
+          );
+        },
+        transitionDuration: Duration(milliseconds: 400),
+        barrierDismissible: true,
+        barrierLabel: '',
+        context: context,
+        pageBuilder: (context, animation1, animation2) {
+          return Text("");
+        });
+  }
 }

@@ -10,9 +10,8 @@ import 'package:todo_app/packages/anim_search_widget.dart';
 import 'package:todo_app/store/home/home_store.dart';
 import 'package:todo_app/store/theme/theme_store.dart';
 import 'package:todo_app/ui/create_question/create_question.dart';
-import 'package:todo_app/ui/home/filter.dart';
+import 'package:todo_app/ui/details_question/details_question.dart';
 import 'package:todo_app/ui/home/question_item.dart';
-import 'package:todo_app/utils/device/device_utils.dart';
 import 'package:todo_app/utils/routes/routes.dart';
 import 'package:todo_app/widgets/stack_overflow_indecator.dart';
 
@@ -32,21 +31,13 @@ class _HomeScreenState extends State<HomeScreen>
   late HomeStore _store;
   late ThemeStore _themeStore;
 
-  RefreshController _refreshController =
-  RefreshController(initialRefresh: false);
   int _page = 0;
 
   ContainerTransitionType _transitionType = ContainerTransitionType.fade;
 
-
   TextEditingController searchController = TextEditingController();
   bool _showNameApp = true;
   bool _showSearchColor = false;
-
-
-
-
-
 
   @override
   void didChangeDependencies() {
@@ -59,17 +50,20 @@ class _HomeScreenState extends State<HomeScreen>
 
   @override
   Widget build(BuildContext context) {
-    // if (widget.refreshPage == true) {
-    //   Future.sync(() {
-    //     _store.pagingController.refresh();
-    //   });
-    //
-    // }
+    if (widget.refreshPage == true) {
+      //return page 0 because onLoading function can send request again
+      _page = 0;
+      debugPrint("Pagination onRefresh");
+      Future.delayed(Duration(milliseconds: 1000));
+      _store.question.clear();
+      _store.getQuestion(0);
+      _store.refreshController.refreshCompleted();
+    }
     return Scaffold(
       drawer: _buildDrawer(),
       appBar: _buildAppBar(),
       floatingActionButton: Observer(
-          builder: (_) => _store.showIconFilter
+          builder: (_) => (_store.showIconFilter && _store.tags.isEmpty)
               ? _buildCreateQuestionFAB()
               : _buildRemoveFilterFAB()),
       body: _buildBody(),
@@ -158,7 +152,7 @@ class _HomeScreenState extends State<HomeScreen>
   Widget _createDrawerItem(
       {required IconData icon,
       required String text,
-      required GestureTapCallback onTap}){
+      required GestureTapCallback onTap}) {
     return ListTile(
       title: Row(
         children: <Widget>[
@@ -207,22 +201,6 @@ class _HomeScreenState extends State<HomeScreen>
         ],
       );
 
-  Widget _buildRemoveFilterFAB() => Observer(
-        builder: (_) => Visibility(
-          visible: _store.showIconFilter == false,
-          child: FloatingActionButton(
-              backgroundColor: Colors.red,
-              onPressed: () {
-                // _store.removeFilter();
-                // _store.pagingController.refresh();
-                // DeviceUtils.hideKeyboard(context);
-                // Navigator.of(context).pushNamed(Routes.create_question);
-              },
-              child: Icon(Icons.clear,
-                  color: Colors.white, size: Dimens.padding_xxl)),
-        ),
-      );
-
   Widget _buildSearchIcon() => AnimSearchBar(
         onTap: () async {
           await Future.delayed(
@@ -252,15 +230,25 @@ class _HomeScreenState extends State<HomeScreen>
   Widget _buildFilterIcon() => IconButton(
         icon: Icon(Icons.filter_alt),
         onPressed: () async {
-          await _store.getCategory(0);
-          showModalBottomSheet(
-              isScrollControlled: true,
-              context: context,
-              builder: (_) => FilterBottomSheet());
+          Navigator.of(context).pushNamed(Routes.filter);
         },
       );
 
+  Widget _buildRemoveFilterFAB() => FloatingActionButton(
+        backgroundColor: Colors.red,
+        onPressed: () async {
+          _store.success = false;
+          _store.removeFilter();
+          _page = 0;
+          _store.question.clear();
+          await _store.getQuestion(0);
+          _store.refreshController.refreshCompleted();
+        },
+        child: Icon(Icons.clear, color: Colors.white, size: Dimens.padding_xxl),
+      );
+
   Widget _buildCreateQuestionFAB() => OpenContainer(
+        transitionDuration: Duration(milliseconds: 500),
         transitionType: _transitionType,
         openBuilder: (BuildContext context, VoidCallback _) {
           return CreateQuestionScreen();
@@ -270,9 +258,15 @@ class _HomeScreenState extends State<HomeScreen>
             Radius.circular(_fabDimension / 2),
           ),
         ),
+        onClosed: (result) async {
+          if (result == true) {
+            _store.success = false;
+            _store.question.clear();
+            await _store.getQuestion(0);
+          }
+        },
         closedColor: Theme.of(context).colorScheme.secondary,
         closedBuilder: (BuildContext context, VoidCallback openContainer) {
-
           return SizedBox(
             height: _fabDimension,
             width: _fabDimension,
@@ -286,120 +280,88 @@ class _HomeScreenState extends State<HomeScreen>
         },
       );
 
- /* Widget _buildBody() => RefreshIndicator(
-        onRefresh: () =>  Future.sync(() =>
-          _store.pagingController.refresh()
-        ),
-        child: PagedListView<int , Question>(
-          pagingController: _store.pagingController,
-          builderDelegate: PagedChildBuilderDelegate<Question>(
-            firstPageProgressIndicatorBuilder: (_) => StackOverFlowIndecator(),
-            noItemsFoundIndicatorBuilder: (_) => Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(height: Dimens.padding_xl),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.search, color: Colors.lightBlueAccent),
-                    SizedBox(width: Dimens.padding_mini),
-                    Text(
-                      "no_result_found",
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                    ),
-                  ],
+  Widget _buildBody() => Stack(
+        children: [
+          Align(
+            alignment: Alignment.center,
+            child: Observer(
+              builder: (_) => Visibility(
+                visible: _store.success,
+                child: SmartRefresher(
+                  enablePullDown: true,
+                  enablePullUp: true,
+                  header: WaterDropMaterialHeader(
+                    backgroundColor: Theme.of(context).appBarTheme.color,
+                  ),
+                  footer: CustomFooter(
+                    builder: (BuildContext context, LoadStatus? mode) {
+                      Widget body;
+                      if (mode == LoadStatus.idle) {
+                        body = Text("pull up load");
+                      } else if (mode == LoadStatus.loading) {
+                        body = CupertinoActivityIndicator();
+                      } else if (mode == LoadStatus.failed) {
+                        body = Text("Load Failed!Click retry!");
+                      } else if (mode == LoadStatus.canLoading) {
+                        body = Text("release to load more");
+                      } else {
+                        body = Text("No more Data");
+                      }
+                      return Container(
+                        height: Dimens.paginationLoading,
+                        child: Center(child: body),
+                      );
+                    },
+                  ),
+                  controller: _store.refreshController,
+                  onRefresh: () async {
+                    //return page 0 because onLoading function can send request again
+                    _page = 0;
+                    debugPrint("Pagination onRefresh");
+                    await Future.delayed(Duration(milliseconds: 1000));
+                    _store.question.clear();
+                    await _store.getQuestion(0);
+                    _store.refreshController.refreshCompleted();
+                  },
+                  onLoading: () async {
+                    debugPrint("Pagination onLoading");
+                    await Future.delayed(Duration(milliseconds: 1000));
+                    if (!(_page >= _store.question.length) == true) {
+                      _page += 6;
+                      await _store.getQuestion(_page);
+                      _store.refreshController.loadComplete();
+                    } else {
+                      _store.refreshController.loadComplete();
+                    }
+                  },
+                  child: ListView.builder(
+                    itemCount: _store.question.length,
+                    itemBuilder: (_, index) => QuestionItem(
+                        item: _store.question[index],
+                        onTap: () async {
+                          final result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => DetailsQuestionScreen(
+                                id: _store.question[index].id!,
+                              ),
+                            ),
+                          );
+                          if (result == true) {
+                            _store.success = false;
+                            _store.removeFilter();
+                            _page = 0;
+                            _store.question.clear();
+                            await _store.getQuestion(0);
+                            _store.refreshController.refreshCompleted();
+                          }
+                        }),
+                  ),
                 ),
-              ],
-            ),
-            itemBuilder: (context, item, index) => QuestionItem(
-                item: item,
-                onTap: () async{
-                 final result = await Navigator.push(context,
-                    MaterialPageRoute(
-                      builder: (_) => DetailsQuestionScreen(
-                        id: item.id!,
-                      ),
-                    ),
-                  );
-
-                 if(result == true){
-                   ///work refresh controller until remove question from ui
-                   ///this work after change pagination of home page
-                 }
-                }),
-          ),
-        ),
-      );*/
-
-  Widget _buildBody()=>Stack(
-    children: [
-      Align(
-        alignment: Alignment.center,
-        child: Observer(
-          builder: (_) => Visibility(
-            visible: _store.success,
-            child: SmartRefresher(
-              enablePullDown: true,
-              enablePullUp: true,
-              header: WaterDropMaterialHeader(
-                backgroundColor: Theme.of(context).appBarTheme.color,
-              ),
-              footer: CustomFooter(
-                builder: (BuildContext context, LoadStatus? mode) {
-                  Widget body;
-                  if (mode == LoadStatus.idle) {
-                    body = Text("pull up load");
-                  } else if (mode == LoadStatus.loading) {
-                    body = CupertinoActivityIndicator();
-                  } else if (mode == LoadStatus.failed) {
-                    body = Text("Load Failed!Click retry!");
-                  } else if (mode == LoadStatus.canLoading) {
-                    body = Text("release to load more");
-                  } else {
-                    body = Text("No more Data");
-                  }
-                  return Container(
-                    height: 50.0,
-                    child: Center(child: body),
-                  );
-                },
-              ),
-              controller: _refreshController,
-              onRefresh: () async {
-                //return page 0 because onLoading function can send request again
-                _page = 0;
-                debugPrint("Pagination onRefresh");
-                await Future.delayed(Duration(milliseconds: 1000));
-                _store.question.clear();
-                await _store.getQuestion(0);
-                setState(() {});
-                _refreshController.refreshCompleted();
-              },
-              onLoading: () async {
-                debugPrint("Pagination onLoading");
-                await Future.delayed(Duration(milliseconds: 1000));
-                if (!(_page >= _store.question.length)) {
-                  _page += 6;
-                  await _store.getQuestion(_page);
-                  setState(() {
-                    _refreshController.loadComplete();
-                  });
-                } else {
-                  setState(() {
-                    _refreshController.loadComplete();
-                  });
-                }
-              },
-              child: ListView.builder(
-                itemCount: _store.question.length,
-                itemBuilder: (_ , index)=>QuestionItem(item: _store.question[index], onTap: (){}),
+                replacement: StackOverFlowIndecator(),
               ),
             ),
-            replacement: StackOverFlowIndecator(),
           ),
-        ),
-      ),
-    ],
-  );
+        ],
+      );
 }

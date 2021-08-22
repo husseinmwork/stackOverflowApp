@@ -6,6 +6,7 @@ import 'package:todo_app/constants/dimens.dart';
 import 'package:todo_app/model/get_question/get_question.dart';
 import 'package:todo_app/store/theme/theme_store.dart';
 import 'package:todo_app/widgets/user_image_avatar.dart';
+import 'package:todo_app/utils/todo/todo_utils.dart';
 
 class QuestionItem extends StatefulWidget {
   final Question item;
@@ -44,25 +45,30 @@ class _QuestionItemState extends State<QuestionItem> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildImage(),
-                        SizedBox(width: Dimens.padding_mini),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                _buildUserName(),
-                                SizedBox(width: Dimens.padding_mini),
-                                _buildUserScore()
-                              ],
-                            ),
-                            _buildAskDate()
-                          ],
-                        ),
-                      ],
+                    GestureDetector(
+                      onTap: () {
+                        print("profile ");
+                      },
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildImage(),
+                          SizedBox(width: Dimens.padding_mini),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  _buildUserName(),
+                                  SizedBox(width: Dimens.padding_mini),
+                                  _buildUserScore()
+                                ],
+                              ),
+                              _buildAskDate()
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                     SizedBox(height: Dimens.padding_mid),
                     _buildQuestionTitle(),
@@ -120,9 +126,7 @@ class _QuestionItemState extends State<QuestionItem> {
       );
 
   Widget _buildAskDate() => Text(
-        //todo
-            widget.item.createdAt.toString(),
-     /*   "asked 49 secs ago",*/
+        widget.item.createdAt?.changeFormat(),
         style: Theme.of(context).textTheme.caption?.copyWith(
               color: _themeStore.darkMode ? Colors.white : Colors.black,
             ),
@@ -151,7 +155,9 @@ class _QuestionItemState extends State<QuestionItem> {
               .map((e) => Container(
                     color: Colors.amber.shade600,
                     padding: EdgeInsets.all(Dimens.padding_normal),
-                    margin: EdgeInsets.only(right: Dimens.padding_normal, bottom: Dimens.padding_normal),
+                    margin: EdgeInsets.only(
+                        right: Dimens.padding_normal,
+                        bottom: Dimens.padding_normal),
                     child: Text(e,
                         style: Theme.of(context)
                             .textTheme

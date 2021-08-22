@@ -5,12 +5,9 @@ class Strings {
   static const String appName = "test";
 
   /// date pattern
-  static const String baseDP = "yyyy-MM-dd";
-  static const String realEstateDP = "yyyy.MM.dd";
+  static const String baseDP = "yyyy-MM-dd HH:mm:ss";
   ///like
   static const String like = "UPVOTE";
   static const String desLike = "DOWNVOTE";
-
-
 
 }

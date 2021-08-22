@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:todo_app/ui/answers/answers.dart';
 import 'package:todo_app/ui/create_question/create_question.dart';
 import 'package:todo_app/ui/details_question/details_question.dart';
+import 'package:todo_app/ui/home/filter.dart';
 import 'package:todo_app/ui/home/home.dart';
 import 'package:todo_app/ui/login/login.dart';
 import 'package:todo_app/ui/my_question.dart';
@@ -26,6 +27,7 @@ class Routes {
   static const String create_question = '/createQuestion';
   static const String my_question = '/myQuestion';
   static const String answers = '/answers';
+  static const String filter = '/filter';
 /*
   static const String details_question = '/detailsQuestion';
 */
@@ -39,6 +41,7 @@ class Routes {
     profile_screen: (BuildContext context) => ProfileScreen(),
     edit_profile_screen: (BuildContext context) => EditProfileScreen(),
     create_question: (BuildContext context) => CreateQuestionScreen(),
+    filter: (BuildContext context) => FilterScreen(),
     // my_question: (BuildContext context) => MyQuestionScreen(),
     // answers: (BuildContext context) => AnswersScreen(),
 /*

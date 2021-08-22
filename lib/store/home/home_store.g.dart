@@ -62,6 +62,21 @@ mixin _$HomeStore on _HomeStore, Store {
     });
   }
 
+  final _$oldestAtom = Atom(name: '_HomeStore.oldest');
+
+  @override
+  String? get oldest {
+    _$oldestAtom.reportRead();
+    return super.oldest;
+  }
+
+  @override
+  set oldest(String? value) {
+    _$oldestAtom.reportWrite(value, super.oldest, () {
+      super.oldest = value;
+    });
+  }
+
   final _$minVotesAtom = Atom(name: '_HomeStore.minVotes');
 
   @override
@@ -242,6 +257,21 @@ mixin _$HomeStore on _HomeStore, Store {
     });
   }
 
+  final _$refreshControllerAtom = Atom(name: '_HomeStore.refreshController');
+
+  @override
+  RefreshController get refreshController {
+    _$refreshControllerAtom.reportRead();
+    return super.refreshController;
+  }
+
+  @override
+  set refreshController(RefreshController value) {
+    _$refreshControllerAtom.reportWrite(value, super.refreshController, () {
+      super.refreshController = value;
+    });
+  }
+
   final _$logoutAsyncAction = AsyncAction('_HomeStore.logout');
 
   @override
@@ -294,6 +324,7 @@ mixin _$HomeStore on _HomeStore, Store {
 user: ${user},
 success: ${success},
 loading: ${loading},
+oldest: ${oldest},
 minVotes: ${minVotes},
 maxVotes: ${maxVotes},
 minViews: ${minViews},
@@ -306,6 +337,7 @@ question: ${question},
 category: ${category},
 categoryId: ${categoryId},
 filter: ${filter},
+refreshController: ${refreshController},
 showIconFilter: ${showIconFilter}
     ''';
   }

@@ -28,8 +28,8 @@ abstract class _FormStore with Store {
       reaction((_) => password, validatePassword),
       reaction((_) => userName, validateUserName),
       reaction((_) => confirmPassword, validateConfirmPassword),
-      reaction((_) => questionTitle, validateCreateQuestionTitle),
-      reaction((_) => questionBody, validateCreateQuestionBody),
+      reaction((_) => questionTitle!, validateCreateQuestionTitle),
+      reaction((_) => questionBody!, validateCreateQuestionBody),
     ];
   }
 
@@ -44,10 +44,10 @@ abstract class _FormStore with Store {
   String password = '';
 
   @observable
-  String questionTitle = '';
+  String? questionTitle ;
 
   @observable
-  String questionBody = '';
+  String? questionBody ;
 
   @observable
   String confirmPassword = '';
@@ -83,7 +83,7 @@ abstract class _FormStore with Store {
   @computed
   bool get canCreateQuestion =>
       !formErrorStore.hasErrorInCreateQuestion &&
-          questionTitle.isNotEmpty&&questionBody.isNotEmpty;
+          questionTitle != null&&questionBody != null;
 
   // actions:-------------------------------------------------------------------
   @action
@@ -169,17 +169,21 @@ abstract class _FormStore with Store {
 
   @action
   void validateCreateQuestionTitle(String value) {
-    if (value.isEmpty) {
+    if (value.isEmpty || value == '') {
       formErrorStore.questionTitle = "Title can't be empty";
-    }  else {
+    }else if(value.length < 20){
+      formErrorStore.questionTitle = "Title must be at-least 20 characters long";
+    } else {
       formErrorStore.questionTitle = null;
     }
   }
 
   @action
   void validateCreateQuestionBody(String value) {
-    if (value.isEmpty) {
+    if (value.isEmpty || value == '') {
       formErrorStore.questionBody = "Body can't be empty";
+    }else if(value.length < 40){
+      formErrorStore.questionBody = "Title must be at-least 40 characters long";
     }  else {
       formErrorStore.questionBody = null;
     }
@@ -205,8 +209,8 @@ abstract class _FormStore with Store {
     validatePassword(password);
     validateUserEmail(userEmail);
     validateUserName(userName);
-    validateCreateQuestionTitle(questionTitle);
-   validateCreateQuestionBody(questionBody);
+    validateCreateQuestionTitle(questionTitle!);
+   validateCreateQuestionBody(questionBody!);
   }
 }
 

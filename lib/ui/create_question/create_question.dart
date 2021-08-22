@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:provider/provider.dart';
@@ -7,12 +5,8 @@ import 'package:todo_app/constants/dimens.dart';
 import 'package:todo_app/model/get_question/get_question.dart';
 import 'package:todo_app/store/create_question/create_question_store.dart';
 import 'package:todo_app/store/form/form_store.dart';
-import 'package:todo_app/ui/home/home.dart';
-import 'package:todo_app/utils/routes/routes.dart';
 import 'package:todo_app/utils/todo/todo_utils.dart';
-import 'package:todo_app/widgets/arrow_back_icon.dart';
 import 'package:todo_app/widgets/category_dropdown.dart';
-import 'package:todo_app/widgets/stack_overflow_indecator.dart';
 import 'package:todo_app/widgets/tags_language.dart';
 import 'package:todo_app/widgets/todo_button.dart';
 
@@ -49,17 +43,7 @@ class _CreateQuestionScreenState extends State<CreateQuestionScreen> {
       for (var i in widget.questionItem!.tags!) {
         _tags.add(Language(name: i));
       }
-      // widget.questionItem!.tags!.forEach((element) =>Language(name: element ,position: element.length));
     }
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _titleController.dispose();
-    _bodyController.dispose();
-    _tagController.dispose();
-    _store.loadingEditQuestion = false;
   }
 
   @override
@@ -71,52 +55,33 @@ class _CreateQuestionScreenState extends State<CreateQuestionScreen> {
   }
 
   AppBar _buildAppBar() => AppBar(
-      //todo change languages
-      leading: ArrowBackIcon(),
+      leading: IconButton(
+        onPressed: () {
+          _store.loading = false;
+          Navigator.pop(context);
+        },
+        icon: Icon(Icons.arrow_back_outlined),
+      ),
       title: Text(
-        widget.editQuestion == true ? "Edit Question" : "Ask Question",
-        style: Theme.of(context).textTheme.headline6,
-      ));
+          widget.editQuestion == true ? "Edit Question" : "Ask Question",
+          style: Theme.of(context).textTheme.headline6));
 
-  Widget _buildBody() => Stack(
-        children: [
-          Center(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  _buildQuestionTitle(),
-                  SizedBox(height: Dimens.padding_large),
-                  _buildQuestionBody(),
-                  SizedBox(height: Dimens.padding_large),
-                  _buildQuestionTags(),
-                  SizedBox(height: Dimens.padding_large),
-                  _buildSelectCategory(),
-                  SizedBox(height: Dimens.padding_large),
-                  _buildButton(),
-                ],
-              ),
-            ),
+  Widget _buildBody() => Center(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              _buildQuestionTitle(),
+              SizedBox(height: Dimens.padding_large),
+              _buildQuestionBody(),
+              SizedBox(height: Dimens.padding_large),
+              _buildQuestionTags(),
+              SizedBox(height: Dimens.padding_large),
+              _buildSelectCategory(),
+              SizedBox(height: Dimens.padding_large),
+              _buildButton(),
+            ],
           ),
-          Align(
-            alignment: Alignment.center,
-            child: Observer(
-              builder: (_) => Visibility(
-                visible: _store.loading,
-                child: StackOverFlowIndecator(),
-              ),
-            ),
-          ),
-          Observer(builder: (_) {
-            return _store.success
-                ? _navigateToLoginScreen(context)
-                : _buildClosed();
-          }),
-          Observer(
-              builder: (_) => Visibility(
-                    visible: _store.loadingEditQuestion,
-                    child: StackOverFlowIndecator(),
-                  )),
-        ],
+        ),
       );
 
   Widget _buildQuestionTitle() => Observer(
@@ -124,7 +89,6 @@ class _CreateQuestionScreenState extends State<CreateQuestionScreen> {
           errorText: _formStore.formErrorStore.questionTitle,
           onChanged: (value) {
             _formStore.setQuestionTitle(_titleController.text);
-
             _store.title = value;
           },
           controller: _titleController,
@@ -161,6 +125,7 @@ class _CreateQuestionScreenState extends State<CreateQuestionScreen> {
             Text("Tags".toString(),
                 style: Theme.of(context).textTheme.subtitle2),
             StackOverFlowTags(
+              controller: _tagController,
               onChange: () {
                 _store.tags = _tags;
               },
@@ -174,10 +139,8 @@ class _CreateQuestionScreenState extends State<CreateQuestionScreen> {
         builder: (_) => Padding(
           padding: const EdgeInsets.symmetric(horizontal: Dimens.padding_large),
           child: CategoryDropDown(
-            //todo
-            //category name this maens widget.questionitem.categoryName but this not return from api
             hint: widget.editQuestion == true
-                ? "category name"
+                ? widget.questionItem!.category!.name.toString()
                 : "Select Category",
             value: _store.categoryId,
             item: [
@@ -205,40 +168,40 @@ class _CreateQuestionScreenState extends State<CreateQuestionScreen> {
 
   Widget _buildButton() => Padding(
         padding: const EdgeInsets.symmetric(horizontal: Dimens.padding_large),
-        child: RoundedButton(
-            onPressed: widget.editQuestion == true
-                ? () async {
-                    await _store.updateQuestion().then((value) {
-                      Navigator.pop(context, true);
-                    }).catchError((e) {
-                      print(e);
-                    });
-                  }
-                : () async {
-                    if (_formStore.canCreateQuestion == true) {
-                      await _store.createQuestion();
-                    } else {
-                      showErrorMessage('Please check all fields', context);
+        child: Observer(
+          builder: (_) => RoundedButton(
+              loading: _store.loading,
+              onPressed: widget.editQuestion == true
+                  ? () async {
+                      await _store.updateQuestion().then((value) {
+                        Navigator.pop(context, true);
+                      }).catchError((e) {
+                        _store.loading = false;
+                        print(e);
+                      });
                     }
-                  },
-            title: widget.editQuestion == true
-                ? "Edit Question"
-                : "Create Question"),
+                  : () async {
+                      if (_titleController.text.isEmpty &&
+                          _bodyController.text.isEmpty) {
+                        _formStore.setQuestionTitle(_titleController.text = '');
+                        _formStore.setQuestionBody(_bodyController.text = '');
+                      }
+                      if (_formStore.canCreateQuestion == true) {
+                        await _store.createQuestion().then((value) {
+                          _store.loading = false;
+                          Navigator.pop(context, true);
+                        }).catchError((e) {
+                          print(e);
+                        });
+                      } else {
+                        showErrorMessage('Please check all fields', context);
+                      }
+                    },
+              title: widget.editQuestion == true
+                  ? "Edit Question"
+                  : "Create Question"),
+        ),
       );
-
-  ///this  Navigation to another page
-  _buildClosed() {
-    return SizedBox.shrink();
-  }
-
-  Widget _navigateToLoginScreen(BuildContext context) {
-    Future.delayed(Duration.zero, () {
-      Navigator.of(context).pop();
-      _store.loading = false;
-    });
-    _store.success = false;
-    return Container();
-  }
 }
 
 class TextFeildAddQuestion extends StatelessWidget {

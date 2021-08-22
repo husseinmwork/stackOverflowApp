@@ -8,8 +8,13 @@ part of 'get_question.dart';
 
 Question _$QuestionFromJson(Map<String, dynamic> json) {
   return Question(
+    category: json['field'] == null
+        ? null
+        : Field.fromJson(json['field'] as Map<String, dynamic>),
     categoryId: json['fieldId'] as String?,
-    createdAt: json['createdAt'] as String?,
+    createdAt: json['createdAt'] == null
+        ? null
+        : DateTime.parse(json['createdAt'] as String),
     votesList: (json['votesList'] as List<dynamic>?)
         ?.map((e) => VotesList.fromJson(e as Map<String, dynamic>))
         .toList(),
@@ -38,11 +43,12 @@ Map<String, dynamic> _$QuestionToJson(Question instance) => <String, dynamic>{
       'user': instance.user,
       'title': instance.title,
       'fieldId': instance.categoryId,
-      'createdAt': instance.createdAt,
+      'createdAt': instance.createdAt?.toIso8601String(),
       'hasVoted': instance.hasVoted,
       'tags': instance.tags,
       'answer': instance.answer,
       'votesList': instance.votesList,
+      'field': instance.category,
     };
 
 VotesList _$VotesListFromJson(Map<String, dynamic> json) {
@@ -59,4 +65,14 @@ Map<String, dynamic> _$VotesListToJson(VotesList instance) => <String, dynamic>{
       'userId': instance.userId,
       'questionId': instance.questionId,
       'type': instance.type,
+    };
+
+Field _$FieldFromJson(Map<String, dynamic> json) {
+  return Field(
+    name: json['name'] as String?,
+  );
+}
+
+Map<String, dynamic> _$FieldToJson(Field instance) => <String, dynamic>{
+      'name': instance.name,
     };

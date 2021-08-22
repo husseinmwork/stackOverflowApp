@@ -1,32 +1,50 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_tagging/flutter_tagging.dart';
 import 'package:todo_app/constants/colors.dart';
+import 'package:todo_app/constants/strings.dart';
 
 class StackOverFlowTags extends StatelessWidget {
-
   final List<Language> selectedLanguages;
   final Function onChange;
+  final String? errorText;
+  final TextEditingController controller;
 
-  const StackOverFlowTags({required this.onChange,required this.selectedLanguages}) ;
+  const StackOverFlowTags(
+      {required this.controller,
+      this.errorText,
+      required this.onChange,
+      required this.selectedLanguages});
 
   // final List<Language> _selectedLanguages = [];
-
-
 
   @override
   Widget build(BuildContext context) {
     return FlutterTagging<Language>(
         initialItems: selectedLanguages,
         textFieldConfiguration: TextFieldConfiguration(
+          onChanged: (v) {
+            print(v);
+          },
+          onTap: () {
+          },
+          maxLength: 15,
+          controller: controller,
           decoration: InputDecoration(
+
+
             border: InputBorder.none,
+            errorText: errorText,
             filled: true,
             fillColor: Theme.of(context).appBarTheme.color,
             hintText: 'Search Tags',
             labelText: 'Select 5 Tags',
+            labelStyle: Theme.of(context).textTheme.bodyText1,
+            hintStyle: Theme.of(context).textTheme.caption,
+            counterText: "",
           ),
         ),
+        suggestionsBoxConfiguration:
+            SuggestionsBoxConfiguration(autoFlipDirection: true),
         findSuggestions: LanguageService.getLanguages,
         additionCallback: (value) {
           return Language(
@@ -34,8 +52,7 @@ class StackOverFlowTags extends StatelessWidget {
             position: 0,
           );
         },
-        onAdded:(language){
-          // api calls here, triggered when add to tag button is pressed
+        onAdded: (language) {
           print(language);
           return Language(name: "name");
         },
@@ -59,27 +76,22 @@ class StackOverFlowTags extends StatelessWidget {
           );
         },
         configureChip: (lang) {
-
           return ChipConfiguration(
-            deleteIcon: Icon(Icons.cancel , color:  Theme.of(context).appBarTheme.color),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
+            deleteIcon:
+                Icon(Icons.cancel, color: Theme.of(context).appBarTheme.color),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
             label: Text(lang.name),
             backgroundColor: AppColors.secondaryColor,
             labelStyle: TextStyle(color: Colors.black),
             deleteIconColor: Colors.white,
-
           );
         },
         onChanged: () {
           onChange();
-
-        }
-    );
+        });
   }
 }
-
-
-
 
 /// LanguageService
 class LanguageService {
@@ -93,7 +105,9 @@ class LanguageService {
       Language(name: 'PHP', position: 4),
       Language(name: 'C#', position: 5),
       Language(name: 'C++', position: 6),
-    ].where((lang) => lang.name.toLowerCase().contains(query.toLowerCase())).toList();
+    ]
+        .where((lang) => lang.name.toLowerCase().contains(query.toLowerCase()))
+        .toList();
   }
 }
 
