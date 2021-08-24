@@ -113,13 +113,12 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                 text: TextSpan(children: [
                   TextSpan(
                     text: "Stack",
-                    style: Theme.of(context).textTheme.headline4,
+                    style: Theme.of(context).textTheme.headline4?.copyWith(color:_themeStore.darkMode?Colors.white: Theme.of(context).primaryColor),
                   ),
                   TextSpan(
                     text: "overflow",
                     style: Theme.of(context).textTheme.headline4?.copyWith(
-                        color: /*_themeStore.darkMode? AppColors.lightPurple:*/ Colors
-                            .amber),
+                        color:Theme.of(context).accentColor),
                   ),
                 ]),
               ),
@@ -171,11 +170,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                         ),
                       );
                     },
-                    title: Text("Sign Up",
-                        style: Theme.of(context)
-                            .textTheme
-                            .subtitle1
-                            ?.copyWith(color: Colors.amber)),
+                    title: "Sign Up"
                   ),
                 ),
                 SizedBox(height: Dimens.padding_xxl),

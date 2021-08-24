@@ -54,25 +54,16 @@ final ThemeData themeData = new ThemeData(
   fontFamily: FontFamily.productSans,
   brightness: Brightness.light,
   buttonColor: AppColors.shapeColor,
-/*  cardColor: Colors.white,
-  textButtonTheme: TextButtonThemeData(
-    style: TextButton.styleFrom(
-        primary: Colors.white, backgroundColor: Colors.blue.shade600),
-  ),*/
-  // primarySwatch: MaterialColor(AppColors.orange[500]!.value, AppColors.orange),
-/*
-  scaffoldBackgroundColor: Colors.white,
-*/
-  // scaffoldBackgroundColor: Colors.grey,
-/*  primaryColor: Colors.blue,
-  backgroundColor: Colors.white,
-  primaryColorBrightness: Brightness.light,
-  accentColor: Colors.blue,
-  accentColorBrightness: Brightness.light,
-  primarySwatch: Colors.grey,
-  dividerColor: Colors.white54,
-  iconTheme: IconThemeData(color: Colors.white),
-  appBarTheme: AppBarTheme(
+  accentColor: Colors.grey.shade900,
+  primaryColor: Colors.green,
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ElevatedButton.styleFrom(
+      primary:  Colors.grey.shade900,
+      elevation: 0,
+    ),
+  ),
+
+/*  appBarTheme: AppBarTheme(
     color: Colors.blue[800],
     backwardsCompatibility: false,
     iconTheme: IconThemeData(color: Colors.white),
@@ -81,34 +72,13 @@ final ThemeData themeData = new ThemeData(
 );
 
 final ThemeData themeDataDark = ThemeData(
-
   appBarTheme: AppBarTheme(
     color: Colors.grey[800],
     backwardsCompatibility: false,
     systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: Colors.black),
   ),
   textTheme: textTheme,
-  // fontFamily: FontFamily.productSans,
-  // brightness: Brightness.dark,
-  // primaryColor: Colors.purple.shade700,
-  // cardColor:Colors.grey.shade900,
-  // scaffoldBackgroundColor: AppColors.scaffoldBackgroundColor,
-  // primaryColorBrightness: Brightness.dark,
-  //
-  // floatingActionButtonTheme: FloatingActionButtonThemeData(
-  //     foregroundColor: AppColors.scaffoldBackgroundColor),
 
-  // accentColor: Colors.purple.shade500,
-  //
-  // accentColorBrightness: Brightness.dark,
-  // // iconTheme: IconThemeData(color: Colors.red),
-  // primarySwatch: Colors.grey,
-  // // backgroundColor: const Color(0xFF212121),
-  // accentIconTheme: IconThemeData(color: Colors.black),
-  textButtonTheme: TextButtonThemeData(
-    style: TextButton.styleFrom(
-        primary: Colors.white, backgroundColor: Colors.amber),
-  ),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
       padding: EdgeInsets.zero,
@@ -117,22 +87,16 @@ final ThemeData themeDataDark = ThemeData(
     ),
   ),
 
-
-
   primarySwatch: Colors.grey,
-  primaryColor:  Colors.grey[800],
+  primaryColor: Colors.grey[800],
   brightness: Brightness.dark,
   backgroundColor: const Color(0xFF212121),
-  accentColor: Colors.white,
+  accentColor: Colors.amber.shade700,
   accentIconTheme: IconThemeData(color: Colors.black),
-  dividerColor: Colors.black12,
-  dividerTheme: DividerThemeData(color: Colors.white),
-
 ).copyWith(
   pageTransitionsTheme: const PageTransitionsTheme(
-
-  builders: <TargetPlatform, PageTransitionsBuilder>{
-    TargetPlatform.android: ZoomPageTransitionsBuilder(),
-  },
-),
+    builders: <TargetPlatform, PageTransitionsBuilder>{
+      TargetPlatform.android: ZoomPageTransitionsBuilder(),
+    },
+  ),
 );

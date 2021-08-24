@@ -20,7 +20,7 @@ class UserImageAvatar extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          border: Border.all(color: Colors.amber),
+          border: Border.all(color: Theme.of(context).accentColor),
         ),
         child: CircleAvatar(
           radius: Dimens.cardQuestionImage,

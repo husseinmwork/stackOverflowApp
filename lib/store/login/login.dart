@@ -39,7 +39,7 @@ abstract class _LoginStore with Store {
   @action
   Future login() async {
     this.loading = true;
-    await _repository.login(userName, password).then((value) {
+    return await _repository.login(userName, password).then((value) {
       _repository.saveIsLoggedIn(true);
       _repository.saveUser(value.user);
       _repository.saveAuthToken({

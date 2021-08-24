@@ -153,7 +153,7 @@ class _QuestionItemState extends State<QuestionItem> {
         children: [
           ...widget.item.tags!
               .map((e) => Container(
-                    color: Colors.amber.shade600,
+                    color: Theme.of(context).accentColor,
                     padding: EdgeInsets.all(Dimens.padding_normal),
                     margin: EdgeInsets.only(
                         right: Dimens.padding_normal,
@@ -161,9 +161,9 @@ class _QuestionItemState extends State<QuestionItem> {
                     child: Text(e,
                         style: Theme.of(context)
                             .textTheme
-                            .subtitle2
-                            ?.copyWith(color: Colors.black)),
-                  ))
+                            .subtitle2?.copyWith(color: _themeStore.darkMode ? Colors.black:Colors.white)
+                            ),
+                  ),)
               .toList()
         ],
       );
@@ -171,7 +171,7 @@ class _QuestionItemState extends State<QuestionItem> {
   Widget _buildLike() => Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.thumb_up_alt_outlined, color: Colors.white),
+          Icon(Icons.thumb_up_alt_outlined),
           SizedBox(width: Dimens.padding_normal),
           Text(widget.item.votes!.toInt().toString()),
         ],

@@ -8,7 +8,6 @@ import 'package:todo_app/store/language/language_store.dart';
 import 'package:todo_app/store/profile/profile_store.dart';
 import 'package:todo_app/store/theme/theme_store.dart';
 import 'package:todo_app/utils/routes/routes.dart';
-import 'package:todo_app/widgets/arrow_back_icon.dart';
 import 'package:todo_app/widgets/stack_overflow_indecator.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -42,7 +41,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   AppBar _buildAppBar() => AppBar(
         elevation: 4,
-        leading: ArrowBackIcon(),
         //todo  LocaleKeys.goto_register.tr(), change language after complete all section profile
         title: Text("Profile", style: Theme.of(context).textTheme.headline6),
         actions: [

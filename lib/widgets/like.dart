@@ -27,7 +27,7 @@ class StackOverFlowLike extends StatelessWidget {
   Widget _buildLike() => IconButton(
       icon: (hsVoted != null && hsVoted == Strings.like)
           ? Icon(Icons.thumb_up)
-          : Icon(Icons.thumb_up_alt_outlined, color: Colors.white),
+          : Icon(Icons.thumb_up_alt_outlined),
       onPressed: () {
         like();
       });

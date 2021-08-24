@@ -5,6 +5,8 @@ import 'package:todo_app/model/filter/filter.dart';
 import 'package:todo_app/model/get_question/get_question.dart';
 import 'package:todo_app/model/user/user.dart';
 import 'package:todo_app/store/error/error_store.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
+
 
 part 'my_question_store.g.dart';
 
@@ -22,8 +24,6 @@ abstract class _MyQuestionStore with Store {
   @observable
   Account? user;
 
-
-
   @observable
   bool success = false;
 
@@ -31,15 +31,19 @@ abstract class _MyQuestionStore with Store {
   bool loading = false;
 
 
+  @observable
+  RefreshController refreshController =
+  RefreshController(initialRefresh: false);
+
 
   @observable
   List<Question> question = ObservableList<Question>();
 
   ///get question with paging
   @action
-  Future getQuestion(int skip, ) async {
+  Future getQuestion(int skip) async {
+    loading = true;
     user = _repository.user;
-    print("thisssssssssssssssss${user?.id}");
     if(user != null){
       await _repository
           .getQuestion(skip:skip,take: 6,
@@ -47,8 +51,10 @@ abstract class _MyQuestionStore with Store {
             userId: user?.id,
           ))
           .then((value) {
-        return question = value.results;
-      }).catchError((e) {
+        loading = false;
+        question.addAll(value.results);
+        success = true;
+          }).catchError((e) {
         throw e;
       });
     }

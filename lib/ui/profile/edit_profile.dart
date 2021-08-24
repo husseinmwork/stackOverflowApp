@@ -13,7 +13,6 @@ import 'package:todo_app/store/language/language_store.dart';
 import 'package:todo_app/store/profile/profile_store.dart';
 import 'package:todo_app/utils/device/device_utils.dart';
 import 'package:todo_app/utils/routes/routes.dart';
-import 'package:todo_app/widgets/arrow_back_icon.dart';
 import 'package:todo_app/widgets/labeled_text_field.dart';
 import 'package:todo_app/generated/locale_keys.g.dart';
 import 'package:todo_app/widgets/todo_button.dart';

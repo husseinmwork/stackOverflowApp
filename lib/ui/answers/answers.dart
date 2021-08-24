@@ -28,6 +28,8 @@ class AnswersScreen extends StatefulWidget {
 
 class _AnswersScreenState extends State<AnswersScreen> {
   late AnswersStore _store;
+  late ThemeStore _themeStore;
+
   TextEditingController _answerController = TextEditingController();
 
   RefreshController _refreshController =
@@ -38,6 +40,8 @@ class _AnswersScreenState extends State<AnswersScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _store = Provider.of<AnswersStore>(context);
+    _themeStore = Provider.of<ThemeStore>(context);
+
     _store.questionId = widget.questionId;
     _store.getAnswers(_page);
   }
@@ -53,7 +57,10 @@ class _AnswersScreenState extends State<AnswersScreen> {
   AppBar _buildAppBar() => AppBar(
         title: Text(
           "Answers",
-          style: Theme.of(context).textTheme.headline6,
+          style: Theme.of(context)
+              .textTheme
+              .headline6
+              ?.copyWith(color: Colors.white),
         ),
       );
 
@@ -105,7 +112,7 @@ class _AnswersScreenState extends State<AnswersScreen> {
                           _refreshController.refreshCompleted();
                         },
                         onLoading: () async {
-                         //todo remove numberOfAnswers and add _store.answer.length
+                          //todo remove numberOfAnswers and add _store.answer.length
                           debugPrint("Pagination onLoading");
                           await Future.delayed(Duration(milliseconds: 1000));
                           if (!(_page >= widget.numberOfAnswers)) {
@@ -156,13 +163,12 @@ class _AnswersScreenState extends State<AnswersScreen> {
           color: !isKeyboardVisible
               ? Theme.of(context).scaffoldBackgroundColor
               : Theme.of(context).cardColor,
-          margin: EdgeInsets.symmetric(vertical: Dimens.padding_mini),
+          margin: EdgeInsets.all(4),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
-          child: Padding(
-            padding: EdgeInsets.only(
-                left: Dimens.padding_mid,
-                bottom: Dimens.padding_mini,
-                top: Dimens.padding_mini),
+          child: Container(
+            padding: EdgeInsets.only(left: Dimens.padding_normal),
+            decoration: BoxDecoration(
+                border: Border.all(color: Theme.of(context).accentColor)),
             child: Row(
               children: [
                 UserImageAvatar(
@@ -193,7 +199,7 @@ class _AnswersScreenState extends State<AnswersScreen> {
                   ),
                 ),
                 IconButton(
-                    icon: Icon(Icons.send_outlined, color: Colors.white),
+                    icon: Icon(Icons.send_outlined),
                     onPressed: () async {
                       if (_answerController.text.isNotEmpty) {
                         _store.success = false;
@@ -267,12 +273,11 @@ class _AnswerItemState extends State<AnswerItem> {
                         child: Row(
                           children: [
                             Expanded(
-                              child: StackOverFlowLike(
-                                desLike: (){},
-                                like: (){},
-                                hsVoted: "",
-                              )
-                            ),
+                                child: StackOverFlowLike(
+                              desLike: () {},
+                              like: () {},
+                              hsVoted: "",
+                            )),
                             IconButton(
                                 icon: Icon(Icons.more_vert_outlined, size: 20),
                                 onPressed: () {}),

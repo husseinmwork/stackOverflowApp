@@ -232,7 +232,7 @@ class _AnimSearchBarState extends State<AnimSearchBar>
                       floatingLabelBehavior: FloatingLabelBehavior.never,
                       labelText: widget.helpText,
                       labelStyle: TextStyle(
-                        color: Color(0xff5B5B5B),
+                        color: Colors.white,
                         fontSize: 17.0,
                         fontWeight: FontWeight.w500,
                       ),

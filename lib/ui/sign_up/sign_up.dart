@@ -19,7 +19,6 @@ import 'package:todo_app/utils/routes/routes.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 import 'package:todo_app/utils/todo/todo_utils.dart';
-import 'package:todo_app/widgets/arrow_back_icon.dart';
 import 'package:todo_app/widgets/labeled_text_field.dart';
 import 'package:todo_app/widgets/todo_button.dart';
 
@@ -77,35 +76,15 @@ class _SignUpScreenState extends State<SignUpScreen>
 
   AppBar _buildAppBar() {
     return AppBar(
-      backgroundColor: Colors.transparent,
-      elevation: 0.0,
-      leading: ArrowBackIcon(),
       title: Text(LocaleKeys.sign_up.tr(),
-          style: Theme.of(context).textTheme.headline6),
+          style: Theme.of(context)
+              .textTheme
+              .headline6
+              ?.copyWith(color: Colors.white)),
     );
   }
 
-  Widget _buildBody() {
-    return Stack(
-      children: [
-        _buildElement(),
-        Align(
-          alignment: Alignment.center,
-          child: Observer(
-            builder: (_) => Visibility(
-              visible: _store.loading,
-              child: CircularProgressIndicator(),
-            ),
-          ),
-        ),
-        Observer(builder: (_) {
-          return _store.success
-              ? _navigateToLoginScreen(context)
-              : _buildClosed();
-        }),
-      ],
-    );
-  }
+  Widget _buildBody() => _buildElement();
 
   Widget _buildElement() {
     return Center(
@@ -136,6 +115,7 @@ class _SignUpScreenState extends State<SignUpScreen>
         },
         child: Observer(
           builder: (_) => CircleAvatar(
+            backgroundColor: Theme.of(context).accentColor,
             radius: Dimens.image,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(Dimens.image),
@@ -286,11 +266,12 @@ class _SignUpScreenState extends State<SignUpScreen>
 
   Widget _buildButtonRegistration() {
     return RoundedButton(
-        onPressed: ()async {
+        onPressed: () async {
           DeviceUtils.hideKeyboard(context);
-
           if (_formStore.canRegister) {
             await _store.signUp();
+            Navigator.of(context).pushReplacementNamed(Routes.login);
+            _store.loading = false;
           } else {
             showErrorMessage('Please check all fields', context);
           }
@@ -311,20 +292,5 @@ class _SignUpScreenState extends State<SignUpScreen>
         ),
       ),
     );
-  }
-
-  ///this  Navigation to another page
-
-  _buildClosed() {
-    return SizedBox.shrink();
-  }
-
-  Widget _navigateToLoginScreen(BuildContext context) {
-    Future.delayed(Duration.zero, () {
-      Navigator.of(context).pushReplacementNamed(Routes.login);
-      _store.loading = false;
-    });
-    _store.success = false;
-    return Container();
   }
 }

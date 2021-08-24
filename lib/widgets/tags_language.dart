@@ -8,12 +8,15 @@ class StackOverFlowTags extends StatelessWidget {
   final Function onChange;
   final String? errorText;
   final TextEditingController controller;
+  final TextStyle labelChipStyle;
 
-  const StackOverFlowTags(
-      {required this.controller,
-      this.errorText,
-      required this.onChange,
-      required this.selectedLanguages});
+  const StackOverFlowTags({
+    required this.controller,
+    this.errorText,
+    required this.onChange,
+    required this.selectedLanguages,
+    required this.labelChipStyle,
+  });
 
   // final List<Language> _selectedLanguages = [];
 
@@ -25,13 +28,10 @@ class StackOverFlowTags extends StatelessWidget {
           onChanged: (v) {
             print(v);
           },
-          onTap: () {
-          },
+          onTap: () {},
           maxLength: 15,
           controller: controller,
           decoration: InputDecoration(
-
-
             border: InputBorder.none,
             errorText: errorText,
             filled: true,
@@ -77,13 +77,12 @@ class StackOverFlowTags extends StatelessWidget {
         },
         configureChip: (lang) {
           return ChipConfiguration(
-            deleteIcon:
-                Icon(Icons.cancel, color: Theme.of(context).appBarTheme.color),
+            deleteIcon: Icon(Icons.cancel, color: Colors.red),
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
             label: Text(lang.name),
-            backgroundColor: AppColors.secondaryColor,
-            labelStyle: TextStyle(color: Colors.black),
+            backgroundColor: Theme.of(context).accentColor,
+            labelStyle: labelChipStyle,
             deleteIconColor: Colors.white,
           );
         },

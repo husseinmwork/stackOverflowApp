@@ -5,6 +5,7 @@ import 'package:todo_app/constants/dimens.dart';
 import 'package:todo_app/model/get_question/get_question.dart';
 import 'package:todo_app/store/create_question/create_question_store.dart';
 import 'package:todo_app/store/form/form_store.dart';
+import 'package:todo_app/store/theme/theme_store.dart';
 import 'package:todo_app/utils/todo/todo_utils.dart';
 import 'package:todo_app/widgets/category_dropdown.dart';
 import 'package:todo_app/widgets/tags_language.dart';
@@ -30,11 +31,15 @@ class _CreateQuestionScreenState extends State<CreateQuestionScreen> {
 
   late CreateQuestionStore _store;
   final _formStore = FormStore();
+  late ThemeStore _themeStore;
+
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _store = Provider.of<CreateQuestionStore>(context);
+    _themeStore = Provider.of<ThemeStore>(context);
+
     _store.getCategory(0);
     if (widget.editQuestion == true) {
       _store.questionId = widget.questionId;
@@ -64,7 +69,7 @@ class _CreateQuestionScreenState extends State<CreateQuestionScreen> {
       ),
       title: Text(
           widget.editQuestion == true ? "Edit Question" : "Ask Question",
-          style: Theme.of(context).textTheme.headline6));
+          style: Theme.of(context).textTheme.headline6?.copyWith(color: Colors.white)));
 
   Widget _buildBody() => Center(
         child: SingleChildScrollView(
@@ -125,6 +130,7 @@ class _CreateQuestionScreenState extends State<CreateQuestionScreen> {
             Text("Tags".toString(),
                 style: Theme.of(context).textTheme.subtitle2),
             StackOverFlowTags(
+              labelChipStyle: TextStyle(color: _themeStore.darkMode? Colors.black:Colors.white),
               controller: _tagController,
               onChange: () {
                 _store.tags = _tags;

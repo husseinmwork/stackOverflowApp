@@ -11,7 +11,6 @@ import 'package:todo_app/constants/dimens.dart';
 import 'package:todo_app/generated/locale_keys.g.dart';
 import 'package:todo_app/store/reset_password/reset_password.dart';
 import 'package:todo_app/store/theme/theme_store.dart';
-import 'package:todo_app/widgets/arrow_back_icon.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:todo_app/widgets/labeled_text_field.dart';
 import 'package:todo_app/widgets/todo_button.dart';
@@ -113,7 +112,6 @@ class _OtpScreenState extends State<OtpScreen>
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0.0,
-        leading: ArrowBackIcon(),
       ),
       body: Container(
         width: _screenSize.width,

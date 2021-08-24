@@ -6,6 +6,7 @@ import 'package:todo_app/constants/dimens.dart';
 import 'package:todo_app/constants/strings.dart';
 import 'package:todo_app/model/get_question/get_question.dart';
 import 'package:todo_app/store/details_question/details_question_store.dart';
+import 'package:todo_app/store/theme/theme_store.dart';
 import 'package:todo_app/ui/answers/answers.dart';
 import 'package:todo_app/ui/create_question/create_question.dart';
 import 'package:todo_app/utils/todo/todo_utils.dart';
@@ -24,11 +25,13 @@ class DetailsQuestionScreen extends StatefulWidget {
 
 class _DetailsQuestionScreenState extends State<DetailsQuestionScreen> {
   late DetailsQuestionStore _store;
+  late ThemeStore _themeStore;
 
   @override
   void didChangeDependencies() async {
     super.didChangeDependencies();
     _store = Provider.of<DetailsQuestionStore>(context);
+    _themeStore = Provider.of<ThemeStore>(context);
     _store.questionId = widget.id;
     _store.getPrefUser();
     await _store.getQuestion();
@@ -53,7 +56,10 @@ class _DetailsQuestionScreenState extends State<DetailsQuestionScreen> {
   AppBar _buildAppBar() => AppBar(
       elevation: 4,
       title: Text("Details Question",
-          style: Theme.of(context).textTheme.headline6));
+          style: Theme.of(context)
+              .textTheme
+              .headline6
+              ?.copyWith(color: Colors.white)));
 
   Widget _buildBody() => Stack(
         children: [
@@ -95,7 +101,6 @@ class _DetailsQuestionScreenState extends State<DetailsQuestionScreen> {
             SizedBox(height: Dimens.padding_normal),
             Card(
               margin: EdgeInsets.zero,
-              elevation: 0,
               child: Padding(
                 padding: const EdgeInsets.all(Dimens.padding_normal),
                 child: Text(
@@ -116,7 +121,7 @@ class _DetailsQuestionScreenState extends State<DetailsQuestionScreen> {
             if (_store.question?.tags != null)
               ..._store.question!.tags!
                   .map((e) => Container(
-                        color: Theme.of(context).appBarTheme.color,
+                        color: Theme.of(context).accentColor,
                         padding: EdgeInsets.all(Dimens.padding_normal),
                         margin: EdgeInsets.only(right: Dimens.padding_normal),
                         child: Text(
@@ -124,7 +129,7 @@ class _DetailsQuestionScreenState extends State<DetailsQuestionScreen> {
                           style: Theme.of(context)
                               .textTheme
                               .subtitle2
-                              ?.copyWith(color: Colors.white),
+                              ?.copyWith(color:_themeStore.darkMode? Colors.black: Colors.white),
                         ),
                       ))
                   .toList()
@@ -144,13 +149,14 @@ class _DetailsQuestionScreenState extends State<DetailsQuestionScreen> {
                     _buildDeleteDialog();
                   } else {
                     final resultEditQuestion = await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => CreateQuestionScreen(
-                                  editQuestion: true,
-                                  questionItem: _store.question,
-                                  questionId: widget.id,
-                                )),);
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => CreateQuestionScreen(
+                                editQuestion: true,
+                                questionItem: _store.question,
+                                questionId: widget.id,
+                              )),
+                    );
                     if (resultEditQuestion == true) {
                       _store.successGetQuestion = false;
                       _store.getQuestion();
@@ -282,8 +288,12 @@ class _DetailsQuestionScreenState extends State<DetailsQuestionScreen> {
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
-                    child: Text("CANCEL",
-                        style: Theme.of(context).textTheme.button),
+                    child: Text(
+                      "CANCEL",
+                      style: Theme.of(context).textTheme.button?.copyWith(
+                            color: Colors.white,
+                          ),
+                    ),
                   ),
                   ElevatedButton(
                     onPressed: () async {
@@ -295,8 +305,11 @@ class _DetailsQuestionScreenState extends State<DetailsQuestionScreen> {
                             _store.errorStore.errorMessage, context);
                       });
                     },
-                    child:
-                        Text("OK", style: Theme.of(context).textTheme.button),
+                    child: Text(
+                      "OK",
+                      style: Theme.of(context).textTheme.button?.copyWith(
+                          color:  Colors.white),
+                    ),
                   ),
                 ],
                 content: Text(
@@ -307,7 +320,10 @@ class _DetailsQuestionScreenState extends State<DetailsQuestionScreen> {
                 enableFullWidth: true,
                 title: Text(
                   "Delete Question",
-                  style: Theme.of(context).textTheme.subtitle1,
+                  style: Theme.of(context)
+                      .textTheme
+                      .subtitle1
+                      ?.copyWith(color: Colors.white),
                 ),
                 headerColor: Theme.of(context).primaryColor,
                 backgroundColor: Theme.of(context).scaffoldBackgroundColor,

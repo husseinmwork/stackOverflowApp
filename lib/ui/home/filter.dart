@@ -51,7 +51,7 @@ class _FilterScreenState extends State<FilterScreen> {
   }
 
   AppBar _buildAppBar() => AppBar(
-      title: Text("Filter", style: Theme.of(context).textTheme.headline6));
+      title: Text("Filter", style: Theme.of(context).textTheme.headline6?.copyWith(color: Colors.white)));
 
   Widget _buildBody() => Container(
         padding: const EdgeInsets.symmetric(
@@ -213,6 +213,8 @@ class _FilterScreenState extends State<FilterScreen> {
         children: [
           Text("Tags".toString(), style: Theme.of(context).textTheme.subtitle2),
           StackOverFlowTags(
+            labelChipStyle: TextStyle(color: _themeStore.darkMode? Colors.black:Colors.white),
+
             controller: _tagController,
             onChange: () {
               for (var i in _tags) {

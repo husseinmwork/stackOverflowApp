@@ -42,7 +42,7 @@ class Routes {
     edit_profile_screen: (BuildContext context) => EditProfileScreen(),
     create_question: (BuildContext context) => CreateQuestionScreen(),
     filter: (BuildContext context) => FilterScreen(),
-    // my_question: (BuildContext context) => MyQuestionScreen(),
+    my_question: (BuildContext context) => MyQuestionScreen(),
     // answers: (BuildContext context) => AnswersScreen(),
 /*
     details_question: (BuildContext context) => DetailsQuestion(),

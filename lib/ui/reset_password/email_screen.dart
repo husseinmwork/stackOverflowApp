@@ -13,7 +13,6 @@ import 'package:todo_app/ui/reset_password/otp.dart';
 import 'package:todo_app/utils/device/device_utils.dart';
 import 'package:todo_app/utils/routes/routes.dart';
 import 'package:todo_app/utils/todo/todo_utils.dart';
-import 'package:todo_app/widgets/arrow_back_icon.dart';
 import 'package:todo_app/widgets/labeled_text_field.dart';
 import 'package:todo_app/widgets/todo_button.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -47,9 +46,7 @@ class _EmailScreenState extends State<EmailScreen> {
 
   AppBar _buildAppBar() => AppBar(
         backgroundColor: Colors.transparent,
-        elevation: 0.0,
-        leading: ArrowBackIcon(),
-      );
+        elevation: 0.0,   );
 
   Widget _buildBody() {
     TextTheme textTheme = Theme.of(context).textTheme;

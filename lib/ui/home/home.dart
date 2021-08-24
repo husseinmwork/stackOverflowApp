@@ -14,6 +14,7 @@ import 'package:todo_app/ui/details_question/details_question.dart';
 import 'package:todo_app/ui/home/question_item.dart';
 import 'package:todo_app/utils/routes/routes.dart';
 import 'package:todo_app/widgets/stack_overflow_indecator.dart';
+import 'package:todo_app/widgets/user_image_avatar.dart';
 
 const double _fabDimension = 56.0;
 
@@ -103,34 +104,28 @@ class _HomeScreenState extends State<HomeScreen>
       );
 
   Widget _createHeader() {
-    // onTap: () {
-    //   Navigator.of(context).pop();
-    //   Navigator.of(context).pushNamed(Routes.profile_screen);
-    // },
-    return UserAccountsDrawerHeader(
-      accountName: Text(_store.user?.username ?? "null",
-          style: Theme.of(context).textTheme.bodyText1),
-      accountEmail: Text(_store.user?.email ?? "null",
-          style: Theme.of(context).textTheme.subtitle1),
-      decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor,
-      ),
-      otherAccountsPictures: [
-        _buildThemeButton(),
-      ],
-      currentAccountPicture: CircleAvatar(
-        radius: Dimens.imageDrawer,
-        child: ClipOval(
-          child: FadeInImage.assetNetwork(
-            fit: BoxFit.cover,
-            placeholder: Assets.placeHolder,
-            height: double.infinity,
-            width: double.infinity,
-            image: _store.user?.image ?? "null",
-            imageErrorBuilder: (_, __, ___) {
-              return Image.asset(Assets.placeHolder, fit: BoxFit.cover);
-            },
-          ),
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).pop();
+        Navigator.of(context).pushNamed(Routes.profile_screen);
+      },
+      child: UserAccountsDrawerHeader(
+        accountName: Text(_store.user?.username ?? "null",
+            style: Theme.of(context).textTheme.bodyText1),
+        accountEmail: Text(_store.user?.email ?? "null",
+            style: Theme.of(context).textTheme.subtitle1),
+        decoration: BoxDecoration(
+          color: Theme.of(context).primaryColor,
+        ),
+        otherAccountsPictures: [
+          _buildThemeButton(),
+        ],
+        currentAccountPicture: UserImageAvatar(
+          onTap: () {
+            Navigator.of(context).pop();
+            Navigator.of(context).pushNamed(Routes.profile_screen);
+          },
+          image: _store.user?.image ?? "null",
         ),
       ),
     );
@@ -182,13 +177,17 @@ class _HomeScreenState extends State<HomeScreen>
                 text: TextSpan(children: [
                   TextSpan(
                     text: "Stack",
-                    style: Theme.of(context).textTheme.headline6,
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline6
+                        ?.copyWith(color: Colors.white),
                   ),
                   TextSpan(
                     text: "overflow",
-                    style: Theme.of(context).textTheme.headline6?.copyWith(
-                        color: /*_themeStore.darkMode? AppColors.lightPurple:*/ Colors
-                            .amber),
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline6
+                        ?.copyWith(color: Theme.of(context).accentColor),
                   ),
                 ]),
               ),
@@ -210,14 +209,13 @@ class _HomeScreenState extends State<HomeScreen>
             _showNameApp = !_showNameApp;
           });
         },
-        autoFocus: true,
-        color: _showSearchColor ? Colors.black : Colors.transparent,
+        autoFocus: false,
+        color: Theme.of(context).primaryColor,
         width: MediaQuery.of(context).size.width * 0.70,
         textController: searchController,
+        style: TextStyle(color: Colors.white, fontSize: 18),
         onChange: (value) {
-          print(value);
           _store.body = value;
-          // _store.pagingController.refresh();
         },
         onSuffixTap: () {
           setState(() {

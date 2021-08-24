@@ -27,7 +27,6 @@ class _PopUpMenuWidgetState extends State<PopUpMenuWidget> {
         PopupMenuItem<question>(
           value: question.delete,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Icon(Icons.delete),
               SizedBox(width: Dimens.padding_mini),

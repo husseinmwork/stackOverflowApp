@@ -10,7 +10,6 @@ import 'package:todo_app/store/theme/theme_store.dart';
 import 'package:todo_app/utils/device/device_utils.dart';
 import 'package:todo_app/utils/routes/routes.dart';
 import 'package:todo_app/utils/todo/todo_utils.dart';
-import 'package:todo_app/widgets/arrow_back_icon.dart';
 import 'package:todo_app/widgets/labeled_text_field.dart';
 import 'package:todo_app/widgets/todo_button.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -69,34 +68,18 @@ class _LoginScreenState extends State<LoginScreen> {
 
   AppBar _buildAppBar() {
     return AppBar(
-      backgroundColor: Colors.transparent,
-      elevation: 0.0,
-      leading: ArrowBackIcon(),
-      title: Text(LocaleKeys.login.tr(),
-          style: Theme.of(context).textTheme.headline6),
+      title: Text(
+        LocaleKeys.login.tr(),
+        style: Theme.of(context)
+            .textTheme
+            .headline6
+            ?.copyWith(color: Colors.white),
+      ),
     );
   }
 
   Widget _buildBody() {
-    return Stack(
-      children: [
-        _buildElement(),
-        Align(
-          alignment: Alignment.center,
-          child: Observer(
-            builder: (_) => Visibility(
-              visible: _store.loading,
-              child: CircularProgressIndicator(),
-            ),
-          ),
-        ),
-        Observer(builder: (_) {
-          return _store.success
-              ? _navigateToLoginScreen(context)
-              : _buildClosed();
-        }),
-      ],
-    );
+    return _buildElement();
   }
 
   Widget _buildElement() {
@@ -153,8 +136,11 @@ class _LoginScreenState extends State<LoginScreen> {
                           _store.password = password;
                         },
                         focusNode: _passwordFocusNode,
-                        onFieldSubmitted: (vlaue) {
-                          _store.login();
+                        onFieldSubmitted: (vlaue) async {
+                          await _store.login();
+                          Navigator.of(context)
+                              .pushReplacementNamed(Routes.home);
+                          _store.loading = false;
                         },
                       ),
                     ),
@@ -180,10 +166,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 height: Dimens.padding_xxl,
               ),
               RoundedButton(
+                loading: _store.loading,
                 onPressed: () async {
                   DeviceUtils.hideKeyboard(context);
                   if (_formStore.canLogin == true) {
                     await _store.login();
+                    Navigator.of(context).pushReplacementNamed(Routes.home);
+                    _store.loading = false;
+
                     if (_store.errorLogin == true) {
                       onSaveTaped(context);
                     }
@@ -229,19 +219,5 @@ class _LoginScreenState extends State<LoginScreen> {
       duration: Duration(seconds: 4),
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  }
-
-  ///this  Navigation to another page
-  _buildClosed() {
-    return SizedBox.shrink();
-  }
-
-  Widget _navigateToLoginScreen(BuildContext context) {
-    Future.delayed(Duration.zero, () {
-      Navigator.of(context).pushReplacementNamed(Routes.home);
-      _store.loading = false;
-    });
-    _store.success = false;
-    return Container();
   }
 }
