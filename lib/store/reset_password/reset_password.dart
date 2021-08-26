@@ -44,13 +44,13 @@ abstract class _ResetPasswordStore with Store {
   Future passwordResetRequest() async {
     this.loading = true;
     await _repository.passwordResetRequest(email!).then((value) {
+      loading = false;
       success = true;
-      errorSendEmail = false;
     }).catchError((error) {
       this.loading = false;
       this.success = false;
-      this.errorSendEmail = true;
       errorStore.errorMessage = DioErrorUtil.handleError(error);
+      throw error;
     });
   }
 

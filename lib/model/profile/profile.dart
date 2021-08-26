@@ -21,6 +21,18 @@ class Profile {
   @JsonKey(name: 'image')
   final String? image;
 
+  @JsonKey(name: 'level')
+  final String? level;
+
+  @JsonKey(name: 'fieldId')
+  final String? fieldId;
+
+  @JsonKey(name: 'lat')
+  final double? lat;
+
+  @JsonKey(name: 'lng')
+  final double? lng;
+
   @JsonKey(name: 'Question')
   final List<dynamic>? question;
 
@@ -38,6 +50,10 @@ class Profile {
     this.score,
     this.isActive,
     this.image,
+    this.level,
+    this.lng,
+    this.lat,
+    this.fieldId,
   });
 
   factory Profile.fromJson(Map<String, dynamic> json) =>

@@ -26,6 +26,8 @@ abstract class _ProfileStore with Store {
   @observable
   String? email;
 
+
+
   @observable
   String? userName;
 
@@ -55,13 +57,12 @@ abstract class _ProfileStore with Store {
 
   ///get profile
   @action
-  Future getProfile() async {
-    return await _repository.getProfile().then((value) {
+  Future getProfile({String? userId}) async {
+    return await _repository.getProfile(userId: userId).then((value) {
       profile = value;
       success = true;
     }).catchError((error) {
       success = false;
-      print(error);
     });
   }
 

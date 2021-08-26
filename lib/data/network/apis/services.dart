@@ -69,21 +69,19 @@ class Services {
 
   ///end registration
 
-  ///get profile
-  Future<Profile> getProfile() async {
+  /// profile
+  Future<Profile> getProfile({String? userId}) async {
     try {
-      var response = await _dioClient.get(Endpoints.profile);
+      var response = await _dioClient.get(userId == null ?Endpoints.profile :(Endpoints.yourProfile +"/"+userId) );
       return Profile.fromJson(response);
     } catch (e) {
       throw e;
     }
   }
-
-  ///update profile
   Future<Account> updateProfile(FormData profile) async {
     try {
       var response =
-          await _dioClient.patch(Endpoints.updateProfile, data: profile);
+          await _dioClient.patch(Endpoints.profile, data: profile);
       return Account.fromJson(response);
     } catch (e) {
       throw e;

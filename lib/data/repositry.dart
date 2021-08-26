@@ -156,8 +156,8 @@ class Repository {
   }
 
   /// profile
-  Future<Profile> getProfile() async {
-    return await _services.getProfile().catchError((error) => throw error);
+  Future<Profile> getProfile({String? userId}) async {
+    return await _services.getProfile(userId:userId ).catchError((error) => throw error);
   }
 
   Future<Account> updateProfile(FormData profile) async {

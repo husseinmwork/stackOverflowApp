@@ -4,6 +4,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app/constants/assets.dart';
 import 'package:todo_app/constants/dimens.dart';
+import 'package:todo_app/model/user/user.dart';
 import 'package:todo_app/store/language/language_store.dart';
 import 'package:todo_app/store/profile/profile_store.dart';
 import 'package:todo_app/store/theme/theme_store.dart';
@@ -13,6 +14,10 @@ import 'package:todo_app/widgets/stack_overflow_indecator.dart';
 import 'package:todo_app/widgets/user_image_avatar.dart';
 
 class ProfileScreen extends StatefulWidget {
+  final String? userId;
+
+  const ProfileScreen({this.userId});
+
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
 }
@@ -28,7 +33,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _languageStore = Provider.of<LanguageStore>(context);
     _store = Provider.of<ProfileStore>(context);
     _themeStore = Provider.of<ThemeStore>(context);
-    _store.getProfile();
+    if(widget.userId == null){
+      _store.getProfile();
+    }else{
+      _store.getProfile(userId:widget.userId);
+    }
+
   }
 
   @override
@@ -39,8 +49,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    //todo send request after edit
-
     return Scaffold(
       appBar: _buildAppBar(),
       body: _buildBody(),
@@ -48,7 +56,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   AppBar _buildAppBar() => AppBar(
-        title: Text("Profile", style: Theme.of(context).textTheme.headline6?.copyWith(color: Colors.white)),
+        title: Text("Profile",
+            style: Theme.of(context)
+                .textTheme
+                .headline6
+                ?.copyWith(color: Colors.white)),
       );
 
   Widget _buildBody() => Stack(
@@ -75,12 +87,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             Expanded(child: _buildRow()),
                           ],
                         ),
-                        SizedBox(height: Dimens.padding_normal),
-                        _buildFullName(),
-                        SizedBox(height: Dimens.padding_normal),
-                        _buildEmail(),
-                        SizedBox(height: Dimens.padding_normal),
-                        _buildUserName(),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  SizedBox(height: Dimens.padding_normal),
+                                  _buildFullName(),
+                                  SizedBox(height: Dimens.padding_normal),
+                                  _buildEmail(),
+                                  SizedBox(height: Dimens.padding_normal),
+                                  _buildUserName(),
+                                ],
+                              ),
+                            ),
+                            _buildUserLevel(),
+                          ],
+                        ),
                         SizedBox(height: Dimens.padding_xl),
                         _buildButton()
                       ],
@@ -96,27 +121,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _buildImage() => UserImageAvatar(
       height: 100,
       width: 100,
-      image: _store.profile?.image ?? "error",
+      image:_store.profile?.image ?? "noThing",
       onTap: () {});
 
   Widget _buildFullName() => Text(
-        _store.profile?.fullName ?? "null",
+        _store.profile?.fullName ?? " ",
         style: Theme.of(context).textTheme.headline6?.copyWith(
               color: _themeStore.darkMode ? Colors.white : Colors.black,
             ),
       );
 
   Widget _buildUserName() => Text(
-        _store.profile?.userName ?? "",
+        _store.profile?.userName ?? "noThing",
         style: Theme.of(context).textTheme.subtitle2?.copyWith(
               color: _themeStore.darkMode ? Colors.white : Colors.black,
             ),
       );
 
   Widget _buildEmail() => Text(
-        _store.profile?.email ?? "",
+         _store.profile?.email ?? "",
         style: Theme.of(context).textTheme.subtitle2?.copyWith(
               color: _themeStore.darkMode ? Colors.white : Colors.black,
+            ),
+      );
+
+  Widget _buildUserLevel() => Text(
+         _store.profile?.level ?? " ",
+        style: Theme.of(context).textTheme.subtitle2?.copyWith(
+              color: Colors.purpleAccent,
             ),
       );
 
@@ -128,7 +160,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Column(
               children: [
                 Text(
-                  _store.profile?.score?.toString() ?? "0",
+                 _store.profile?.score?.toString() ?? "0",
                   style: Theme.of(context).textTheme.headline6?.copyWith(
                         color:
                             _themeStore.darkMode ? Colors.white : Colors.black,
@@ -176,7 +208,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Column(
               children: [
                 Text(
-                  _store.profile?.answer?.length.toString() ?? "0",
+                   _store.profile?.answer?.length.toString() ?? "0",
                   style: Theme.of(context).textTheme.headline6?.copyWith(
                         color:
                             _themeStore.darkMode ? Colors.white : Colors.black,
@@ -196,23 +228,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
       );
 
   Widget _buildButton() => SizedBox(
-        height: 40,
-        child: OutlinedButtonS(
-          borderColor: _themeStore.darkMode
-              ? Colors.white
-              : Theme.of(context).accentColor,
-          titleColor: _themeStore.darkMode
-              ? Colors.white
-              : Theme.of(context).accentColor,
-          onPressed: () async {
-            final result = await Navigator.of(context)
-                .pushNamed(Routes.edit_profile_screen);
-            if (result == true) {
-              _store.success = false;
-              _store.getProfile();
-            }
-          },
-          title: "Edit",
-        ),
-      );
+    height: 40,
+    child: OutlinedButtonS(
+      borderColor: _themeStore.darkMode
+          ? Colors.white
+          : Theme.of(context).accentColor,
+      titleColor: _themeStore.darkMode
+          ? Colors.white
+          : Theme.of(context).accentColor,
+      onPressed: () async {
+        final result = await Navigator.of(context)
+            .pushNamed(Routes.edit_profile_screen);
+        if (result == true) {
+          _store.success = false;
+          _store.getProfile();
+        }
+      },
+      title: "Edit",
+    ),
+  );
 }

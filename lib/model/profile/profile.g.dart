@@ -18,6 +18,10 @@ Profile _$ProfileFromJson(Map<String, dynamic> json) {
     score: json['score'] as int?,
     isActive: json['isActive'] as bool?,
     image: json['image'] as String?,
+    level: json['level'] as String?,
+    lng: (json['lng'] as num?)?.toDouble(),
+    lat: (json['lat'] as num?)?.toDouble(),
+    fieldId: json['fieldId'] as String?,
   );
 }
 
@@ -30,6 +34,10 @@ Map<String, dynamic> _$ProfileToJson(Profile instance) => <String, dynamic>{
       'score': instance.score,
       'isActive': instance.isActive,
       'image': instance.image,
+      'level': instance.level,
+      'fieldId': instance.fieldId,
+      'lat': instance.lat,
+      'lng': instance.lng,
       'Question': instance.question,
       'Answer': instance.answer,
     };

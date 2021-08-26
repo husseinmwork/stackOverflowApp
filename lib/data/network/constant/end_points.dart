@@ -31,7 +31,7 @@ class Endpoints {
 
   ///profile
   static const String profile = baseUrl + "/accounts/profile";
-  static const String updateProfile = baseUrl + "/accounts/profile";
+  static const String yourProfile = baseUrl + "/accounts/user";
 /// category
   static const String category = baseUrl + "/fields";
   /// Answer

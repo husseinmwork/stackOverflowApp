@@ -8,6 +8,7 @@ import 'package:todo_app/constants/dimens.dart';
 import 'package:todo_app/model/get_answer/get_answer.dart';
 import 'package:todo_app/store/answers/answers_store.dart';
 import 'package:todo_app/store/theme/theme_store.dart';
+import 'package:todo_app/ui/profile/profile.dart';
 import 'package:todo_app/utils/device/device_utils.dart';
 import 'package:todo_app/widgets/like.dart';
 import 'package:todo_app/widgets/stack_overflow_indecator.dart';
@@ -240,9 +241,9 @@ class _AnswerItemState extends State<AnswerItem> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
-        widget.onTap();
-      },
+      // onTap: () {
+      //   widget.onTap();
+      // },
       child: Column(
         children: [
           Row(
@@ -258,14 +259,28 @@ class _AnswerItemState extends State<AnswerItem> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: [
-                          _buildUserName(),
-                          SizedBox(width: Dimens.padding_mini),
-                          _buildUserScore()
-                        ],
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => ProfileScreen(
+                                      userId: widget.item.userId)));
+                        },
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                _buildUserName(),
+                                SizedBox(width: Dimens.padding_mini),
+                                _buildUserScore()
+                              ],
+                            ),
+                            _buildAnswerDate(),
+                          ],
+                        ),
                       ),
-                      _buildAnswerDate(),
                       SizedBox(height: Dimens.padding_mid),
                       _buildAnswerBody(),
                       SizedBox(height: Dimens.padding_mid),
@@ -297,11 +312,17 @@ class _AnswerItemState extends State<AnswerItem> {
   }
 
   Widget _buildImage() => Padding(
-        //todo after change language add padding from right
         padding: const EdgeInsets.only(
             left: Dimens.padding_normal, top: Dimens.padding_normal),
         child: UserImageAvatar(
-            image: widget.item.user?.image ?? "null", onTap: () {}),
+            image: widget.item.user?.image ?? "null",
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) =>
+                          ProfileScreen(userId: widget.item.userId)));
+            }),
       );
 
   Widget _buildUserName() => Text(

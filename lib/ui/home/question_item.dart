@@ -4,13 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app/constants/dimens.dart';
 import 'package:todo_app/model/get_question/get_question.dart';
+import 'package:todo_app/model/user/user.dart';
 import 'package:todo_app/store/theme/theme_store.dart';
+import 'package:todo_app/ui/profile/profile.dart';
 import 'package:todo_app/widgets/user_image_avatar.dart';
 import 'package:todo_app/utils/todo/todo_utils.dart';
 
 class QuestionItem extends StatefulWidget {
   final Question item;
   final VoidCallback onTap;
+
 
   QuestionItem({required this.item, required this.onTap});
 
@@ -47,7 +50,7 @@ class _QuestionItemState extends State<QuestionItem> {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        print("profile ");
+                        Navigator.push(context, MaterialPageRoute(builder: (_)=>ProfileScreen(userId: widget.item.userId)));
                       },
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -109,7 +112,11 @@ class _QuestionItemState extends State<QuestionItem> {
   }
 
   Widget _buildImage() =>
-      UserImageAvatar(image: widget.item.user?.image ?? "null", onTap: () {});
+      UserImageAvatar(image: widget.item.user?.image ?? "null", onTap: () {
+        Navigator.push(context, MaterialPageRoute(builder: (_)=>ProfileScreen(userId: widget.item.userId)));
+
+
+      });
 
   Widget _buildUserName() => Text(
         widget.item.user!.cardUserName,

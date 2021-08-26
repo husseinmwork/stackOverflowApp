@@ -162,8 +162,8 @@ mixin _$ProfileStore on _ProfileStore, Store {
   final _$getProfileAsyncAction = AsyncAction('_ProfileStore.getProfile');
 
   @override
-  Future<dynamic> getProfile() {
-    return _$getProfileAsyncAction.run(() => super.getProfile());
+  Future<dynamic> getProfile({String? userId}) {
+    return _$getProfileAsyncAction.run(() => super.getProfile(userId: userId));
   }
 
   @override

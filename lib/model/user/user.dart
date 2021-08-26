@@ -16,6 +16,19 @@ class Account {
   final String? lastName;
   @JsonKey(name: 'image')
   final String? image;
+
+  @JsonKey(name: 'level')
+  final String? level;
+
+  @JsonKey(name: 'fieldId')
+  final String? fieldId;
+
+  @JsonKey(name: 'lat')
+  final double? lat;
+
+  @JsonKey(name: 'lng')
+  final double? lng;
+
   @JsonKey(name: 'score')
   final int? score;
   @JsonKey(name: 'Question')
@@ -23,23 +36,28 @@ class Account {
   @JsonKey(name: 'Answer')
   final List<dynamic>? answer;
 
-  Account(
-      {this.id,
-      this.username,
-      this.email,
-      this.firstName,
-      this.lastName,
-      this.score,
-      this.image,
-      this.question,
-      this.answer});
+  Account({
+    this.id,
+    this.username,
+    this.email,
+    this.firstName,
+    this.lastName,
+    this.score,
+    this.image,
+    this.question,
+    this.answer,
+    this.fieldId,
+    this.lat,
+    this.lng,
+    this.level,
+  });
 
   factory Account.fromJson(Map<String, dynamic> json) =>
       _$AccountFromJson(json);
 
   Map<String, dynamic> toJson() => _$AccountToJson(this);
 
-  String get fullName => (firstName??"") + (lastName??"");
+  String get fullName => (firstName ?? "") + (lastName ?? "");
 
-  String get cardUserName =>fullName.isEmpty? "${username}" : "${fullName}";
+  String get cardUserName => fullName.isEmpty ? "$username" : "$fullName";
 }

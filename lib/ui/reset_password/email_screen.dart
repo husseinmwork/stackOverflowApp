@@ -10,10 +10,8 @@ import 'package:todo_app/packages/toast.dart';
 import 'package:todo_app/store/form/form_store.dart';
 import 'package:todo_app/store/reset_password/reset_password.dart';
 import 'package:todo_app/store/theme/theme_store.dart';
-import 'package:todo_app/ui/reset_password/otp.dart';
 import 'package:todo_app/utils/device/device_utils.dart';
 import 'package:todo_app/utils/routes/routes.dart';
-import 'package:todo_app/utils/todo/todo_utils.dart';
 import 'package:todo_app/widgets/labeled_text_field.dart';
 import 'package:todo_app/widgets/todo_button.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -46,42 +44,27 @@ class _EmailScreenState extends State<EmailScreen> {
   }
 
   AppBar _buildAppBar() => AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0.0,   );
+        title: Text(
+          "Send Email",
+          style: Theme.of(context)
+              .textTheme
+              .headline6
+              ?.copyWith(color: Colors.white),
+        ),
+      );
 
   Widget _buildBody() {
-    TextTheme textTheme = Theme.of(context).textTheme;
-
-    return Stack(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: Dimens.padding_xl),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              _buildTitle(),
-              _buildTextField(),
-              _buildButton(),
-            ],
-          ),
-        ),
-        Align(
-          alignment: Alignment.center,
-          child: Observer(
-            builder: (_) => Visibility(
-              visible: _store.loading,
-              child: CircularProgressIndicator(
-              ),
-            ),
-          ),
-        ),
-        Observer(builder: (_) {
-          return _store.success
-              ? _navigateToLoginScreen(context)
-              : _buildClosed();
-        }),
-      ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: Dimens.padding_large),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          _buildTitle(),
+          _buildTextField(),
+          _buildButton(),
+        ],
+      ),
     );
   }
 
@@ -116,68 +99,50 @@ class _EmailScreenState extends State<EmailScreen> {
       height: 100,
       child: Observer(
         builder: (_) => LabeledTextField(
-          isIcon: false,
-          title: LocaleKeys.regs_text_field_lable_email.tr(),
-          textController: _emailController,
-          hint: LocaleKeys.regs_text_field_lable_email.tr(),
-          errorText: _formStore.formErrorStore.userEmail,
-          onChanged: (email) {
-            _formStore.setUserId(email);
-            _store.email = email;
-          },
-          onFieldSubmitted: (value) {
-            // FocusScope.of(context).requestFocus(_passwordFocusNode);
-          },
-        ),
+            isIcon: false,
+            title: LocaleKeys.regs_text_field_lable_email.tr(),
+            textController: _emailController,
+            hint: LocaleKeys.regs_text_field_lable_email.tr(),
+            errorText: _formStore.formErrorStore.userEmail,
+            onChanged: (email) {
+              _formStore.setUserId(email);
+              _store.email = email;
+            },
+            onFieldSubmitted: (value) async {
+              DeviceUtils.hideKeyboard(context);
+              if (_formStore.canSendEmail) {
+                await _store.passwordResetRequest().then((value) {
+                  Navigator.of(context).pushReplacementNamed(Routes.otp_screen);
+                }).catchError((e) {
+                  Toast.show(_store.errorStore.errorMessage, context,
+                      duration: 3);
+                });
+              } else {
+                Toast.show("please Enter a valid Email", context, duration: 2);
+              }
+            }),
       ),
     );
   }
 
   Widget _buildButton() {
-    return RoundedButton(
-        title: LocaleKeys.reset_password.tr(),
-        onPressed: () async {
-          DeviceUtils.hideKeyboard(context);
-          if (_formStore.canSendEmail) {
-            await _store.passwordResetRequest();
-            if(_store.errorSendEmail)
-              onSaveTaped();
-
-          } else {
-            Toast.show("please Enter a valid Email", context , duration: 2);
-
-
-          }
-        });
-  }
-
-  void onSaveTaped() async {
-    final snackBar = SnackBar(
-      content: Observer(
-        builder: (_) => Text(
-          _store.errorStore.errorMessage,
-          style: TextStyle(color: Colors.white),
-        ),
-      ),
-      behavior: SnackBarBehavior.fixed,
-      backgroundColor: AppColors.DarkPurple,
-      duration: Duration(seconds: 4),
+    return Observer(
+      builder: (_) => RoundedButton(
+          loading: _store.loading,
+          title: LocaleKeys.reset_password.tr(),
+          onPressed: () async {
+            DeviceUtils.hideKeyboard(context);
+            if (_formStore.canSendEmail) {
+              await _store.passwordResetRequest().then((value) {
+                Navigator.of(context).pushReplacementNamed(Routes.otp_screen);
+              }).catchError((e) {
+                Toast.show(_store.errorStore.errorMessage, context,
+                    duration: 3);
+              });
+            } else {
+              Toast.show("please Enter a valid Email", context, duration: 2);
+            }
+          }),
     );
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  }
-
-  ///this  Navigation to another page
-
-  _buildClosed() {
-    return SizedBox.shrink();
-  }
-
-  Widget _navigateToLoginScreen(BuildContext context) {
-    Future.delayed(Duration.zero, () {
-      Navigator.of(context).pushReplacementNamed(Routes.otp_screen);
-      _store.loading = false;
-    });
-    _store.success = false;
-    return Container();
   }
 }
