@@ -190,21 +190,6 @@ mixin _$SignUpStore on _SignUpStore, Store {
     });
   }
 
-  final _$errorRegisterAtom = Atom(name: '_SignUpStore.errorRegister');
-
-  @override
-  bool get errorRegister {
-    _$errorRegisterAtom.reportRead();
-    return super.errorRegister;
-  }
-
-  @override
-  set errorRegister(bool value) {
-    _$errorRegisterAtom.reportWrite(value, super.errorRegister, () {
-      super.errorRegister = value;
-    });
-  }
-
   final _$signUpAsyncAction = AsyncAction('_SignUpStore.signUp');
 
   @override
@@ -226,8 +211,7 @@ isActive: ${isActive},
 success: ${success},
 loading: ${loading},
 showPassword: ${showPassword},
-showConfirmPassword: ${showConfirmPassword},
-errorRegister: ${errorRegister}
+showConfirmPassword: ${showConfirmPassword}
     ''';
   }
 }

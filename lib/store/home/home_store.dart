@@ -39,6 +39,9 @@ abstract class _HomeStore with Store {
   @observable
   bool loading = false;
 
+  @observable
+  bool sendRequest = true;
+
 /*  //User screen Scroll
   @observable
   ScrollController controller = ScrollController();

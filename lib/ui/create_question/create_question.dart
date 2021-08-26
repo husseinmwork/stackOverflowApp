@@ -3,6 +3,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app/constants/dimens.dart';
 import 'package:todo_app/model/get_question/get_question.dart';
+import 'package:todo_app/packages/toast.dart';
 import 'package:todo_app/store/create_question/create_question_store.dart';
 import 'package:todo_app/store/form/form_store.dart';
 import 'package:todo_app/store/theme/theme_store.dart';
@@ -200,7 +201,9 @@ class _CreateQuestionScreenState extends State<CreateQuestionScreen> {
                           print(e);
                         });
                       } else {
-                        showErrorMessage('Please check all fields', context);
+                        Toast.show("Please check all fields", context , duration: 2);
+
+
                       }
                     },
               title: widget.editQuestion == true

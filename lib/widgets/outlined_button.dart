@@ -4,10 +4,14 @@ import 'package:todo_app/constants/dimens.dart';
 class OutlinedButtonS extends StatelessWidget {
   final Function onPressed;
   final String title;
+  final Color titleColor;
+  final Color borderColor;
 
   const OutlinedButtonS({
     required this.onPressed,
     required this.title,
+    required this.borderColor,
+    required this.titleColor
   });
 
   @override
@@ -15,19 +19,19 @@ class OutlinedButtonS extends StatelessWidget {
     return OutlinedButton(
       style: OutlinedButton.styleFrom(
         minimumSize: Size(double.infinity, 48),
-        side: BorderSide(color: Theme.of(context).accentColor),
+        side: BorderSide(color: borderColor),
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(Dimens.padding_small)),
+            borderRadius: BorderRadius.circular(Dimens.padding_mini)),
       ),
       onPressed: () {
         onPressed();
       },
       child: Text(
-        "Sign Up".toUpperCase(),
+        title.toUpperCase(),
         style: Theme.of(context)
             .textTheme
             .button
-            ?.copyWith(color: Theme.of(context).accentColor),
+            ?.copyWith(color: titleColor),
       ),
     );
   }

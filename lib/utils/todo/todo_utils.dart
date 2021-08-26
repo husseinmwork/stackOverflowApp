@@ -1,26 +1,8 @@
-import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:todo_app/constants/strings.dart';
-import 'package:todo_app/utils/locale/app_localization.dart';
 
-///validation method
-// General Methods:-----------------------------------------------------------
-showErrorMessage(String message , BuildContext context) {
-  if (message.isNotEmpty) {
-    Future.delayed(Duration(milliseconds: 0), () {
-      if (message.isNotEmpty) {
-        FlushbarHelper.createError(
-          message: message,
-          //todo change languages
-          title: 'home_tv_error',
-          duration: Duration(seconds: 3),
-        )..show(context);
-      }
-    });
-  }
-  return SizedBox.shrink();
-}
+
 
 /// date pattern
 const String baseDP = "yyyy-MM-dd";

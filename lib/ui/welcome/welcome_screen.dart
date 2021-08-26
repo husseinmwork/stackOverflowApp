@@ -1,3 +1,7 @@
+import 'dart:async';
+import 'dart:io';
+
+import 'package:data_connection_checker_tv/data_connection_checker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +9,7 @@ import 'package:material_dialog/material_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app/constants/dimens.dart';
 import 'package:todo_app/generated/locale_keys.g.dart';
+import 'package:todo_app/packages/toast.dart';
 import 'package:todo_app/store/language/language_store.dart';
 import 'package:todo_app/store/theme/theme_store.dart';
 import 'package:todo_app/ui/login/login.dart';
@@ -23,6 +28,36 @@ class _WelcomeScreenState extends State<WelcomeScreen>
     with SingleTickerProviderStateMixin {
   late LanguageStore _languageStore;
   late ThemeStore _themeStore;
+
+  late StreamSubscription<DataConnectionStatus> listener;
+
+  bool _checkConnections = false;
+
+  checkConnection(BuildContext context) async {
+    listener = DataConnectionChecker().onStatusChange.listen((status) {
+      switch (status) {
+        case DataConnectionStatus.connected:
+          _checkConnections = true;
+          break;
+        case DataConnectionStatus.disconnected:
+          _checkConnections = false;
+          break;
+      }
+    });
+    return await DataConnectionChecker().connectionStatus;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    checkConnection(context).listener.cancel();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    checkConnection(context);
+  }
 
   @override
   void didChangeDependencies() {
@@ -113,12 +148,17 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                 text: TextSpan(children: [
                   TextSpan(
                     text: "Stack",
-                    style: Theme.of(context).textTheme.headline4?.copyWith(color:_themeStore.darkMode?Colors.white: Theme.of(context).primaryColor),
+                    style: Theme.of(context).textTheme.headline4?.copyWith(
+                        color: _themeStore.darkMode
+                            ? Colors.white
+                            : Theme.of(context).primaryColor),
                   ),
                   TextSpan(
                     text: "overflow",
-                    style: Theme.of(context).textTheme.headline4?.copyWith(
-                        color:Theme.of(context).accentColor),
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline4
+                        ?.copyWith(color: Theme.of(context).accentColor),
                   ),
                 ]),
               ),
@@ -137,19 +177,24 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                   duration: 600,
                   child: RoundedButton(
                       onPressed: () {
-                        Navigator.of(context).push(
-                          PageRouteBuilder<String>(
-                            pageBuilder:
-                                (context, animation, secondaryAnimation) =>
-                                    LoginScreen(),
-                            transitionsBuilder:
-                                (context, animation, a2, child) =>
-                                    FadeTransition(
-                                        opacity: animation, child: child),
-                            transitionDuration:
-                                Duration(milliseconds: Dimens.navigator_anim),
-                          ),
-                        );
+                        if (_checkConnections) {
+                          Navigator.of(context).push(
+                            PageRouteBuilder<String>(
+                              pageBuilder:
+                                  (context, animation, secondaryAnimation) =>
+                                      LoginScreen(),
+                              transitionsBuilder: (context, animation, a2,
+                                      child) =>
+                                  FadeTransition(
+                                      opacity: animation, child: child),
+                              transitionDuration:
+                                  Duration(milliseconds: Dimens.navigator_anim),
+                            ),
+                          );
+                        } else {
+                          Toast.show(
+                              "Please check your internet connection", context);
+                        }
                       },
                       title: "Sign In"),
                 ),
@@ -157,21 +202,29 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                 ItemFader(
                   duration: 800,
                   child: OutlinedButtonS(
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        PageRouteBuilder<String>(
-                          pageBuilder:
-                              (context, animation, secondaryAnimation) =>
-                                  SignUpScreen(),
-                          transitionsBuilder: (context, animation, a2, child) =>
-                              FadeTransition(opacity: animation, child: child),
-                          transitionDuration:
-                              Duration(milliseconds: Dimens.navigator_anim),
-                        ),
-                      );
-                    },
-                    title: "Sign Up"
-                  ),
+                      borderColor: Theme.of(context).accentColor,
+                      titleColor: Theme.of(context).accentColor,
+                      onPressed: () {
+                        if (_checkConnections) {
+                          Navigator.of(context).push(
+                            PageRouteBuilder<String>(
+                              pageBuilder:
+                                  (context, animation, secondaryAnimation) =>
+                                      SignUpScreen(),
+                              transitionsBuilder: (context, animation, a2,
+                                      child) =>
+                                  FadeTransition(
+                                      opacity: animation, child: child),
+                              transitionDuration:
+                                  Duration(milliseconds: Dimens.navigator_anim),
+                            ),
+                          );
+                        } else {
+                          Toast.show(
+                              "Please check your internet connection", context);
+                        }
+                      },
+                      title: "Sign Up"),
                 ),
                 SizedBox(height: Dimens.padding_xxl),
                 ItemFader(

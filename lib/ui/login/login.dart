@@ -3,13 +3,13 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app/constants/colors.dart';
 import 'package:todo_app/constants/dimens.dart';
+import 'package:todo_app/packages/toast.dart';
 import 'package:todo_app/store/form/form_store.dart';
 import 'package:todo_app/store/language/language_store.dart';
 import 'package:todo_app/store/login/login.dart';
 import 'package:todo_app/store/theme/theme_store.dart';
 import 'package:todo_app/utils/device/device_utils.dart';
 import 'package:todo_app/utils/routes/routes.dart';
-import 'package:todo_app/utils/todo/todo_utils.dart';
 import 'package:todo_app/widgets/labeled_text_field.dart';
 import 'package:todo_app/widgets/todo_button.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -40,7 +40,7 @@ class _LoginScreenState extends State<LoginScreen> {
     _themeStore = Provider.of<ThemeStore>(context);
     _languageStore = Provider.of<LanguageStore>(context);
     _store
-      ..userName = _userNameController.text = "hussein.net"
+      ..userName = _userNameController.text = "hussein.nets"
       ..password = _passwordController.text = "hussein.net";
     _store.userName = "hussein.net";
     _store.password = "hussein.net";
@@ -79,10 +79,6 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _buildBody() {
-    return _buildElement();
-  }
-
-  Widget _buildElement() {
     TextTheme textTheme = Theme.of(context).textTheme;
     return Center(
       child: SingleChildScrollView(
@@ -96,109 +92,23 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Observer(
-                      builder: (_) => LabeledTextField(
-                        isIcon: false,
-                        title: LocaleKeys.login_text_field_email_title.tr(),
-                        textController: _userNameController,
-                        hint: LocaleKeys.login_text_field_email_title.tr(),
-                        errorText: _formStore.formErrorStore.userName,
-                        onChanged: (userName) {
-                          _formStore.setUserName(_userNameController.text);
-                          _store.userName = userName;
-                        },
-                        focusNode: _emailFocusNode,
-                        onFieldSubmitted: (value) {
-                          FocusScope.of(context)
-                              .requestFocus(_passwordFocusNode);
-                        },
-                      ),
-                    ),
+                    _buildFieldUserName(),
                     SizedBox(
                       height: Dimens.padding_xxl,
                     ),
-                    Observer(
-                      builder: (_) => LabeledTextField(
-                        isObscure: _store.showPassword,
-                        isIcon: true,
-                        icon: _store.showPassword
-                            ? Icons.visibility_off
-                            : Icons.visibility,
-                        onTap: () {
-                          _store.showPassword = !_store.showPassword;
-                        },
-                        title: LocaleKeys.login_text_field_password_title.tr(),
-                        textController: _passwordController,
-                        hint: LocaleKeys.login_text_field_hint_password.tr(),
-                        errorText: _formStore.formErrorStore.password,
-                        onChanged: (password) {
-                          _formStore.setPassword(_passwordController.text);
-                          _store.password = password;
-                        },
-                        focusNode: _passwordFocusNode,
-                        onFieldSubmitted: (vlaue) async {
-                          await _store.login();
-                          Navigator.of(context)
-                              .pushReplacementNamed(Routes.home);
-                          _store.loading = false;
-                        },
-                      ),
-                    ),
-                    MaterialButton(
-                      onPressed: () {
-                        Navigator.of(context).pushNamed(Routes.email_screen);
-                      },
-                      child: Container(
-                        alignment: Alignment.centerRight,
-                        child: Text(
-                          LocaleKeys.login_btn_forgot_password.tr(),
-                          style: textTheme.bodyText2?.copyWith(
-                              color: _themeStore.darkMode
-                                  ? Colors.white
-                                  : Colors.black),
-                        ),
-                      ),
-                    ),
+                    _buildFieldPass(),
+                    _buildForgetPassButton(textTheme),
                   ],
                 ),
               ),
               SizedBox(
                 height: Dimens.padding_xxl,
               ),
-              RoundedButton(
-                loading: _store.loading,
-                onPressed: () async {
-                  DeviceUtils.hideKeyboard(context);
-                  if (_formStore.canLogin == true) {
-                    await _store.login();
-                    Navigator.of(context).pushReplacementNamed(Routes.home);
-                    _store.loading = false;
-
-                    if (_store.errorLogin == true) {
-                      onSaveTaped(context);
-                    }
-                  } else {
-                    showErrorMessage('Please check all fields', context);
-                  }
-                },
-                title: LocaleKeys.login.tr(),
-              ),
+              _buildLoginButton(),
               SizedBox(
                 height: Dimens.padding_normal,
               ),
-              MaterialButton(
-                onPressed: () {
-                  Navigator.of(context).pushReplacementNamed(Routes.sign_up);
-                },
-                child: Center(
-                  child: Text(
-                    LocaleKeys.goto_register.tr(),
-                    style: textTheme.bodyText2?.copyWith(
-                        color:
-                            _themeStore.darkMode ? Colors.white : Colors.black),
-                  ),
-                ),
-              ),
+              _buildRegButton(textTheme),
             ],
           ),
         ),
@@ -206,18 +116,101 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void onSaveTaped(BuildContext context) async {
-    final snackBar = SnackBar(
-      content: Observer(
-        builder: (_) => Text(
-          _store.errorStore.errorMessage,
-          style: TextStyle(color: Colors.white),
+  _buildFieldUserName() => Observer(
+        builder: (_) => LabeledTextField(
+          isIcon: false,
+          title: LocaleKeys.login_text_field_email_title.tr(),
+          textController: _userNameController,
+          hint: LocaleKeys.login_text_field_email_title.tr(),
+          errorText: _formStore.formErrorStore.userName,
+          onChanged: (userName) {
+            _formStore.setUserName(_userNameController.text);
+            _store.userName = userName;
+          },
+          focusNode: _emailFocusNode,
+          onFieldSubmitted: (value) {
+            FocusScope.of(context).requestFocus(_passwordFocusNode);
+          },
         ),
-      ),
-      behavior: SnackBarBehavior.fixed,
-      backgroundColor: AppColors.DarkPurple,
-      duration: Duration(seconds: 4),
-    );
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  }
+      );
+
+  _buildFieldPass() => Observer(
+        builder: (_) => LabeledTextField(
+          isObscure: _store.showPassword,
+          isIcon: true,
+          icon: _store.showPassword ? Icons.visibility_off : Icons.visibility,
+          onTap: () {
+            _store.showPassword = !_store.showPassword;
+          },
+          title: LocaleKeys.login_text_field_password_title.tr(),
+          textController: _passwordController,
+          hint: LocaleKeys.login_text_field_hint_password.tr(),
+          errorText: _formStore.formErrorStore.password,
+          onChanged: (password) {
+            _formStore.setPassword(_passwordController.text);
+            _store.password = password;
+          },
+          focusNode: _passwordFocusNode,
+          onFieldSubmitted: (vlaue) async {
+            DeviceUtils.hideKeyboard(context);
+            if (_formStore.canLogin == true) {
+              await _store.login().then((value) {
+                Navigator.of(context).pushReplacementNamed(Routes.home);
+              }).catchError((e) {
+                Toast.show(_store.errorStore.errorMessage, context,
+                    duration: 3);
+              });
+            } else {
+              Toast.show("Please check all fields", context, duration: 3);
+            }
+          },
+        ),
+      );
+
+  _buildForgetPassButton(TextTheme textTheme) => MaterialButton(
+        onPressed: () {
+          Navigator.of(context).pushNamed(Routes.email_screen);
+        },
+        child: Container(
+          alignment: Alignment.centerRight,
+          child: Text(
+            LocaleKeys.login_btn_forgot_password.tr(),
+            style: textTheme.bodyText2?.copyWith(
+                color: _themeStore.darkMode ? Colors.white : Colors.black),
+          ),
+        ),
+      );
+
+  _buildLoginButton() => Observer(
+        builder: (_) => RoundedButton(
+          loading: _store.loading,
+          onPressed: () async {
+            DeviceUtils.hideKeyboard(context);
+            if (_formStore.canLogin == true) {
+              await _store.login().then((value) {
+                Navigator.of(context).pushReplacementNamed(Routes.home);
+              }).catchError((e) {
+                Toast.show(_store.errorStore.errorMessage, context,
+                    duration: 3);
+              });
+            } else {
+              Toast.show("Please check all fields", context, duration: 3);
+            }
+          },
+          title: LocaleKeys.login.tr(),
+        ),
+      );
+
+  _buildRegButton(TextTheme textTheme) => MaterialButton(
+        onPressed: () {
+          Navigator.of(context).pushReplacementNamed(Routes.sign_up);
+        },
+        child: Center(
+          child: Text(
+            LocaleKeys.goto_register.tr(),
+            style: textTheme.bodyText2?.copyWith(
+                color: _themeStore.darkMode ? Colors.white : Colors.black),
+          ),
+        ),
+      );
 }

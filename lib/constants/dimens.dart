@@ -8,6 +8,7 @@ class Dimens {
 
   //padding
   static const double padding_xxl = 40.0;
+  static const double padding_xxxl = 50.0;
   static const double padding_xl = 32.0;
   static const double padding_large = 16.0;
   static const double padding_mid = 12.0;
@@ -30,6 +31,7 @@ class Dimens {
   static const double border_image = 30;
   ///this border of all filter field
   static const double border_small = 4;
+  static const double border_VerySmall = 2;
   static const double border_mid = 8;
   static const double border_large = 12;
   static const double border_xl = 16;
@@ -37,7 +39,7 @@ class Dimens {
   //size
   static const double image = 50;
   static const double paginationLoading = 50;
-  static const double imageProfile = 60;
+  static const double imageProfile = 50;
   static const double imageDrawer = 40;
   static const double cardQuestionImage = 18;
 

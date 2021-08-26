@@ -7,6 +7,7 @@ import 'package:todo_app/data/repositry.dart';
 import 'package:todo_app/model/sign_up/sign_up.dart';
 import 'package:todo_app/store/error/error_store.dart';
 import 'package:todo_app/utils/dio/dio_error_util.dart';
+import 'package:todo_app/utils/todo/todo_utils.dart';
 
 part 'sign_up.g.dart';
 
@@ -57,35 +58,35 @@ abstract class _SignUpStore with Store {
   @observable
   bool showConfirmPassword = true;
 
-  @observable
-  bool errorRegister = false;
 
   @action
   Future signUp() async {
-    List<MultipartFile> multiPartFile = [];
-    multiPartFile.add(
-      MultipartFile.fromFileSync(image!.path, filename: "image.jpg"),
-    );
+    loading = true;
+    List<MultipartFile>? multiPartFile;
+    if (image != null) {
+      multiPartFile = [];
+      multiPartFile.add(
+        MultipartFile.fromFileSync(image!.path, filename: "image.jpg"),
+      );
+    }
+
     var formData = FormData.fromMap({
       "image": multiPartFile,
       "username": userName,
       "email": email,
       "password": password,
-      "firstName":firstName,
-      "lastName":lastName
-    });
+      "firstName": firstName,
+      "lastName": lastName
+    }.removeNull());
 
-    loading = true;
-    var response = _repository.signUp(formData);
-    response.then((value) {
+    await _repository.signUp(formData).then((value) {
+      loading = false;
       success = true;
-      errorRegister = false;
     }).catchError((error) {
       this.loading = false;
       this.success = false;
-      errorRegister = true;
       errorStore.errorMessage = DioErrorUtil.handleError(error);
+      throw error;
     });
-    return response;
   }
 }

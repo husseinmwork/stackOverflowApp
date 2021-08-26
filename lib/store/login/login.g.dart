@@ -84,18 +84,18 @@ mixin _$LoginStore on _LoginStore, Store {
     });
   }
 
-  final _$errorLoginAtom = Atom(name: '_LoginStore.errorLogin');
+  final _$errorInLoginAtom = Atom(name: '_LoginStore.errorInLogin');
 
   @override
-  bool get errorLogin {
-    _$errorLoginAtom.reportRead();
-    return super.errorLogin;
+  bool get errorInLogin {
+    _$errorInLoginAtom.reportRead();
+    return super.errorInLogin;
   }
 
   @override
-  set errorLogin(bool value) {
-    _$errorLoginAtom.reportWrite(value, super.errorLogin, () {
-      super.errorLogin = value;
+  set errorInLogin(bool value) {
+    _$errorInLoginAtom.reportWrite(value, super.errorInLogin, () {
+      super.errorInLogin = value;
     });
   }
 
@@ -114,7 +114,7 @@ password: ${password},
 showPassword: ${showPassword},
 success: ${success},
 loading: ${loading},
-errorLogin: ${errorLogin}
+errorInLogin: ${errorInLogin}
     ''';
   }
 }

@@ -1,20 +1,18 @@
 import 'dart:io';
 
-import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app/constants/app_theme.dart';
 import 'package:todo_app/constants/dimens.dart';
 import 'package:todo_app/generated/locale_keys.g.dart';
+import 'package:todo_app/packages/toast.dart';
 import 'package:todo_app/store/form/form_store.dart';
 import 'package:todo_app/store/sign_up/sign_up.dart';
 import 'package:todo_app/store/theme/theme_store.dart';
 import 'package:todo_app/utils/device/device_utils.dart';
-import 'package:todo_app/utils/locale/app_localization.dart';
 import 'package:todo_app/utils/routes/routes.dart';
 import 'package:easy_localization/easy_localization.dart';
 
@@ -87,23 +85,20 @@ class _SignUpScreenState extends State<SignUpScreen>
   Widget _buildBody() => _buildElement();
 
   Widget _buildElement() {
-    return Center(
-      child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: Dimens.padding_xl),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              _buildImage(),
-              SizedBox(height: Dimens.padding_xxl),
-              _buildTextField(),
-              SizedBox(height: Dimens.padding_xxl),
-              _buildButtonRegistration(),
-              SizedBox(height: Dimens.padding_normal),
-              _buildButtonLogin(),
-            ],
-          ),
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: Dimens.padding_xl),
+        child: Column(
+          children: [
+            SizedBox(height: Dimens.padding_xxl),
+            _buildImage(),
+            SizedBox(height: Dimens.padding_xxl),
+            _buildTextField(),
+            SizedBox(height: Dimens.padding_xxl),
+            _buildButtonRegistration(),
+            SizedBox(height: Dimens.padding_normal),
+            _buildButtonLogin(),
+          ],
         ),
       ),
     );
@@ -114,19 +109,26 @@ class _SignUpScreenState extends State<SignUpScreen>
           await getImage();
         },
         child: Observer(
-          builder: (_) => CircleAvatar(
-            backgroundColor: Theme.of(context).accentColor,
-            radius: Dimens.image,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(Dimens.image),
-              child: _store.image == null
-                  ? Icon(Icons.add_a_photo, size: Dimens.padding_xxl)
-                  : Image.file(
-                      _store.image!,
-                      fit: BoxFit.cover,
-                      height: double.infinity,
-                      width: double.infinity,
-                    ),
+          builder: (_) => Container(
+            decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                    color: Theme.of(context).accentColor,
+                    width: Dimens.border_VerySmall)),
+            child: CircleAvatar(
+              backgroundColor: Colors.transparent,
+              radius: Dimens.image,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(Dimens.image),
+                child: _store.image == null
+                    ? Icon(Icons.person, size: 80)
+                    : Image.file(
+                        _store.image!,
+                        fit: BoxFit.cover,
+                        height: double.infinity,
+                        width: double.infinity,
+                      ),
+              ),
             ),
           ),
         ),
@@ -257,6 +259,19 @@ class _SignUpScreenState extends State<SignUpScreen>
               onChanged: (password) {
                 _formStore.setConfirmPassword(password);
               },
+              onFieldSubmitted: (value) async {
+                DeviceUtils.hideKeyboard(context);
+                if (_formStore.canRegister) {
+                  await _store.signUp().then((value) {
+                    Navigator.of(context).pushReplacementNamed(Routes.login);
+                  }).catchError((e) {
+                    Toast.show(_store.errorStore.errorMessage, context,
+                        duration: 3);
+                  });
+                } else {
+                  Toast.show('Please check all fields', context, duration: 2);
+                }
+              },
             ),
           ),
         ],
@@ -265,18 +280,24 @@ class _SignUpScreenState extends State<SignUpScreen>
   }
 
   Widget _buildButtonRegistration() {
-    return RoundedButton(
-        onPressed: () async {
-          DeviceUtils.hideKeyboard(context);
-          if (_formStore.canRegister) {
-            await _store.signUp();
-            Navigator.of(context).pushReplacementNamed(Routes.login);
-            _store.loading = false;
-          } else {
-            showErrorMessage('Please check all fields', context);
-          }
-        },
-        title: LocaleKeys.sign_up.tr());
+    return Observer(
+      builder: (_) => RoundedButton(
+          loading: _store.loading,
+          onPressed: () async {
+            DeviceUtils.hideKeyboard(context);
+            if (_formStore.canRegister) {
+              await _store.signUp().then((value) {
+                Navigator.of(context).pushReplacementNamed(Routes.login);
+              }).catchError((e) {
+                Toast.show(_store.errorStore.errorMessage, context,
+                    duration: 3);
+              });
+            } else {
+              Toast.show('Please check all fields', context, duration: 2);
+            }
+          },
+          title: LocaleKeys.sign_up.tr()),
+    );
   }
 
   Widget _buildButtonLogin() {

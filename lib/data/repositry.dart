@@ -48,7 +48,6 @@ class Repository {
 
   Future<Future<bool>> removeUser() async => _sharedPrefsHelper.removeUser();
 
-
   // is login user -------------------------------------------------------------
   Future<void> saveIsLoggedIn(bool value) =>
       _sharedPrefsHelper.saveIsLoggedIn(value);
@@ -64,9 +63,9 @@ class Repository {
   }
 
   Future<Login> login(String userName, String password) async {
-    return await _services
-        .login(userName, password)
-        .catchError((error) => throw error);
+    return await _services.login(userName, password).catchError((error) {
+      throw error;
+    });
   }
 
   Future passwordResetRequest(String email) async {
@@ -94,16 +93,23 @@ class Repository {
   }
 
   ///question
-  Future<Paging<Question>> getQuestion({int? skip, int?take, QuestionFilter? filter }) async {
-    return await _services.getQuestion(skip: skip , filter:filter , take: take).catchError((e) => throw e);
+  Future<Paging<Question>> getQuestion(
+      {int? skip, int? take, QuestionFilter? filter}) async {
+    return await _services
+        .getQuestion(skip: skip, filter: filter, take: take)
+        .catchError((e) => throw e);
   }
 
   Future createQuestion(CreateQuestion createQuestion) async {
-    return await _services.createQuestion(createQuestion).catchError((e) => throw e);
+    return await _services
+        .createQuestion(createQuestion)
+        .catchError((e) => throw e);
   }
 
-  Future deleteQuestion(String questionId)async{
-    return await _services.deleteQuestion(questionId).catchError((error)=>throw error);
+  Future deleteQuestion(String questionId) async {
+    return await _services
+        .deleteQuestion(questionId)
+        .catchError((error) => throw error);
   }
 
   Future<Question> getDetailsQuestion(String id) async {
@@ -115,39 +121,53 @@ class Repository {
     return await _services.questionLike(like).catchError((e) => throw e);
   }
 
-  Future questionUpdateLike(String likeId , String type)async{
-    return await _services.questionUpdateLike(likeId , type).catchError((e)=>throw e);
+  Future questionUpdateLike(String likeId, String type) async {
+    return await _services
+        .questionUpdateLike(likeId, type)
+        .catchError((e) => throw e);
   }
 
-  Future questionDeleteLike(String likeId)async{
-    return await _services.questionDeleteLike(likeId).catchError((e)=>throw e);
+  Future questionDeleteLike(String likeId) async {
+    return await _services
+        .questionDeleteLike(likeId)
+        .catchError((e) => throw e);
   }
 
-  Future updateQuestion(Question question , String questionId)async{
-    return await _services.updateQuestion(question , questionId).catchError((e)=>throw e);
+  Future updateQuestion(Question question, String questionId) async {
+    return await _services
+        .updateQuestion(question, questionId)
+        .catchError((e) => throw e);
   }
 
   ///Answer
-  Future<Paging<Answer>> getAnswers({required int take ,required int skip,required String questionId}) async {
-    return await _services.getAnswers( questionId: questionId , skip: skip , take: take).catchError((e) => throw e);
+  Future<Paging<Answer>> getAnswers(
+      {required int take,
+      required int skip,
+      required String questionId}) async {
+    return await _services
+        .getAnswers(questionId: questionId, skip: skip, take: take)
+        .catchError((e) => throw e);
   }
+
   Future<CreateAnswer> createAnswer(CreateAnswer createAnswer) async {
-    return await _services.createAnswer(createAnswer).catchError((e) => throw e);
+    return await _services
+        .createAnswer(createAnswer)
+        .catchError((e) => throw e);
   }
 
   /// profile
-  Future<Profile> getProfile()async{
-   return await _services.getProfile().catchError((error)=>throw error);
+  Future<Profile> getProfile() async {
+    return await _services.getProfile().catchError((error) => throw error);
   }
 
-  Future<Account> updateProfile(FormData profile)async{
-    return await _services.updateProfile(profile).catchError((error)=>throw error);
+  Future<Account> updateProfile(FormData profile) async {
+    return await _services
+        .updateProfile(profile)
+        .catchError((error) => throw error);
   }
 
   /// category
   Future<Paging<Category>> getCategory(int skip) async {
-    return await _services.getCategory(skip: skip ).catchError((e) => throw e);
+    return await _services.getCategory(skip: skip).catchError((e) => throw e);
   }
-
-
 }

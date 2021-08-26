@@ -34,26 +34,26 @@ abstract class _LoginStore with Store {
   bool loading = false;
 
   @observable
-  bool errorLogin = false;
+  bool errorInLogin = false;
 
   @action
   Future login() async {
     this.loading = true;
-    return await _repository.login(userName, password).then((value) {
+     await  _repository.login(userName, password).then((value) {
       _repository.saveIsLoggedIn(true);
       _repository.saveUser(value.user);
       _repository.saveAuthToken({
         'accessToken': value.accessToken,
         'refreshToken': value.refreshToken
       });
+      loading = false;
       success = true;
-      errorLogin = false;
     }).catchError((error) {
+      this.errorInLogin = true;
       this.loading = false;
       this.success = false;
-      this.errorLogin = true;
-         DioErrorUtil.handleError(error);
-        errorStore.errorMessage = DioErrorUtil.handleError(error);
+      errorStore.errorMessage = DioErrorUtil.handleError(error);
+      throw error;
     });
   }
 }

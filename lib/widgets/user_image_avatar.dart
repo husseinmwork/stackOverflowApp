@@ -18,6 +18,8 @@ class UserImageAvatar extends StatelessWidget {
         onTap.call();
       },
       child: Container(
+        height: height,
+        width: width,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           border: Border.all(color: Theme.of(context).accentColor),

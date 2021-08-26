@@ -8,7 +8,9 @@ import 'package:todo_app/store/language/language_store.dart';
 import 'package:todo_app/store/profile/profile_store.dart';
 import 'package:todo_app/store/theme/theme_store.dart';
 import 'package:todo_app/utils/routes/routes.dart';
+import 'package:todo_app/widgets/outlined_button.dart';
 import 'package:todo_app/widgets/stack_overflow_indecator.dart';
+import 'package:todo_app/widgets/user_image_avatar.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -30,6 +32,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    _store.success = false;
+  }
+
+  @override
   Widget build(BuildContext context) {
     //todo send request after edit
 
@@ -40,78 +48,56 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   AppBar _buildAppBar() => AppBar(
-        elevation: 4,
-        //todo  LocaleKeys.goto_register.tr(), change language after complete all section profile
-        title: Text("Profile", style: Theme.of(context).textTheme.headline6),
-        actions: [
-          TextButton(
-            style: TextButton.styleFrom(backgroundColor: Colors.transparent),
-            onPressed: () {
-              Navigator.of(context).pop();
-              Navigator.of(context).pushNamed(Routes.edit_profile_screen);
-            },
-            child: Text(
-              "Edit",
-              style: Theme.of(context).textTheme.button,
+        title: Text("Profile", style: Theme.of(context).textTheme.headline6?.copyWith(color: Colors.white)),
+      );
+
+  Widget _buildBody() => Stack(
+        children: [
+          Observer(
+            builder: (_) => Visibility(
+              visible: _store.success,
+              replacement: StackOverFlowIndecator(),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: Dimens.padding_large),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: Dimens.padding_xl),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            _buildImage(),
+                            Expanded(child: _buildRow()),
+                          ],
+                        ),
+                        SizedBox(height: Dimens.padding_normal),
+                        _buildFullName(),
+                        SizedBox(height: Dimens.padding_normal),
+                        _buildEmail(),
+                        SizedBox(height: Dimens.padding_normal),
+                        _buildUserName(),
+                        SizedBox(height: Dimens.padding_xl),
+                        _buildButton()
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
-          )
+          ),
         ],
       );
 
-  Widget _buildBody() => Observer(
-        builder: (_) => Visibility(
-          visible: _store.profile != null,
-          replacement: Center(
-            child: StackOverFlowIndecator(),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-
-
-
-              Container(
-                //todo add color
-                // color:Colors.grey[800],
-                height: MediaQuery.of(context).size.height * 0.40,
-                width: double.infinity,
-                child: Column(
-                  children: [
-                    SizedBox(height: Dimens.padding_xl),
-
-                    _buildImage(),
-                    SizedBox(height: Dimens.padding_normal),
-                    _buildFullName(),
-                    SizedBox(height: Dimens.padding_normal),
-                    _buildEmail(),
-                    SizedBox(height: Dimens.padding_normal),
-                    _buildUserName(),
-                  ],
-                ),
-              ),
-
-              _buildRow(),
-            ],
-          ),
-        ),
-      );
-
-  Widget _buildImage() => CircleAvatar(
-        radius: Dimens.imageProfile,
-        child: ClipOval(
-          child: FadeInImage.assetNetwork(
-            fit: BoxFit.cover,
-            placeholder: Assets.placeHolder,
-            height: double.infinity,
-            width: double.infinity,
-            image: _store.profile?.image ?? "null",
-            imageErrorBuilder: (_, __, ___) {
-              return Image.asset(Assets.placeHolder, fit: BoxFit.cover);
-            },
-          ),
-        ),
-      );
+  Widget _buildImage() => UserImageAvatar(
+      height: 100,
+      width: 100,
+      image: _store.profile?.image ?? "error",
+      onTap: () {});
 
   Widget _buildFullName() => Text(
         _store.profile?.fullName ?? "null",
@@ -134,79 +120,99 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
       );
 
-  Widget _buildRow() => Transform.translate(
-    offset: Offset(0,-35),
-    child: Card(
-      elevation: Dimens.padding_mini,
-      margin: EdgeInsets.symmetric(horizontal: Dimens.padding_normal),
-      child: Container(
+  Widget _buildRow() => Container(
         padding: EdgeInsets.all(Dimens.padding_normal),
         child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Column(
               children: [
-                Column(
-                  children: [
-                    Text(
-                      _store.profile?.score?.toString() ?? "0",
-                      style: Theme.of(context).textTheme.headline6?.copyWith(
-                            color: _themeStore.darkMode ? Colors.white : Colors.black,
-                          ),
-                    ),
-                    Text(
-                      "Score",
-                      style: Theme.of(context).textTheme.subtitle2?.copyWith(
-                            color: _themeStore.darkMode ? Colors.white : Colors.black,
-                          ),
-                    ),
-                  ],
+                Text(
+                  _store.profile?.score?.toString() ?? "0",
+                  style: Theme.of(context).textTheme.headline6?.copyWith(
+                        color:
+                            _themeStore.darkMode ? Colors.white : Colors.black,
+                      ),
                 ),
-                SizedBox(
-                  height: Dimens.padding_xxl,
-                  child: VerticalDivider(
-                    color: _themeStore.darkMode ? Colors.white : Colors.black,
-                  ),
-                ),
-                Column(
-                  children: [
-                    Text(
-                      _store.profile?.question?.length.toString() ?? "0",
-                      style: Theme.of(context).textTheme.headline6?.copyWith(
-                            color: _themeStore.darkMode ? Colors.white : Colors.black,
-                          ),
-                    ),
-                    Text(
-                      "Question",
-                      style: Theme.of(context).textTheme.subtitle2?.copyWith(
-                            color: _themeStore.darkMode ? Colors.white : Colors.black,
-                          ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: Dimens.padding_xxl,
-                  child: VerticalDivider(
-                    color: _themeStore.darkMode ? Colors.white : Colors.black,
-                  ),
-                ),
-                Column(
-                  children: [
-                    Text(
-                      _store.profile?.answer?.length.toString() ?? "0",
-                      style: Theme.of(context).textTheme.headline6?.copyWith(
-                            color: _themeStore.darkMode ? Colors.white : Colors.black,
-                          ),
-                    ),
-                    Text(
-                      "Answers",
-                      style: Theme.of(context).textTheme.subtitle2?.copyWith(
-                            color: _themeStore.darkMode ? Colors.white : Colors.black,
-                          ),
-                    ),
-                  ],
+                Text(
+                  "Score",
+                  style: Theme.of(context).textTheme.subtitle2?.copyWith(
+                        color:
+                            _themeStore.darkMode ? Colors.white : Colors.black,
+                      ),
                 ),
               ],
             ),
-      ),
-    ),
-  );
+            SizedBox(
+              height: Dimens.padding_xxl,
+              child: VerticalDivider(
+                color: _themeStore.darkMode ? Colors.white : Colors.black,
+              ),
+            ),
+            Column(
+              children: [
+                Text(
+                  _store.profile?.question?.length.toString() ?? "0",
+                  style: Theme.of(context).textTheme.headline6?.copyWith(
+                        color:
+                            _themeStore.darkMode ? Colors.white : Colors.black,
+                      ),
+                ),
+                Text(
+                  "Question",
+                  style: Theme.of(context).textTheme.subtitle2?.copyWith(
+                        color:
+                            _themeStore.darkMode ? Colors.white : Colors.black,
+                      ),
+                ),
+              ],
+            ),
+            SizedBox(
+              height: Dimens.padding_xxl,
+              child: VerticalDivider(
+                color: _themeStore.darkMode ? Colors.white : Colors.black,
+              ),
+            ),
+            Column(
+              children: [
+                Text(
+                  _store.profile?.answer?.length.toString() ?? "0",
+                  style: Theme.of(context).textTheme.headline6?.copyWith(
+                        color:
+                            _themeStore.darkMode ? Colors.white : Colors.black,
+                      ),
+                ),
+                Text(
+                  "Answers",
+                  style: Theme.of(context).textTheme.subtitle2?.copyWith(
+                        color:
+                            _themeStore.darkMode ? Colors.white : Colors.black,
+                      ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
+
+  Widget _buildButton() => SizedBox(
+        height: 40,
+        child: OutlinedButtonS(
+          borderColor: _themeStore.darkMode
+              ? Colors.white
+              : Theme.of(context).accentColor,
+          titleColor: _themeStore.darkMode
+              ? Colors.white
+              : Theme.of(context).accentColor,
+          onPressed: () async {
+            final result = await Navigator.of(context)
+                .pushNamed(Routes.edit_profile_screen);
+            if (result == true) {
+              _store.success = false;
+              _store.getProfile();
+            }
+          },
+          title: "Edit",
+        ),
+      );
 }

@@ -62,6 +62,21 @@ mixin _$HomeStore on _HomeStore, Store {
     });
   }
 
+  final _$sendRequestAtom = Atom(name: '_HomeStore.sendRequest');
+
+  @override
+  bool get sendRequest {
+    _$sendRequestAtom.reportRead();
+    return super.sendRequest;
+  }
+
+  @override
+  set sendRequest(bool value) {
+    _$sendRequestAtom.reportWrite(value, super.sendRequest, () {
+      super.sendRequest = value;
+    });
+  }
+
   final _$oldestAtom = Atom(name: '_HomeStore.oldest');
 
   @override
@@ -324,6 +339,7 @@ mixin _$HomeStore on _HomeStore, Store {
 user: ${user},
 success: ${success},
 loading: ${loading},
+sendRequest: ${sendRequest},
 oldest: ${oldest},
 minVotes: ${minVotes},
 maxVotes: ${maxVotes},

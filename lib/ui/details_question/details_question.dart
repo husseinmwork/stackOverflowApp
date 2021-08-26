@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:todo_app/constants/dimens.dart';
 import 'package:todo_app/constants/strings.dart';
 import 'package:todo_app/model/get_question/get_question.dart';
+import 'package:todo_app/packages/toast.dart';
 import 'package:todo_app/store/details_question/details_question_store.dart';
 import 'package:todo_app/store/theme/theme_store.dart';
 import 'package:todo_app/ui/answers/answers.dart';
@@ -301,8 +302,9 @@ class _DetailsQuestionScreenState extends State<DetailsQuestionScreen> {
                         Navigator.pop(context);
                         Navigator.pop(context, true);
                       }).catchError((e) {
-                        showErrorMessage(
-                            _store.errorStore.errorMessage, context);
+                        Toast.show(_store.errorStore.errorMessage, context , duration: 2);
+
+
                       });
                     },
                     child: Text(

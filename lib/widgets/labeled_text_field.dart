@@ -67,7 +67,7 @@ class _LabeledTextFieldState extends State<LabeledTextField> {
       children: [
         Text(
           widget.title.toUpperCase(),
-          style: Theme.of(context).textTheme.overline,
+          style: Theme.of(context).textTheme.overline?.copyWith(color: Colors.grey),
         ),
         TextFormField(
           textAlign: TextAlign.start,

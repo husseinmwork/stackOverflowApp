@@ -58,7 +58,9 @@ abstract class _ProfileStore with Store {
   Future getProfile() async {
     return await _repository.getProfile().then((value) {
       profile = value;
+      success = true;
     }).catchError((error) {
+      success = false;
       print(error);
     });
   }

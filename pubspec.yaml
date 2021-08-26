@@ -49,9 +49,6 @@ dependencies:
   # XXTEA is a fast and secure encryption algorithm. This is a XXTEA library for Dart.
   xxtea: ^2.1.0
   percent_indicator: ^3.0.1
-  # A flexible widget for user notification. Customize your text, button, duration, animations
-  # and much more. For Android devs, it is made to replace Snackbars and Toasts.
-  another_flushbar: ^1.10.20
   # String validation and sanitization for Dart. Dart 2-compatible version of validator
   validators: ^3.0.0
   flutter_custom_tab_bar: ^1.0.0
@@ -70,6 +67,7 @@ dependencies:
   flutter_tagging: ^3.0.0
   flutter_keyboard_visibility: ^5.0.3
   pull_to_refresh: ^2.0.0
+  data_connection_checker_tv: ^0.3.5-nullsafety
 
 
 dev_dependencies:

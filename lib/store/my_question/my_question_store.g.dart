@@ -54,6 +54,22 @@ mixin _$MyQuestionStore on _MyQuestionStore, Store {
     });
   }
 
+  final _$refreshControllerAtom =
+      Atom(name: '_MyQuestionStore.refreshController');
+
+  @override
+  RefreshController get refreshController {
+    _$refreshControllerAtom.reportRead();
+    return super.refreshController;
+  }
+
+  @override
+  set refreshController(RefreshController value) {
+    _$refreshControllerAtom.reportWrite(value, super.refreshController, () {
+      super.refreshController = value;
+    });
+  }
+
   final _$questionAtom = Atom(name: '_MyQuestionStore.question');
 
   @override
@@ -82,6 +98,7 @@ mixin _$MyQuestionStore on _MyQuestionStore, Store {
 user: ${user},
 success: ${success},
 loading: ${loading},
+refreshController: ${refreshController},
 question: ${question}
     ''';
   }

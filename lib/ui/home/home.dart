@@ -45,8 +45,11 @@ class _HomeScreenState extends State<HomeScreen>
     super.didChangeDependencies();
     _store = Provider.of<HomeStore>(context);
     _themeStore = Provider.of<ThemeStore>(context);
-    _store.getPrefUser();
-    _store.getQuestion(_page);
+    if(_store.sendRequest){
+      _store.getPrefUser();
+      _store.getQuestion(_page);
+      _store.sendRequest = false;
+    }
   }
 
   @override

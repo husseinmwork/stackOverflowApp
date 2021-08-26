@@ -6,6 +6,7 @@ import 'package:todo_app/constants/colors.dart';
 import 'package:todo_app/constants/dimens.dart';
 import 'package:todo_app/generated/locale_keys.g.dart';
 import 'package:todo_app/packages/polygon_shape.dart';
+import 'package:todo_app/packages/toast.dart';
 import 'package:todo_app/store/form/form_store.dart';
 import 'package:todo_app/store/reset_password/reset_password.dart';
 import 'package:todo_app/store/theme/theme_store.dart';
@@ -143,8 +144,9 @@ class _EmailScreenState extends State<EmailScreen> {
               onSaveTaped();
 
           } else {
-            showErrorMessage(
-                "please Enter a valid Email", context);
+            Toast.show("please Enter a valid Email", context , duration: 2);
+
+
           }
         });
   }
