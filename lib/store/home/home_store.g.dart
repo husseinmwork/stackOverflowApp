@@ -200,15 +200,45 @@ mixin _$HomeStore on _HomeStore, Store {
   final _$tagsAtom = Atom(name: '_HomeStore.tags');
 
   @override
-  List<String> get tags {
+  List<Language> get tags {
     _$tagsAtom.reportRead();
     return super.tags;
   }
 
   @override
-  set tags(List<String> value) {
+  set tags(List<Language> value) {
     _$tagsAtom.reportWrite(value, super.tags, () {
       super.tags = value;
+    });
+  }
+
+  final _$allTagsAtom = Atom(name: '_HomeStore.allTags');
+
+  @override
+  List<String> get allTags {
+    _$allTagsAtom.reportRead();
+    return super.allTags;
+  }
+
+  @override
+  set allTags(List<String> value) {
+    _$allTagsAtom.reportWrite(value, super.allTags, () {
+      super.allTags = value;
+    });
+  }
+
+  final _$oneTagAtom = Atom(name: '_HomeStore.oneTag');
+
+  @override
+  String? get oneTag {
+    _$oneTagAtom.reportRead();
+    return super.oneTag;
+  }
+
+  @override
+  set oneTag(String? value) {
+    _$oneTagAtom.reportWrite(value, super.oneTag, () {
+      super.oneTag = value;
     });
   }
 
@@ -349,6 +379,8 @@ body: ${body},
 id: ${id},
 userId: ${userId},
 tags: ${tags},
+allTags: ${allTags},
+oneTag: ${oneTag},
 question: ${question},
 category: ${category},
 categoryId: ${categoryId},

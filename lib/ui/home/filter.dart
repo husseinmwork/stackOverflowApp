@@ -212,16 +212,16 @@ class _FilterScreenState extends State<FilterScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text("Tags".toString(), style: Theme.of(context).textTheme.subtitle2),
-          StackOverFlowTags(
-            labelChipStyle: TextStyle(color: _themeStore.darkMode? Colors.black:Colors.white),
+          Observer(
+            builder:(_)=> StackOverFlowTags(
+              labelChipStyle: TextStyle(color: _themeStore.darkMode? Colors.black:Colors.white),
 
-            controller: _tagController,
-            onChange: () {
-              for (var i in _tags) {
-                _store.tags.add(i.name);
-              }
-            },
-            selectedLanguages: _tags,
+              controller: _tagController,
+              onChange: () {
+                  _store.tags = _tags;
+              },
+              selectedLanguages: _tags,
+            ),
           ),
         ],
       );

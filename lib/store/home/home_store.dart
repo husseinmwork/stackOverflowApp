@@ -8,6 +8,7 @@ import 'package:todo_app/model/filter/filter.dart';
 import 'package:todo_app/store/error/error_store.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:todo_app/utils/dio/dio_error_util.dart';
+import 'package:todo_app/widgets/tags_language.dart';
 
 part 'home_store.g.dart';
 
@@ -74,7 +75,13 @@ abstract class _HomeStore with Store {
   String? userId;
 
   @observable
-  List<String> tags = [];
+  List<Language> tags = [];
+
+  @observable
+  List<String> allTags = [];
+
+  @observable
+  String? oneTag;
 
   @observable
   List<Question> question = ObservableList<Question>();
@@ -150,23 +157,33 @@ abstract class _HomeStore with Store {
   ///get question with paging
   @action
   Future getQuestion(int skip) async {
+    if (tags.isNotEmpty) {
+      allTags = [];
+      if (tags.length == 1) {
+        oneTag = tags.first.name;
+      } else {
+        for (var i in tags) {
+          allTags.add(i.name);
+        }
+      }
+    }
     loading = true;
     await _repository
         .getQuestion(
       skip: skip,
       take: 6,
       filter: QuestionFilter(
-        body: body,
-        maxVotes: maxVotes,
-        minVotes: minVotes,
-        id: id,
-        userId: userId,
-        fieldId: categoryId,
-        minViews: minViews,
-        maxViews: maxViews,
-        tags: tags,
-        oldest: oldest,
-      ),
+          body: body,
+          maxVotes: maxVotes,
+          minVotes: minVotes,
+          id: id,
+          userId: userId,
+          fieldId: categoryId,
+          minViews: minViews,
+          maxViews: maxViews,
+          tags: allTags,
+          oldest: oldest,
+          tag: oneTag),
     )
         .then((value) {
       loading = false;

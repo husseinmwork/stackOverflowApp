@@ -27,19 +27,23 @@ class QuestionFilter {
   @JsonKey(name: 'tags')
   final List<String>? tags;
 
-  QuestionFilter(
-      {this.id,
-      this.userId,
-      this.minVotes,
-      this.maxVotes,
-      this.body,
-      this.fieldId,
-      this.minViews,
-      this.maxViews,
-      this.tags,
-      this.questionId ,
-      this.oldest,
-      });
+  @JsonKey(name: 'tags[0]')
+  final String? tag;
+
+  QuestionFilter({
+    this.id,
+    this.userId,
+    this.minVotes,
+    this.maxVotes,
+    this.body,
+    this.fieldId,
+    this.minViews,
+    this.maxViews,
+    this.tags,
+    this.questionId,
+    this.oldest,
+    this.tag,
+  });
 
   factory QuestionFilter.fromJson(Map<String, dynamic> json) =>
       _$QuestionFilterFromJson(json);
