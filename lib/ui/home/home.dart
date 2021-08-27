@@ -12,6 +12,7 @@ import 'package:todo_app/store/theme/theme_store.dart';
 import 'package:todo_app/ui/create_question/create_question.dart';
 import 'package:todo_app/ui/details_question/details_question.dart';
 import 'package:todo_app/ui/home/question_item.dart';
+import 'package:todo_app/utils/device/device_utils.dart';
 import 'package:todo_app/utils/routes/routes.dart';
 import 'package:todo_app/widgets/stack_overflow_indecator.dart';
 import 'package:todo_app/widgets/user_image_avatar.dart';
@@ -39,13 +40,14 @@ class _HomeScreenState extends State<HomeScreen>
   TextEditingController searchController = TextEditingController();
   bool _showNameApp = true;
   bool _showSearchColor = false;
+  bool _closeSearchBar = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _store = Provider.of<HomeStore>(context);
     _themeStore = Provider.of<ThemeStore>(context);
-    if(_store.sendRequest){
+    if (_store.sendRequest) {
       _store.getPrefUser();
       _store.getQuestion(_page);
       _store.sendRequest = false;
@@ -204,6 +206,9 @@ class _HomeScreenState extends State<HomeScreen>
       );
 
   Widget _buildSearchIcon() => AnimSearchBar(
+        closeSearch: _closeSearchBar,
+
+        closeSearchOnSuffixTap: false,
         onTap: () async {
           await Future.delayed(
               Duration(milliseconds: _showNameApp == true ? 100 : 300));
@@ -212,18 +217,22 @@ class _HomeScreenState extends State<HomeScreen>
             _showNameApp = !_showNameApp;
           });
         },
-        autoFocus: false,
-        color: Theme.of(context).primaryColor,
-        width: MediaQuery.of(context).size.width * 0.70,
+        autoFocus: true,
+        color: Colors.black,
+        width: MediaQuery.of(context).size.width * 0.75,
         textController: searchController,
         style: TextStyle(color: Colors.white, fontSize: 18),
         onChange: (value) {
-          _store.body = value;
+          if (value != '') {
+            _store.success = false;
+            _store.question.clear();
+            _store.body = value;
+            _store.getQuestion(0);
+          }
         },
         onSuffixTap: () {
           setState(() {
             searchController.clear();
-            _showNameApp = true;
           });
         },
       );
@@ -238,12 +247,22 @@ class _HomeScreenState extends State<HomeScreen>
   Widget _buildRemoveFilterFAB() => FloatingActionButton(
         backgroundColor: Colors.red,
         onPressed: () async {
+          DeviceUtils.hideKeyboard(context);
+          _closeSearchBar = true;
+          searchController.clear();
+          Future.delayed(Duration(milliseconds: 300), () {
+            setState(() {
+              _showNameApp = true;
+            });
+          });
+
           _store.success = false;
           _store.removeFilter();
           _page = 0;
           _store.question.clear();
           await _store.getQuestion(0);
           _store.refreshController.refreshCompleted();
+          _closeSearchBar = false;
         },
         child: Icon(Icons.clear, color: Colors.white, size: Dimens.padding_xxl),
       );

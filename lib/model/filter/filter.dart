@@ -22,10 +22,8 @@ class QuestionFilter {
   final int? maxViews;
   @JsonKey(name: 'body')
   final String? body;
-
   @JsonKey(name: 'createdAt')
   final String? oldest;
-
   @JsonKey(name: 'tags')
   final List<String>? tags;
 

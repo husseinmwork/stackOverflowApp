@@ -15,6 +15,7 @@ class AnimSearchBar extends StatefulWidget {
   ///  animationDurationInMilli -  int ,isRequired : No
   ///  helpText - String ,isRequired :  No
   /// inputFormatters - TextInputFormatter, Required - No
+  final bool closeSearch;
   final double width;
   final Function onTap;
   final Function onChange;
@@ -36,6 +37,8 @@ class AnimSearchBar extends StatefulWidget {
 
     /// The width cannot be null
     required this.width,
+
+    required this.closeSearch,
 
     /// The textController cannot be null
     required this.textController,
@@ -104,6 +107,12 @@ class _AnimSearchBarState extends State<AnimSearchBar>
 
   @override
   Widget build(BuildContext context) {
+    if(widget.closeSearch){
+setState(() {
+  toggle = 0;
+  _con.reverse();
+});
+    }
     return Container(
       height: 100.0,
 
@@ -113,7 +122,7 @@ class _AnimSearchBarState extends State<AnimSearchBar>
       ///Using Animated container to expand and shrink the widget
       child: AnimatedContainer(
         duration: Duration(milliseconds: widget.animationDurationInMilli),
-        height: 48.0,
+        height: 45.0,
         width: (toggle == 0) ? 48.0 : widget.width,
         curve: Curves.easeOut,
         decoration: BoxDecoration(
