@@ -16,6 +16,9 @@ Answer _$AnswerFromJson(Map<String, dynamic> json) {
         ? null
         : Account.fromJson(json['user'] as Map<String, dynamic>),
     questionId: json['questionId'] as String?,
+    createdAt: json['createdAt'] == null
+        ? null
+        : DateTime.parse(json['createdAt'] as String),
   );
 }
 
@@ -26,4 +29,5 @@ Map<String, dynamic> _$AnswerToJson(Answer instance) => <String, dynamic>{
       'userId': instance.userId,
       'user': instance.user,
       'questionId': instance.questionId,
+      'createdAt': instance.createdAt?.toIso8601String(),
     };

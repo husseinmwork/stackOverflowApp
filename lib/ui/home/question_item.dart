@@ -14,7 +14,6 @@ class QuestionItem extends StatefulWidget {
   final Question item;
   final VoidCallback onTap;
 
-
   QuestionItem({required this.item, required this.onTap});
 
   @override
@@ -50,7 +49,11 @@ class _QuestionItemState extends State<QuestionItem> {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (_)=>ProfileScreen(userId: widget.item.userId)));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) =>
+                                    ProfileScreen(userId: widget.item.userId)));
                       },
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -111,11 +114,13 @@ class _QuestionItemState extends State<QuestionItem> {
     );
   }
 
-  Widget _buildImage() =>
-      UserImageAvatar(image: widget.item.user?.image ?? "null", onTap: () {
-        Navigator.push(context, MaterialPageRoute(builder: (_)=>ProfileScreen(userId: widget.item.userId)));
-
-
+  Widget _buildImage() => UserImageAvatar(
+      image: widget.item.user?.image ?? "null",
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (_) => ProfileScreen(userId: widget.item.userId)));
       });
 
   Widget _buildUserName() => Text(
@@ -159,18 +164,19 @@ class _QuestionItemState extends State<QuestionItem> {
   Widget _buildTags() => Wrap(
         children: [
           ...widget.item.tags!
-              .map((e) => Container(
-                    color: Theme.of(context).accentColor,
-                    padding: EdgeInsets.all(Dimens.padding_normal),
-                    margin: EdgeInsets.only(
-                        right: Dimens.padding_normal,
-                        bottom: Dimens.padding_normal),
-                    child: Text(e,
-                        style: Theme.of(context)
-                            .textTheme
-                            .subtitle2?.copyWith(color: _themeStore.darkMode ? Colors.black:Colors.white)
-                            ),
-                  ),)
+              .map(
+                (e) => Container(
+                  color: Theme.of(context).accentColor,
+                  padding: EdgeInsets.all(Dimens.padding_card),
+                  margin: EdgeInsets.only(
+                      right: Dimens.padding_card, bottom: Dimens.padding_card),
+                  child: Text(e,
+                      style: Theme.of(context).textTheme.bodyText1?.copyWith(
+                          color: _themeStore.darkMode
+                              ? Colors.black
+                              : Colors.white)),
+                ),
+              )
               .toList()
         ],
       );

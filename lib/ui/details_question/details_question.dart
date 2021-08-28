@@ -121,18 +121,20 @@ class _DetailsQuestionScreenState extends State<DetailsQuestionScreen> {
           children: [
             if (_store.question?.tags != null)
               ..._store.question!.tags!
-                  .map((e) => Container(
-                        color: Theme.of(context).accentColor,
-                        padding: EdgeInsets.all(Dimens.padding_normal),
-                        margin: EdgeInsets.only(right: Dimens.padding_normal),
-                        child: Text(
-                          e,
-                          style: Theme.of(context)
-                              .textTheme
-                              .subtitle2
-                              ?.copyWith(color:_themeStore.darkMode? Colors.black: Colors.white),
-                        ),
-                      ))
+                  .map(
+                    (e) => Container(
+                      color: Theme.of(context).accentColor,
+                      padding: EdgeInsets.all(Dimens.padding_card),
+                      margin: EdgeInsets.only(right: Dimens.padding_card),
+                      child: Text(
+                        e,
+                        style: Theme.of(context).textTheme.bodyText1?.copyWith(
+                            color: _themeStore.darkMode
+                                ? Colors.black
+                                : Colors.white),
+                      ),
+                    ),
+                  )
                   .toList()
           ],
         ),
@@ -147,7 +149,21 @@ class _DetailsQuestionScreenState extends State<DetailsQuestionScreen> {
               child: PopUpMenuWidget(
                 onSelected: (result) async {
                   if (result == question.delete) {
-                    _buildDeleteDialog();
+                    buildDeleteDialog(
+                      context: context,
+                      close: (){ Navigator.of(context).pop();},
+                      delete:  () async {
+                        await _store.deleteQuestion().then((value) {
+                          Navigator.pop(context);
+                          Navigator.pop(context, true);
+                        }).catchError((e) {
+                          Toast.show(_store.errorStore.errorMessage, context,
+                              duration: 2);
+                        });
+                      },
+                      content:  "Are you sure you want to delete the question?",
+                      title:  "Delete Question",
+                    );
                   } else {
                     final resultEditQuestion = await Navigator.push(
                       context,
@@ -168,179 +184,116 @@ class _DetailsQuestionScreenState extends State<DetailsQuestionScreen> {
             ),
             Row(
               children: [
-                Text(_store.question!.answer!.length.toString(),
-                    style: Theme.of(context).textTheme.bodyText2),
-                SizedBox(width: Dimens.padding_mini),
-                IconButton(
-                    icon: Icon(Icons.comment),
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => AnswersScreen(
-                            questionId: widget.id,
-                            numberOfAnswers: _store.question!.answer!.length,
-                          ),
-                        ),
-                      );
-                    }),
+                Row(
+                  children: [
+                    Text(_store.question!.answer!.length.toString(),
+                        style: Theme.of(context).textTheme.bodyText2),
+                    SizedBox(width: Dimens.padding_mini),
+                    IconButton(
+                        icon: Icon(Icons.comment),
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => AnswersScreen(
+                                questionId: widget.id,
+                                numberOfAnswers:
+                                    _store.question!.answer!.length,
+                              ),
+                            ),
+                          );
+                        }),
+                  ],
+                ),
+                StackOverFlowLike(
+                  hsVoted: _store.hsVoted,
+                  like: _store.hsVoted == Strings.like
+
+                      ///delete like
+                      ? () async {
+                          VotesList? likedObj;
+                          for (var i in _store.question!.votesList!) {
+                            if (i.userId == _store.user!.id) likedObj = i;
+                            likedObj = i;
+                          }
+                          if (likedObj != null) {
+                            _store.likeId = likedObj.id;
+                            _store.hsVoted = null;
+                            await _store.questionDeleteLike();
+                            _store.getQuestion();
+                          }
+                        }
+                      : _store.hsVoted == Strings.desLike
+
+                          ///update like
+                          ? () async {
+                              VotesList? likedObj;
+                              for (var i in _store.question!.votesList!) {
+                                if (i.userId == _store.user!.id) likedObj = i;
+                              }
+                              if (likedObj != null) {
+                                _store.typeLike = Strings.like;
+                                _store.likeId = likedObj.id;
+                                _store.hsVoted = Strings.like;
+                                await _store.questionUpdateLike();
+                                _store.getQuestion();
+                              }
+                            }
+                          :
+
+                          ///post like
+                          () async {
+                              _store.typeLike = Strings.like;
+                              _store.hsVoted = Strings.like;
+                              await _store.questionLike();
+
+                              _store.getQuestion();
+                            },
+                  desLike: _store.hsVoted == Strings.desLike
+
+                      ///delete desLike
+                      ? () async {
+                          VotesList? likedObj;
+                          for (var i in _store.question!.votesList!) {
+                            if (i.userId == _store.user!.id) likedObj = i;
+                          }
+                          if (likedObj != null) {
+                            _store.likeId = likedObj.id;
+                            _store.hsVoted = null;
+                            await _store.questionDeleteLike();
+                            _store.getQuestion();
+                          }
+                        }
+                      : _store.hsVoted == Strings.like
+
+                          ///update desLike
+                          ? () async {
+                              VotesList? likedObj;
+                              for (var i in _store.question!.votesList!) {
+                                if (i.userId == _store.user!.id) likedObj = i;
+                              }
+                              if (likedObj != null) {
+                                _store.typeLike = Strings.desLike;
+                                _store.likeId = likedObj.id;
+                                _store.hsVoted = Strings.desLike;
+                                await _store.questionUpdateLike();
+                                _store.getQuestion();
+                              }
+                              //update
+                            }
+
+                          ///post desLike
+                          : () async {
+                              _store.typeLike = Strings.desLike;
+                              _store.hsVoted = Strings.desLike;
+                              await _store.questionLike();
+                              _store.getQuestion();
+                            },
+                ),
               ],
-            ),
-            StackOverFlowLike(
-              hsVoted: _store.hsVoted,
-              like: _store.hsVoted == Strings.like
-
-                  ///delete like
-                  ? () async {
-                      VotesList? likedObj;
-                      for (var i in _store.question!.votesList!) {
-                        if (i.userId == _store.user!.id) likedObj = i;
-                        likedObj = i;
-                      }
-                      if (likedObj != null) {
-                        _store.likeId = likedObj.id;
-                        _store.hsVoted = null;
-                        await _store.questionDeleteLike();
-                        _store.getQuestion();
-                      }
-                    }
-                  : _store.hsVoted == Strings.desLike
-
-                      ///update like
-                      ? () async {
-                          VotesList? likedObj;
-                          for (var i in _store.question!.votesList!) {
-                            if (i.userId == _store.user!.id) likedObj = i;
-                          }
-                          if (likedObj != null) {
-                            _store.typeLike = Strings.like;
-                            _store.likeId = likedObj.id;
-                            _store.hsVoted = Strings.like;
-                            await _store.questionUpdateLike();
-                            _store.getQuestion();
-                          }
-                        }
-                      :
-
-                      ///post like
-                      () async {
-                          _store.typeLike = Strings.like;
-                          _store.hsVoted = Strings.like;
-                          await _store.questionLike();
-
-                          _store.getQuestion();
-                        },
-              desLike: _store.hsVoted == Strings.desLike
-
-                  ///delete desLike
-                  ? () async {
-                      VotesList? likedObj;
-                      for (var i in _store.question!.votesList!) {
-                        if (i.userId == _store.user!.id) likedObj = i;
-                      }
-                      if (likedObj != null) {
-                        _store.likeId = likedObj.id;
-                        _store.hsVoted = null;
-                        await _store.questionDeleteLike();
-                        _store.getQuestion();
-                      }
-                    }
-                  : _store.hsVoted == Strings.like
-
-                      ///update desLike
-                      ? () async {
-                          VotesList? likedObj;
-                          for (var i in _store.question!.votesList!) {
-                            if (i.userId == _store.user!.id) likedObj = i;
-                          }
-                          if (likedObj != null) {
-                            _store.typeLike = Strings.desLike;
-                            _store.likeId = likedObj.id;
-                            _store.hsVoted = Strings.desLike;
-                            await _store.questionUpdateLike();
-                            _store.getQuestion();
-                          }
-                          //update
-                        }
-
-                      ///post desLike
-                      : () async {
-                          _store.typeLike = Strings.desLike;
-                          _store.hsVoted = Strings.desLike;
-                          await _store.questionLike();
-                          _store.getQuestion();
-                        },
             ),
           ],
         ),
       );
 
-  _buildDeleteDialog() {
-    showGeneralDialog(
-        barrierColor: Colors.black.withOpacity(0.5),
-        transitionBuilder: (context, a1, a2, widget) {
-          final curvedValue = Curves.easeInOutBack.transform(a1.value) - 1.0;
-          return Transform(
-            transform: Matrix4.translationValues(0.0, curvedValue * 200, 0.0),
-            child: Opacity(
-              opacity: a1.value,
-              child: MaterialDialog(
-                actions: [
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text(
-                      "CANCEL",
-                      style: Theme.of(context).textTheme.button?.copyWith(
-                            color: Colors.white,
-                          ),
-                    ),
-                  ),
-                  ElevatedButton(
-                    onPressed: () async {
-                      await _store.deleteQuestion().then((value) {
-                        Navigator.pop(context);
-                        Navigator.pop(context, true);
-                      }).catchError((e) {
-                        Toast.show(_store.errorStore.errorMessage, context , duration: 2);
 
-
-                      });
-                    },
-                    child: Text(
-                      "OK",
-                      style: Theme.of(context).textTheme.button?.copyWith(
-                          color:  Colors.white),
-                    ),
-                  ),
-                ],
-                content: Text(
-                  "Are you sure you want to delete the question?",
-                  style: Theme.of(context).textTheme.subtitle2,
-                ),
-                borderRadius: Dimens.border_mid,
-                enableFullWidth: true,
-                title: Text(
-                  "Delete Question",
-                  style: Theme.of(context)
-                      .textTheme
-                      .subtitle1
-                      ?.copyWith(color: Colors.white),
-                ),
-                headerColor: Theme.of(context).primaryColor,
-                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                enableCloseButton: false,
-                enableBackButton: false,
-              ),
-            ),
-          );
-        },
-        transitionDuration: Duration(milliseconds: 400),
-        barrierDismissible: true,
-        barrierLabel: '',
-        context: context,
-        pageBuilder: (context, animation1, animation2) {
-          return Text("");
-        });
-  }
 }

@@ -11,6 +11,7 @@ import 'package:todo_app/store/theme/theme_store.dart';
 import 'package:todo_app/ui/answers/edit_answer.dart';
 import 'package:todo_app/ui/profile/profile.dart';
 import 'package:todo_app/utils/device/device_utils.dart';
+import 'package:todo_app/utils/todo/todo_utils.dart';
 import 'package:todo_app/widgets/like.dart';
 import 'package:todo_app/widgets/stack_overflow_indecator.dart';
 import 'package:todo_app/widgets/stackoverflow_popup_menu.dart';
@@ -44,9 +45,15 @@ class _AnswersScreenState extends State<AnswersScreen> {
     super.didChangeDependencies();
     _store = Provider.of<AnswersStore>(context);
     _themeStore = Provider.of<ThemeStore>(context);
-
     _store.questionId = widget.questionId;
+    _store.answers.clear();
     _store.getAnswers(_page);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _store.success = false;
   }
 
   @override
@@ -320,19 +327,34 @@ class _AnswerItemState extends State<AnswerItem> {
                 child: PopUpMenuWidget(
                   onSelected: (result) async {
                     if (result == question.delete) {
-                      await _store.deleteAnswers(widget.item.id!);
-                    } else {
-                     final result = await Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => EditAnswerScreen(
-                          answerId: widget.item.id!,
-                          bodyOfAnswer: widget.item.body,
-                          userImage: _store.user!.image!,
-                        )),
+                      buildDeleteDialog(
+                        context: context,
+                        close: () {
+                          Navigator.of(context).pop();
+                        },
+                        delete: () async {
+                          Navigator.pop(context);
+                          await _store.deleteAnswers(widget.item.id!);
+                        },
+                        content: "Are you sure you want to delete the answer?",
+                        title: "Delete answer",
                       );
-                     if(result){
-                       _store.getAnswers(0);
-                     }
+                    } else {
+                      final result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => EditAnswerScreen(
+                                  answerId: widget.item.id!,
+                                  bodyOfAnswer: widget.item.body,
+                                  userImage: _store.user!.image!,
+                                )),
+                      );
+                      if (result) {
+                        _store.loading = true;
+
+                        _store.answers.clear();
+                        _store.getAnswers(0);
+                      }
                     }
                   },
                 ),
@@ -379,9 +401,7 @@ class _AnswerItemState extends State<AnswerItem> {
       );
 
   Widget _buildAnswerDate() => Text(
-        //todo this after add created at from backend
-        /*    widget.item.user!.createdAt.toString(),*/
-        "answered 20 mins ago",
+      widget.item.createdAt?.changeFormat(),
         style: Theme.of(context).textTheme.caption?.copyWith(
               color: _themeStore.darkMode ? Colors.white : Colors.black,
             ),

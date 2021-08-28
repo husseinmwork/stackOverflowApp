@@ -17,6 +17,8 @@ class Answer {
   final Account? user;
   @JsonKey(name: 'questionId')
   final String? questionId;
+  @JsonKey(name: 'createdAt')
+  final DateTime? createdAt;
 
   factory Answer.fromJson(Map<String, dynamic> json) => _$AnswerFromJson(json);
 
@@ -26,7 +28,9 @@ class Answer {
       this.votes,
       this.userId,
       this.user,
-      this.questionId});
+      this.questionId,
+      this.createdAt,
+      });
 
   static Answer fromJsonModel(Map<String, dynamic> json) =>
       Answer.fromJson(json);
