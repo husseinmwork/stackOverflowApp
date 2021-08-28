@@ -140,6 +140,7 @@ abstract class _HomeStore with Store {
     maxViews = null;
     oldest = null;
     tags = [];
+    oneTag = null;
   }
 
   ///this method work logout and remove (user , authToken , IsLoggedIn) shared preferences

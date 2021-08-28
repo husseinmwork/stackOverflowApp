@@ -62,13 +62,12 @@ abstract class NetworkModule {
           var token = await sharedPrefHelper.authToken;
           if (error?.statusCode == 401 && token != null) {
             var response = await dio.post(Endpoints.refreshToken,
-                data: {'refresh': token['refreshToken']}).then((value) {
-              print(
-                  "this refresh token before save in shaerd preferances response $value");
+                data: {'refreshToken': token['refreshToken']}).then((value) {
+
               sharedPrefHelper.saveAuthToken(
                 {
-                  'accessToken': value.data['access'],
-                  'refreshToken': value.data['refresh']
+                  'accessToken': value.data['token'],
+                  'refreshToken': value.data['refresh_token']
                 },
               );
               print("this refresh token response $value");
@@ -76,6 +75,8 @@ abstract class NetworkModule {
               //todo if false use resolve
               ///this function send the request again
               //              handler.next(e);
+            }).catchError((e){
+              print(e);
             });
           }
           //this error in handel error 400

@@ -58,7 +58,7 @@ final ThemeData themeData = new ThemeData(
   primaryColor: Colors.green,
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
-      primary:  Colors.grey.shade900,
+      primary: Colors.grey.shade900,
       elevation: 0,
     ),
   ),
@@ -72,13 +72,12 @@ final ThemeData themeData = new ThemeData(
 );
 
 final ThemeData themeDataDark = ThemeData(
-  appBarTheme: AppBarTheme(
-    color: Colors.grey[800],
-    backwardsCompatibility: false,
-    systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: Colors.black),
-  ),
+  // appBarTheme: AppBarTheme(
+  //   color: Colors.grey[800],
+  //   backwardsCompatibility: false,
+  //   systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: Color(0xFF212121)),//status bar
+  // ),
   textTheme: textTheme,
-
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
       padding: EdgeInsets.zero,
@@ -86,7 +85,6 @@ final ThemeData themeDataDark = ThemeData(
       elevation: 0,
     ),
   ),
-
   primarySwatch: Colors.grey,
   primaryColor: Colors.grey[800],
   brightness: Brightness.dark,
