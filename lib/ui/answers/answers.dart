@@ -8,10 +8,12 @@ import 'package:todo_app/constants/dimens.dart';
 import 'package:todo_app/model/get_answer/get_answer.dart';
 import 'package:todo_app/store/answers/answers_store.dart';
 import 'package:todo_app/store/theme/theme_store.dart';
+import 'package:todo_app/ui/answers/edit_answer.dart';
 import 'package:todo_app/ui/profile/profile.dart';
 import 'package:todo_app/utils/device/device_utils.dart';
 import 'package:todo_app/widgets/like.dart';
 import 'package:todo_app/widgets/stack_overflow_indecator.dart';
+import 'package:todo_app/widgets/stackoverflow_popup_menu.dart';
 import 'package:todo_app/widgets/user_image_avatar.dart';
 
 class AnswersScreen extends StatefulWidget {
@@ -152,6 +154,7 @@ class _AnswersScreenState extends State<AnswersScreen> {
               ? []
               : _store.answers
                   .map((item) => AnswerItem(
+                        myUserId: _store.user!.id!,
                         item: item,
                         onTap: () {},
                       ))
@@ -222,8 +225,9 @@ class _AnswersScreenState extends State<AnswersScreen> {
 class AnswerItem extends StatefulWidget {
   final Answer item;
   final Function onTap;
+  final String myUserId;
 
-  AnswerItem({required this.item, required this.onTap});
+  AnswerItem({required this.item, required this.onTap, required this.myUserId});
 
   @override
   _AnswerItemState createState() => _AnswerItemState();
@@ -231,11 +235,14 @@ class AnswerItem extends StatefulWidget {
 
 class _AnswerItemState extends State<AnswerItem> {
   late ThemeStore _themeStore;
+  late AnswersStore _store;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+
     _themeStore = Provider.of<ThemeStore>(context);
+    _store = Provider.of<AnswersStore>(context);
   }
 
   @override
@@ -245,67 +252,99 @@ class _AnswerItemState extends State<AnswerItem> {
       //   widget.onTap();
       // },
       child: Column(
+        mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildImage(),
               Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                      top: Dimens.padding_mid,
-                      left: Dimens.padding_mid,
-                      right: Dimens.padding_mid),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (_) => ProfileScreen(
-                                      userId: widget.item.userId)));
-                        },
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                _buildUserName(),
-                                SizedBox(width: Dimens.padding_mini),
-                                _buildUserScore()
-                              ],
-                            ),
-                            _buildAnswerDate(),
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: Dimens.padding_mid),
-                      _buildAnswerBody(),
-                      SizedBox(height: Dimens.padding_mid),
-                      Container(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildImage(),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            top: Dimens.padding_mid,
+                            left: Dimens.padding_mid,
+                            right: Dimens.padding_mid),
                         child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Expanded(
-                                child: StackOverFlowLike(
-                              desLike: () {},
-                              like: () {},
-                              hsVoted: "",
-                            )),
-                            IconButton(
-                                icon: Icon(Icons.more_vert_outlined, size: 20),
-                                onPressed: () {}),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.max,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (_) => ProfileScreen(
+                                                  userId: widget.item.userId)));
+                                    },
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            _buildUserName(),
+                                            SizedBox(
+                                                width: Dimens.padding_mini),
+                                            _buildUserScore()
+                                          ],
+                                        ),
+                                        _buildAnswerDate(),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(height: Dimens.padding_mid),
+                                  _buildAnswerBody(),
+                                  SizedBox(height: Dimens.padding_mid),
+                                ],
+                              ),
+                            ),
                           ],
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
+                ),
+              ),
+              Visibility(
+                visible: widget.item.userId == widget.myUserId,
+                child: PopUpMenuWidget(
+                  onSelected: (result) async {
+                    if (result == question.delete) {
+                      await _store.deleteAnswers(widget.item.id!);
+                    } else {
+                     final result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => EditAnswerScreen(
+                          answerId: widget.item.id!,
+                          bodyOfAnswer: widget.item.body,
+                          userImage: _store.user!.image!,
+                        )),
+                      );
+                     if(result){
+                       _store.getAnswers(0);
+                     }
+                    }
+                  },
                 ),
               ),
             ],
           ),
-          Divider()
+          StackOverFlowLike(
+            desLike: () {},
+            like: () {},
+            hsVoted: "",
+          ),
+          Divider(color: _themeStore.darkMode ? Colors.white : Colors.black)
         ],
       ),
     );
@@ -349,10 +388,9 @@ class _AnswerItemState extends State<AnswerItem> {
       );
 
   Widget _buildAnswerBody() => Text(
-        widget.item.body.toString().replaceAll(new RegExp(r"\n|\s\n"), ""),
-        maxLines: 6,
-        overflow: TextOverflow.ellipsis,
+        widget.item.body.toString(),
         textAlign: TextAlign.start,
+        softWrap: true,
         style: Theme.of(context).textTheme.caption?.copyWith(
               color: _themeStore.darkMode ? Colors.white : Colors.black,
             ),

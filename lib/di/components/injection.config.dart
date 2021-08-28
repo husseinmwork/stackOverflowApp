@@ -12,26 +12,27 @@ import 'package:shared_preferences/shared_preferences.dart' as _i6;
 
 import '../../data/local/datasources/post/post_datasource.dart' as _i11;
 import '../../data/network/apis/services.dart' as _i10;
-import '../../data/network/dio_client.dart' as _i24;
-import '../../data/network/rest_client.dart' as _i23;
+import '../../data/network/dio_client.dart' as _i25;
+import '../../data/network/rest_client.dart' as _i24;
 import '../../data/repositry.dart' as _i9;
 import '../../data/sharedpref/shared_preference_helper.dart' as _i8;
 import '../../store/answers/answers_store.dart' as _i15;
+import '../../store/answers/edit_answer/edit_answer_store.dart' as _i18;
 import '../../store/create_question/create_question_store.dart' as _i16;
 import '../../store/details_question/details_question_store.dart' as _i17;
 import '../../store/error/error_store.dart' as _i4;
 import '../../store/form/form_store.dart' as _i5;
-import '../../store/home/home_store.dart' as _i18;
-import '../../store/language/language_store.dart' as _i19;
-import '../../store/login/login.dart' as _i20;
-import '../../store/my_question/my_question_store.dart' as _i21;
-import '../../store/profile/profile_store.dart' as _i22;
+import '../../store/home/home_store.dart' as _i19;
+import '../../store/language/language_store.dart' as _i20;
+import '../../store/login/login.dart' as _i21;
+import '../../store/my_question/my_question_store.dart' as _i22;
+import '../../store/profile/profile_store.dart' as _i23;
 import '../../store/reset_password/reset_password.dart' as _i12;
 import '../../store/sign_up/sign_up.dart' as _i13;
 import '../../store/theme/theme_store.dart' as _i14;
-import '../module/local_module.dart' as _i25;
+import '../module/local_module.dart' as _i26;
 import '../module/network_module.dart'
-    as _i26; // ignore_for_file: unnecessary_lambdas
+    as _i27; // ignore_for_file: unnecessary_lambdas
 
 // ignore_for_file: lines_longer_than_80_chars
 /// initializes the registration of provided dependencies inside of [GetIt]
@@ -62,23 +63,25 @@ Future<_i1.GetIt> $initGetIt(_i1.GetIt get,
       () => _i16.CreateQuestionStore(get<_i9.Repository>()));
   gh.factory<_i17.DetailsQuestionStore>(
       () => _i17.DetailsQuestionStore(get<_i9.Repository>()));
-  gh.factory<_i18.HomeStore>(() => _i18.HomeStore(get<_i9.Repository>()));
-  gh.factory<_i19.LanguageStore>(
-      () => _i19.LanguageStore(get<_i9.Repository>()));
-  gh.factory<_i20.LoginStore>(() => _i20.LoginStore(get<_i9.Repository>()));
-  gh.factory<_i21.MyQuestionStore>(
-      () => _i21.MyQuestionStore(get<_i9.Repository>()));
-  gh.factory<_i22.ProfileStore>(() => _i22.ProfileStore(get<_i9.Repository>()));
+  gh.factory<_i18.EditAnswersStore>(
+      () => _i18.EditAnswersStore(get<_i9.Repository>()));
+  gh.factory<_i19.HomeStore>(() => _i19.HomeStore(get<_i9.Repository>()));
+  gh.factory<_i20.LanguageStore>(
+      () => _i20.LanguageStore(get<_i9.Repository>()));
+  gh.factory<_i21.LoginStore>(() => _i21.LoginStore(get<_i9.Repository>()));
+  gh.factory<_i22.MyQuestionStore>(
+      () => _i22.MyQuestionStore(get<_i9.Repository>()));
+  gh.factory<_i23.ProfileStore>(() => _i23.ProfileStore(get<_i9.Repository>()));
   gh.singleton<_i11.PostDataSource>(_i11.PostDataSource());
-  gh.singleton<_i23.RestClient>(_i23.RestClient());
+  gh.singleton<_i24.RestClient>(_i24.RestClient());
   gh.singleton<_i8.SharedPreferenceHelper>(
       _i8.SharedPreferenceHelper(get<_i6.SharedPreferences>()));
-  gh.singleton<_i24.DioClient>(_i24.DioClient(get<_i7.Dio>()));
+  gh.singleton<_i25.DioClient>(_i25.DioClient(get<_i7.Dio>()));
   gh.singleton<_i10.Services>(
-      _i10.Services(get<_i24.DioClient>(), get<_i23.RestClient>()));
+      _i10.Services(get<_i25.DioClient>(), get<_i24.RestClient>()));
   return get;
 }
 
-class _$LocalModule extends _i25.LocalModule {}
+class _$LocalModule extends _i26.LocalModule {}
 
-class _$NetworkModule extends _i26.NetworkModule {}
+class _$NetworkModule extends _i27.NetworkModule {}

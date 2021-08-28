@@ -6,7 +6,7 @@ part 'get_answer.g.dart';
 @JsonSerializable()
 class Answer {
   @JsonKey(name: 'id')
-  final String id;
+  final String? id;
   @JsonKey(name: 'body')
   final String body;
   @JsonKey(name: 'votes')
@@ -21,7 +21,7 @@ class Answer {
   factory Answer.fromJson(Map<String, dynamic> json) => _$AnswerFromJson(json);
 
   Answer(
-      {required this.id,
+      { this.id,
       required this.body,
       this.votes,
       this.userId,

@@ -7,6 +7,7 @@ import 'package:todo_app/constants/app_theme.dart';
 import 'package:todo_app/constants/strings.dart';
 import 'package:todo_app/di/components/injection.dart';
 import 'package:todo_app/store/answers/answers_store.dart';
+import 'package:todo_app/store/answers/edit_answer/edit_answer_store.dart';
 import 'package:todo_app/store/create_question/create_question_store.dart';
 import 'package:todo_app/store/details_question/details_question_store.dart';
 import 'package:todo_app/store/home/home_store.dart';
@@ -38,6 +39,7 @@ class MyApp extends StatelessWidget {
   final CreateQuestionStore _createQuestionStore = CreateQuestionStore(getIt<Repository>());
   final DetailsQuestionStore _detailsQuestionStore = DetailsQuestionStore(getIt<Repository>());
   final MyQuestionStore _myQuestionStore = MyQuestionStore(getIt<Repository>());
+  final EditAnswersStore _editAnswersStore = EditAnswersStore(getIt<Repository>());
   final AnswersStore _answersStore = AnswersStore(getIt<Repository>());
   final ResetPasswordStore _resetPasswordStore =
       ResetPasswordStore(getIt<Repository>());
@@ -57,6 +59,7 @@ class MyApp extends StatelessWidget {
         Provider<CreateQuestionStore>(create: (_) => _createQuestionStore),
         Provider<MyQuestionStore>(create: (_) => _myQuestionStore),
         Provider<AnswersStore>(create: (_) => _answersStore),
+        Provider<EditAnswersStore>(create: (_) => _editAnswersStore),
       ],
       child: Observer(
         name: 'global-observer',

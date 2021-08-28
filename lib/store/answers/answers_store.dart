@@ -7,6 +7,7 @@ import 'package:todo_app/model/get_answer/get_answer.dart';
 import 'package:todo_app/model/helper/paging.dart';
 import 'package:todo_app/model/user/user.dart';
 import 'package:todo_app/store/error/error_store.dart';
+import 'package:todo_app/utils/dio/dio_error_util.dart';
 
 part 'answers_store.g.dart';
 
@@ -68,6 +69,20 @@ abstract class _AnswersStore with Store {
           ))
           .then((value) {})
           .catchError((e) {});
+    }
+  }
+
+
+
+  @action
+  Future deleteAnswers(String answerId) async {
+    if (answerId.isNotEmpty) {
+      return await _repository.deleteAnswer(answerId).then((value) {
+        answers.removeWhere((element) => element.id == answerId);
+      }).catchError((error) {
+        errorStore.errorMessage = DioErrorUtil.handleError(error);
+        throw error;
+      });
     }
   }
 }

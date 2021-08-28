@@ -8,7 +8,7 @@ part of 'get_answer.dart';
 
 Answer _$AnswerFromJson(Map<String, dynamic> json) {
   return Answer(
-    id: json['id'] as String,
+    id: json['id'] as String?,
     body: json['body'] as String,
     votes: (json['votes'] as num?)?.toDouble(),
     userId: json['userId'] as String?,

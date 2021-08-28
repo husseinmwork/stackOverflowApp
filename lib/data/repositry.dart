@@ -133,7 +133,7 @@ class Repository {
         .catchError((e) => throw e);
   }
 
-  Future updateQuestion(Question question, String questionId) async {
+  Future<Question> updateQuestion(Question question, String questionId) async {
     return await _services
         .updateQuestion(question, questionId)
         .catchError((e) => throw e);
@@ -153,6 +153,18 @@ class Repository {
     return await _services
         .createAnswer(createAnswer)
         .catchError((e) => throw e);
+  }
+
+  Future<Answer> updateAnswer(Answer answer, String answerId) async {
+    return await _services
+        .updateAnswer(answer, answerId)
+        .catchError((e) => throw e);
+  }
+
+  Future deleteAnswer(String AnswerId) async {
+    return await _services
+        .deleteAnswer(AnswerId)
+        .catchError((error) => throw error);
   }
 
   /// profile

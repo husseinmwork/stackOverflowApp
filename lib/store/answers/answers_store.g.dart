@@ -113,6 +113,13 @@ mixin _$AnswersStore on _AnswersStore, Store {
     return _$createAnswerAsyncAction.run(() => super.createAnswer());
   }
 
+  final _$deleteAnswersAsyncAction = AsyncAction('_AnswersStore.deleteAnswers');
+
+  @override
+  Future<dynamic> deleteAnswers(String answerId) {
+    return _$deleteAnswersAsyncAction.run(() => super.deleteAnswers(answerId));
+  }
+
   @override
   String toString() {
     return '''

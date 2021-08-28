@@ -180,6 +180,27 @@ class Services {
     }
   }
 
+
+  Future<Answer> updateAnswer(Answer answer , String answerId) async {
+    try {
+      var response =
+      await _dioClient.patch(Endpoints.answer +'/'+ answerId, data: answer.toJson().removeNull());
+      return Answer.fromJson(response);
+    } catch (e) {
+      throw e;
+    }
+  }
+
+
+  Future deleteAnswer(String answerId)async{
+    try{
+      var response = await _dioClient.delete(Endpoints.answer +'/'+ answerId);
+      return response ;
+    }catch(error){
+      throw error;
+    }
+  }
+
   ///question Like
   ///work like
   Future<Like> questionLike(Like like)async{
